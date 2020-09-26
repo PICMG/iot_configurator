@@ -1,0 +1,525 @@
+{
+	"pins": [
+		"J1.1",
+		"J1.2",
+		"J1.3",
+		"J1.6",
+		"J1.7",
+		"J1.8",
+		"J1.10",
+		"J1.14",
+		"J1.16",
+		"J1.17",
+		"J1.18"
+	],
+
+	"channels": [{
+			"name": "din1_level",
+			"direction": "input",
+			"type": "digital_level_input",
+			"pins": ["J1.1"]
+		},
+		{
+			"name": "din1_pos_edge",
+			"direction": "input",
+			"type": "digital_pos_edge_input",
+			"pins": ["J1.1"]
+		},
+		{
+			"name": "din1_neg_edge",
+			"direction": "input",
+			"type": "digital_neg_edge_input",
+			"pins": ["J1.1"]
+		},
+		{
+			"name": "din1_pos_pulse",
+			"direction": "input",
+			"type": "digital_pos_edge_input",
+			"pins": ["J1.1"]
+		},
+		{
+			"name": "din1_neg_pulse",
+			"direction": "input",
+			"type": "digital_neg_edge_input",
+			"pins": ["J1.1"]
+		},
+		{
+			"name": "din2_level",
+			"direction": "input",
+			"type": "digital_level_input",
+			"pins": ["J1.2"]
+		},
+		{
+			"name": "din2_pos_edge",
+			"direction": "input",
+			"type": "digital_pos_edge_input",
+			"pins": ["J1.2"]
+		},
+		{
+			"name": "din2_neg_edge",
+			"direction": "input",
+			"type": "digital_neg_edge_input",
+			"pins": ["J1.2"]
+		},
+		{
+			"name": "din2_pos_pulse",
+			"direction": "input",
+			"type": "digital_pos_edge_input",
+			"pins": ["J1.2"]
+		},
+		{
+			"name": "din2_neg_pulse",
+			"direction": "input",
+			"type": "digital_neg_edge_input",
+			"pins": ["J1.2"]
+		},
+		{
+			"name": "dout",
+			"direction": "output",
+			"type": "digital_neg_edge_input",
+			"pins": ["J1.3"]
+		},
+		{
+			"name": "quadrature_out",
+			"direction": "output",
+			"type": "quadrature_output",
+			"pins": ["J1.6", "J1.7", "J1.8"]
+		},
+		{
+			"name": "quadrature_in",
+			"direction": "input",
+			"type": "quadrature_input",
+			"pins": ["J1.6", "J1.7", "J1.8"]
+		},
+		{
+			"name": "encz_in_level",
+			"direction": "input",
+			"type": "digital_level_input",
+			"pins": ["J1.6"]
+		},
+		{
+			"name": "encz_in_pos_edge",
+			"direction": "input",
+			"type": "digital_pos_edge_input",
+			"pins": ["J1.6"]
+		},
+		{
+			"name": "encz_in_neg_edge",
+			"direction": "input",
+			"type": "digital_neg_edge_input",
+			"pins": ["J1.6"]
+		},
+		{
+			"name": "encz_in_pos_pulse",
+			"direction": "input",
+			"type": "digital_pos_pulse_input",
+			"pins": ["J1.6"]
+		},
+		{
+			"name": "encz_in_neg_pulse",
+			"direction": "input",
+			"type": "digital_neg_pulse_input",
+			"pins": ["J1.6"]
+		},
+		{
+			"name": "encz_out_binary",
+			"direction": "output",
+			"type": "digital_output",
+			"pins": ["J1.6"]
+		},
+		{
+			"name": "encz_out_pulsetrain",
+			"direction": "output",
+			"type": "digital_pulsetrain_output",
+			"pins": ["J1.6"]
+		},
+		{
+			"name": "enca_in_level",
+			"direction": "input",
+			"type": "digital_level_input",
+			"pins": ["J1.7"]
+		},
+		{
+			"name": "enca_in_pos_edge",
+			"direction": "input",
+			"type": "digital_pos_edge_input",
+			"pins": ["J1.7"]
+		},
+		{
+			"name": "enca_in_neg_edge",
+			"direction": "input",
+			"type": "digital_neg_edge_input",
+			"pins": ["J1.7"]
+		},
+		{
+			"name": "enca_in_pos_pulse",
+			"direction": "input",
+			"type": "digital_pos_pulse_input",
+			"pins": ["J1.7"]
+		},
+		{
+			"name": "enca_in_neg_pulse",
+			"direction": "input",
+			"type": "digital_neg_pulse_input",
+			"pins": ["J1.7"]
+		},
+		{
+			"name": "enca_out_binary",
+			"direction": "output",
+			"type": "digital_output",
+			"pins": ["J1.7"]
+		},
+		{
+			"name": "enca_out_pulsetrain",
+			"direction": "output",
+			"type": "digital_pulsetrain_output",
+			"pins": ["J1.7"]
+		},
+		{
+			"name": "encb_in_level",
+			"direction": "input",
+			"type": "digital_level_input",
+			"pins": ["J1.8"]
+		},
+		{
+			"name": "encb_in_pos_edge",
+			"direction": "input",
+			"type": "digital_pos_edge_input",
+			"pins": ["J1.8"]
+		},
+		{
+			"name": "encb_in_neg_edge",
+			"direction": "input",
+			"type": "digital_neg_edge_input",
+			"pins": ["J1.8"]
+		},
+		{
+			"name": "encb_in_pos_pulse",
+			"direction": "input",
+			"type": "digital_pos_pulse_input",
+			"pins": ["J1.8"]
+		},
+		{
+			"name": "encb_in_neg_pulse",
+			"direction": "input",
+			"type": "digital_neg_pulse_input",
+			"pins": ["J1.8"]
+		},
+		{
+			"name": "encb_out_binary",
+			"direction": "output",
+			"type": "digital_output",
+			"pins": ["J1.8"]
+		},
+		{
+			"name": "encb_out_pulsetrain",
+			"direction": "output",
+			"type": "digital_pulsetrain_output",
+			"pins": ["J1.8"]
+		},
+		{
+			"name": "pwm_out",
+			"direction": "output",
+			"type": "pwm_output",
+			"pins": ["J1.10"]
+		},
+		{
+			"name": "pwm_out",
+			"direction": "output",
+			"type": "pwm_output",
+			"pins": ["J1.10"]
+		},
+		{
+			"name": "ain",
+			"direction": "input",
+			"type": "analog_input",
+			"pins": ["J1.14"]
+		},
+		{
+			"name": "ain_current",
+			"direction": "input",
+			"type": "current_loop_input",
+			"pins": ["J1.14"]
+		},
+		{
+			"name": "ain_5v",
+			"direction": "input",
+			"type": "analog_input",
+			"pins": ["J1.16"]
+		},
+		{
+			"name": "ain_12v",
+			"direction": "input",
+			"type": "analog_input",
+			"pins": ["J1.17"]
+		},
+		{
+			"name": "ain_24v",
+			"direction": "input",
+			"type": "analog_input",
+			"pins": ["J1.18"]
+		}
+	],
+
+	"controllers": [
+		{
+			"oem": false,
+			"algorithm": "pid",
+			"description": "PICMG standard PID controller",
+			"allowed_output1_channels": ["pwm_out"],
+			"output1_description": "the PID output",
+			"required_number_of_outputs": 1,
+			"allowed_input1_channels": ["ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
+			"input1_descripton": "the PID input",
+			"required_number_of_inputs": 1,
+			"parameters": [{
+					"name": "kp",
+					"description": "The proportional gain",
+					"type": "numeric",
+					"default_value": 1,
+					"access_options": [
+						"none",
+						"read-only",
+						"full"
+					]
+				},
+				{
+					"name": "ki",
+					"description": "The integral gain",
+					"type": "numeric",
+					"default_value": 0,
+					"access_options": [
+						"none",
+						"read-only",
+						"full"
+					]
+				},
+				{
+					"name": "kd",
+					"description": "The differential gain",
+					"type": "numeric",
+					"default_value": 0,
+					"access_options": [
+						"none",
+						"read-only",
+						"full"
+					]
+				}
+			],
+			"virtual_sensors": [{
+				"sensor_name": "err",
+				"description": "error of pid loop",
+				"sensor_type": "unspecified"
+			}]
+		},
+		{
+			"oem": false,
+			"algorithm": "piv",
+			"description": "PICMG standard PIV controller",
+			"allowed_output1_channels": ["pwm_out"],
+			"output1_description": "the PID output",
+			"allowed_output2_channels": ["dout"],
+			"output2_description": "optional brake output (active high).",
+			"required_number_of_outputs": 1,
+			"allowed_input1_channels": ["quadrature_in", "ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
+			"input1_descripton": "position input",
+			"allowed_input2_channels": ["quadrature_in", "ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
+			"input2_descripton": "optional velocity input.  If this is not used, the controller will estimate velocity from successive position readings",
+			"required_number_of_inputs": 1,
+			"parameters": [{
+					"name": "kffd",
+					"description": "The feed forward differential (acceleration) setpoint gain.  This should be set to be close to the inertia experienced by the motor shaft.",
+					"type": "numeric",
+					"default_value": 1
+				},
+				{
+					"name": "kffp",
+					"description": "The feed forward proportional setpoint (velocity) gain.  This should be set close to the coefficient of viscous friction for the motor.",
+					"type": "numeric",
+					"default_value": 1
+				},
+				{
+					"name": "xmax",
+					"description": "The maximum allowed setpoint (velocity) of the motor.  This is used by the position loop limiter to make sure that velocities over the limit are not requested.  If this value is set to 0, the limiter will not be used.",
+					"type": "numeric",
+					"default_value": 10000
+				},
+				{
+					"name": "kip",
+					"description": "The proportional gain for the integral setpoint (position)",
+					"type": "numeric",
+					"default_value": 1
+				},
+				{
+					"name": "ki",
+					"description": "The integral gain for the velocity loop",
+					"type": "numeric",
+					"default_value": 0
+				},
+				{
+					"name": "kd",
+					"description": "The differential gain for the velocity loop",
+					"type": "numeric",
+					"default_value": 0
+				},
+				{
+					"name": "kp",
+					"description": "The proportional gain for the velocity loop",
+					"type": "numeric",
+					"default_value": 1
+				},
+				{
+					"name": "kctl",
+					"description": "Control signal scaling factor – adjusts Torque command to proper range for DAC output.",
+					"type": "numeric",
+					"default_value": 1
+				},
+				{
+					"name": "omax",
+					"description": "Maximum output value to be used by output limiter",
+					"type": "numeric",
+					"default_value": 10000
+				},
+				{
+					"name": "ksnsp",
+					"description": "Velocity feedback scaling.  If this is set to null or zero, a velocity estimator from position feedback will be used.",
+					"type": "numeric",
+					"default_value": 1
+				},
+				{
+					"name": "ksnsi",
+					"description": "Position feedback scaling.  This parameter scales the position feedback for both the velocity estimator and the position loop.  If the velocity estimator not used, this value should be set to null.",
+					"type": "numeric",
+					"default_value": 1
+				},
+				{
+					"name": "kfbi",
+					"description": "Position feedback scaling.",
+					"type": "numeric",
+					"default_value": 1
+				},
+				{
+					"name": "tc",
+					"description": "System time constant – time to wait between profile generator reaching final position and when the controller registers as done",
+					"type": "numeric",
+					"default_value": 0.01
+				},
+				{
+					"name": "position_accuracy",
+					"description": "Set when the system parameters are programmed to report what positional accuracy may be achieved.",
+					"type": "numeric",
+					"default_value": 0.01
+				},
+				{
+					"name": "velocity_accuracy",
+					"description": "Set when the system parameters are programmed to report what positional accuracy may be achieved.",
+					"type": "numeric",
+					"default_value": 0.001
+				},
+				{
+					"name": "done_action",
+					"description": "Action to take when in the “Done” and “Idle” motion states.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+					"type": "string",
+					"allowed_values": [
+						"hold",
+						"brake",
+						"coast"
+					],
+					"default_value": "hold"
+				},
+				{
+					"name": "condition_action",
+					"description": "Action to take when in the “Condition Stop” state.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+					"type": "string",
+					"allowed_values": [
+						"hold",
+						"brake",
+						"coast"
+					],
+					"default_value": "hold"
+				}
+			],
+			"virtual_sensors": [{
+					"sensor_name": "perr",
+					"description": "position error",
+					"sensor_type": "unspecified"
+				},
+				{
+					"sensor_name": "verr",
+					"description": "velocity error loop",
+					"sensor_type": "unspecified"
+				}
+			]
+		},
+		{
+			"oem": false,
+			"algorithm": "stepper",
+			"description": "PICMG standard stepper controller",
+			"allowed_output1_channels": ["encoder_out", "dout"],
+			"output1_description": "the stepper output",
+			"allowed_output2_channels": ["dout"],
+			"output2_description": "optional brake output (active high).",
+			"required_number_of_outputs": 1,
+			"parameters": [{
+					"name": "position_accuracy",
+					"description": "Set when the system parameters are programmed to report what positional accuracy may be achieved.",
+					"type": "numeric",
+					"default_value": 0.01
+				},
+				{
+					"name": "velocity_accuracy",
+					"description": "Set when the system parameters are programmed to report what positional accuracy may be achieved.",
+					"type": "numeric",
+					"default_value": 0.001
+				},
+				{
+					"name": "done_action",
+					"description": "Action to take when in the “Done” and “Idle” motion states.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+					"type": "string",
+					"allowed_values": [
+						"hold",
+						"brake",
+						"coast"
+					],
+					"default_value": "hold"
+				},
+				{
+					"name": "condition_action",
+					"description": "Action to take when in the “Condition Stop” state.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+					"type": "string",
+					"allowed_values": [
+						"hold",
+						"brake",
+						"coast"
+					],
+					"default_value": "hold"
+				}
+			],
+			"virtual_sensors": []
+		},
+		{
+			"oem": false,
+			"algorithm": "binary",
+			"description": "PICMG standard binary (on/off) controller",
+			"allowed_output1_channels": ["dout"],
+			"output1_description": "controller output",
+			"required_number_of_outputs": 1,
+			"allowed_input1_channels": ["quadrature_in", "ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
+			"input1_descripton": "controller input",
+			"parameters": [{
+					"name": "high_threshold",
+					"description": "When the input rises above this threshold, the output will become activated.  By using different high/low threshold values, the controller can implement hysteresis",
+					"type": "numeric",
+					"default_value": 1
+				},
+				{
+					"name": "low_threshold",
+					"description": "When the input falls below this threshold, the output will become deactivated.  By using different high/low threshold values, the controller can implement hysteresis",
+					"type": "numeric",
+					"default_value": 1
+				}
+			],
+			"virtual_sensors": []
+		}
+	]
+}

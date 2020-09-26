@@ -1,0 +1,47 @@
+{
+	"sensor_types":[
+		"temperature",
+		"length",
+		"linear_position",
+		"angular_position",
+		"linear_velocity",
+		"angular_velocity",
+		"linear_acceleration",
+		"angular_acceleration",
+		"pressure",
+		"torque",
+		"force",
+		"voltage",
+		"current",
+		"inductance",
+		"magnetic_flux",
+		"capacitance",
+		"light",
+		"color",
+		"density",
+		"proximity",
+		"motion",
+		"binary_switch"
+	],
+	
+	"effector_types" : [
+		"servo_motor",
+		"solenoid",
+		"stepper_motor",
+		"analog_valve",
+		"binary_valve"
+		"fan",
+		"pump"
+	],
+	
+	"channnel_types" : [
+		"digital_level_input",
+		"digital_pos_edge_input",
+		"digital_neg_edge_input",
+		"digital_pulse_input",
+		"quadrature_input",
+		"analog_input",
+		"current_loop_input"
+	]		
+}	
+		
