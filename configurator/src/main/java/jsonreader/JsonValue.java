@@ -8,6 +8,7 @@ package jsonreader;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * Represents a concrete JSON value.  Note that this class represents the 
@@ -17,6 +18,16 @@ import java.io.IOException;
 public class JsonValue implements JsonAbstractValue {
     private String value;
 
+    public JsonValue() {
+    }
+    
+	/*
+	 * create a deep clone of the specified json value
+	 */
+	public JsonValue(JsonValue val) {
+		this.value = new String(val.value);
+	}
+	
     @Override
     /**
      * diagnostic function to dump the value to the system output device

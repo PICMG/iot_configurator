@@ -1,0 +1,87 @@
+{
+	"manufacturer" 	: {
+		"type"   : "string",
+		"description": "The manufacturer of the device",
+		"length" : 20,
+		"access" : ["hidden","read-only"]
+	},
+	"model" 	: {
+		"type"   : "string",
+		"description": "The model number of the device",
+		"length" : 20,
+		"access" : ["hidden","read-only"]
+	},
+	"channel_type" 	: {
+		"type"   : "string",
+		"description": "The channel type code for channel the device can be connected to",
+		"length" : 20,
+		"access" : ["hidden","read-only"]
+	},
+	"sensor_type" 	: {
+		"type"   : "string",
+		"description": "The sensor type code for the sensor",		
+		"length" : 20,
+		"access" : ["hidden","read-only"]
+	},
+	"effector_type" 	: {
+		"type"   : "string",
+		"description": "The effector type code for the effector",
+		"length" : 20,
+		"access" : ["hidden","read-only"]
+	},
+	"serial_number" 	: {
+		"type"   : "string",
+		"description": "The the serial number for the device",
+		"length" : 20,
+		"access" : ["hidden","read-only","full"]
+	},
+	"max_valid_reading" 	: {
+		"type"      : "float",
+		"description": "The maximum valid reading from the sensor (expressed in sensor units)",
+		"min_value" : null,
+		"max_value" : null,
+		"access" : ["hidden","read-only","full"]
+	},
+	"min_valid_reading" 	: {
+		"type"      : "float",
+		"description": "The minimum valid reading from the sensor (expressed in sensor units)",
+		"min_value" : null,
+		"max_value" : null,
+		"access" : ["hidden","read-only","full"]
+	},
+	"accuracy" 	: {
+		"type"      : "float",
+		"description": "The absolulte accuracy of the sensor (expressed in sensor units)",
+		"min_value" : null,
+		"max_value" : null,
+		"access" : ["hidden","read-only","full"]
+	},
+	"precision" 	: {
+		"type"      : "float",
+		"description": "The precision of the effector (expressed in effector output units)",
+		"min_value" : null,
+		"max_value" : null,
+		"access" : ["hidden","read-only","full"]
+	},
+	"max_valid_setting" 	: {
+		"type"      : "float",
+		"description": "The maximum valid setting for the effector (expressed in effector units)",
+		"min_value" : null,
+		"max_value" : null,
+		"access" : ["hidden","read-only","full"]
+	},
+	"min_valid_setting" 	: {
+		"type"      : "float",
+		"description": "The minimum valid setting for the effector (expressed in effector units)",
+		"min_value" : null,
+		"max_value" : null,
+		"access" : ["hidden","read-only","full"]
+	},
+	"__default" 	: {
+		"type"      : "string",
+		"description": null,
+		"min_value" : null,
+		"max_value" : null,
+		"access" : ["hidden","read-only","full"]
+	}
+}	

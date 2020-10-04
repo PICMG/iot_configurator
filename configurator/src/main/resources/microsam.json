@@ -16,247 +16,241 @@
 	"channels": [{
 			"name": "din1_level",
 			"direction": "input",
-			"type": "digital_level_input",
+			"type": "digital",
 			"pins": ["J1.1"]
 		},
 		{
 			"name": "din1_pos_edge",
 			"direction": "input",
-			"type": "digital_pos_edge_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.1"]
 		},
 		{
 			"name": "din1_neg_edge",
 			"direction": "input",
-			"type": "digital_neg_edge_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.1"]
 		},
 		{
 			"name": "din1_pos_pulse",
 			"direction": "input",
-			"type": "digital_pos_edge_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.1"]
 		},
 		{
 			"name": "din1_neg_pulse",
 			"direction": "input",
-			"type": "digital_neg_edge_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.1"]
 		},
 		{
 			"name": "din2_level",
 			"direction": "input",
-			"type": "digital_level_input",
+			"type": "digital",
 			"pins": ["J1.2"]
 		},
 		{
 			"name": "din2_pos_edge",
 			"direction": "input",
-			"type": "digital_pos_edge_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.2"]
 		},
 		{
 			"name": "din2_neg_edge",
 			"direction": "input",
-			"type": "digital_neg_edge_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.2"]
 		},
 		{
 			"name": "din2_pos_pulse",
 			"direction": "input",
-			"type": "digital_pos_edge_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.2"]
 		},
 		{
 			"name": "din2_neg_pulse",
 			"direction": "input",
-			"type": "digital_neg_edge_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.2"]
 		},
 		{
 			"name": "dout",
 			"direction": "output",
-			"type": "digital_neg_edge_input",
+			"type": "digital",
 			"pins": ["J1.3"]
 		},
 		{
 			"name": "quadrature_out",
 			"direction": "output",
-			"type": "quadrature_output",
+			"type": "quadrature",
 			"pins": ["J1.6", "J1.7", "J1.8"]
 		},
 		{
 			"name": "quadrature_in",
 			"direction": "input",
-			"type": "quadrature_input",
+			"type": "quadrature",
 			"pins": ["J1.6", "J1.7", "J1.8"]
 		},
 		{
 			"name": "encz_in_level",
 			"direction": "input",
-			"type": "digital_level_input",
+			"type": "digital",
 			"pins": ["J1.6"]
 		},
 		{
 			"name": "encz_in_pos_edge",
 			"direction": "input",
-			"type": "digital_pos_edge_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.6"]
 		},
 		{
 			"name": "encz_in_neg_edge",
 			"direction": "input",
-			"type": "digital_neg_edge_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.6"]
 		},
 		{
 			"name": "encz_in_pos_pulse",
 			"direction": "input",
-			"type": "digital_pos_pulse_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.6"]
 		},
 		{
 			"name": "encz_in_neg_pulse",
 			"direction": "input",
-			"type": "digital_neg_pulse_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.6"]
 		},
 		{
 			"name": "encz_out_binary",
 			"direction": "output",
-			"type": "digital_output",
+			"type": "digital",
 			"pins": ["J1.6"]
 		},
 		{
 			"name": "encz_out_pulsetrain",
 			"direction": "output",
-			"type": "digital_pulsetrain_output",
+			"type": "digital_pulse",
 			"pins": ["J1.6"]
 		},
 		{
 			"name": "enca_in_level",
 			"direction": "input",
-			"type": "digital_level_input",
+			"type": "digital",
 			"pins": ["J1.7"]
 		},
 		{
 			"name": "enca_in_pos_edge",
 			"direction": "input",
-			"type": "digital_pos_edge_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.7"]
 		},
 		{
 			"name": "enca_in_neg_edge",
 			"direction": "input",
-			"type": "digital_neg_edge_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.7"]
 		},
 		{
 			"name": "enca_in_pos_pulse",
 			"direction": "input",
-			"type": "digital_pos_pulse_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.7"]
 		},
 		{
 			"name": "enca_in_neg_pulse",
 			"direction": "input",
-			"type": "digital_neg_pulse_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.7"]
 		},
 		{
 			"name": "enca_out_binary",
 			"direction": "output",
-			"type": "digital_output",
+			"type": "digital",
 			"pins": ["J1.7"]
 		},
 		{
 			"name": "enca_out_pulsetrain",
 			"direction": "output",
-			"type": "digital_pulsetrain_output",
+			"type": "digital_pulse",
 			"pins": ["J1.7"]
 		},
 		{
 			"name": "encb_in_level",
 			"direction": "input",
-			"type": "digital_level_input",
+			"type": "digital",
 			"pins": ["J1.8"]
 		},
 		{
 			"name": "encb_in_pos_edge",
 			"direction": "input",
-			"type": "digital_pos_edge_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.8"]
 		},
 		{
 			"name": "encb_in_neg_edge",
 			"direction": "input",
-			"type": "digital_neg_edge_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.8"]
 		},
 		{
 			"name": "encb_in_pos_pulse",
 			"direction": "input",
-			"type": "digital_pos_pulse_input",
+			"type": "digital_pos_edge",
 			"pins": ["J1.8"]
 		},
 		{
 			"name": "encb_in_neg_pulse",
 			"direction": "input",
-			"type": "digital_neg_pulse_input",
+			"type": "digital_neg_edge",
 			"pins": ["J1.8"]
 		},
 		{
 			"name": "encb_out_binary",
 			"direction": "output",
-			"type": "digital_output",
+			"type": "digital",
 			"pins": ["J1.8"]
 		},
 		{
 			"name": "encb_out_pulsetrain",
 			"direction": "output",
-			"type": "digital_pulsetrain_output",
+			"type": "digital_pulse",
 			"pins": ["J1.8"]
 		},
 		{
 			"name": "pwm_out",
 			"direction": "output",
-			"type": "pwm_output",
-			"pins": ["J1.10"]
-		},
-		{
-			"name": "pwm_out",
-			"direction": "output",
-			"type": "pwm_output",
+			"type": "analog",
 			"pins": ["J1.10"]
 		},
 		{
 			"name": "ain",
 			"direction": "input",
-			"type": "analog_input",
+			"type": "analog",
 			"pins": ["J1.14"]
 		},
 		{
 			"name": "ain_current",
 			"direction": "input",
-			"type": "current_loop_input",
+			"type": "current_loop",
 			"pins": ["J1.14"]
 		},
 		{
 			"name": "ain_5v",
 			"direction": "input",
-			"type": "analog_input",
+			"type": "analog",
 			"pins": ["J1.16"]
 		},
 		{
 			"name": "ain_12v",
 			"direction": "input",
-			"type": "analog_input",
+			"type": "analog",
 			"pins": ["J1.17"]
 		},
 		{
 			"name": "ain_24v",
 			"direction": "input",
-			"type": "analog_input",
+			"type": "analog",
 			"pins": ["J1.18"]
 		}
 	],
@@ -269,9 +263,9 @@
 			"allowed_output1_channels": ["pwm_out"],
 			"output1_description": "the PID output",
 			"required_number_of_outputs": 1,
-			"allowed_input1_channels": ["ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
+			"allowed1_channels": ["ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
 			"input1_descripton": "the PID input",
-			"required_number_of_inputs": 1,
+			"required_number_ofs": 1,
 			"parameters": [{
 					"name": "kp",
 					"description": "The proportional gain",
@@ -321,11 +315,11 @@
 			"allowed_output2_channels": ["dout"],
 			"output2_description": "optional brake output (active high).",
 			"required_number_of_outputs": 1,
-			"allowed_input1_channels": ["quadrature_in", "ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
+			"allowed1_channels": ["quadrature_in", "ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
 			"input1_descripton": "position input",
-			"allowed_input2_channels": ["quadrature_in", "ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
+			"allowed2_channels": ["quadrature_in", "ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
 			"input2_descripton": "optional velocity input.  If this is not used, the controller will estimate velocity from successive position readings",
-			"required_number_of_inputs": 1,
+			"required_number_ofs": 1,
 			"parameters": [{
 					"name": "kffd",
 					"description": "The feed forward differential (acceleration) setpoint gain.  This should be set to be close to the inertia experienced by the motor shaft.",
@@ -504,7 +498,7 @@
 			"allowed_output1_channels": ["dout"],
 			"output1_description": "controller output",
 			"required_number_of_outputs": 1,
-			"allowed_input1_channels": ["quadrature_in", "ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
+			"allowed1_channels": ["quadrature_in", "ain", "ain_current", "ain_5v", "ain_12v", "ain_24v"],
 			"input1_descripton": "controller input",
 			"parameters": [{
 					"name": "high_threshold",

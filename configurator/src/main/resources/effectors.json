@@ -1,0 +1,46 @@
+{
+	"effectors" : [
+		{
+			"name" 			: "servo", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "servo1",
+		   	"channel_type"	: "analog",
+	       	"effector_type"	: "servo"
+		},
+		{
+			"name" 			: "stepper", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "stepper1",
+		   	"channel_type"	: "digital_pulse",
+	       	"effector_type"	: "stepper"
+		},
+		{
+			"name" 			: "solenoid", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "solenoid1",
+		   	"channel_type"	: "digital",
+	       	"sensor_type"	: "binary"
+		},
+		{
+			"name" 			: "valve", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "valve1",
+		   	"channel_type"	: "analog",
+	       	"sensor_type"	: "analog_valve"
+		},
+		{
+			"name" 			: "fan", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "fan1",
+		   	"channel_type"	: "analog",
+	       	"sensor_type"	: "fan"
+		},
+		{
+			"name" 			: "pump", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "pump1",
+		   	"channel_type"	: "analog",
+	       	"sensor_type"	: "pump"
+		}
+	]
+}

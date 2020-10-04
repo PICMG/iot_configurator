@@ -1,0 +1,39 @@
+{
+	"sensors" : [
+		{
+			"name" 			: "shaft encoder", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "sh_enc1",
+		   	"channel_type"	: "quadrature",
+	       	"sensor_type"	: "angular_position"
+		},
+		{
+			"name" 			: "limit switch", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "lim_sw1",
+		   	"channel_type"	: "digital",
+	       	"sensor_type"	: "binary_switch"
+		},
+		{
+			"name" 			: "fluid flow", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "flow1",
+		   	"channel_type"	: "analog",
+	       	"sensor_type"	: "flow_rate"
+		},
+		{
+			"name" 			: "thermocouple", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "therm1",
+		   	"channel_type"	: "analog",
+	       	"sensor_type"	: "temperature"
+		},
+		{
+			"name" 			: "pressure", 
+		   	"manufacturer"	: "picmg",
+		   	"model"			: "pressure1",
+		   	"channel_type"	: "analog",
+	       	"sensor_type"	: "pressure"
+		}
+	]
+}
