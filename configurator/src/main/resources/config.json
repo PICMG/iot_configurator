@@ -36,13 +36,16 @@
 	],
 	
 	"channnel_types" : [
-		"digital",
-		"digital_pos_edge",
-		"digital_neg_edge",
-		"digital_pulse",
-		"quadrature",
-		"analog",
-		"current_loop"
+		"analog_in",
+		"analog_out",
+		"count_in",
+		"digital_in",
+		"digital_out",
+		"pwm_out",
+		"quadrature_in",
+		"rate_in",
+		"rate_out",
+		"step_dir_out"
 	]		
 }	
 		

@@ -1,0 +1,1 @@
+{"name":"Operational Running Status","stateSetId":11,"states":[{"name":"Starting","value":1},{"name":"Stopping","value":2},{"name":"Stopped","value":3},{"name":"In Service","value":4},{"name":"Aborted","value":5},{"name":"Dormant","value":6}],"vendorIANA":412,"vendorName":"DMTF"}

@@ -1,0 +1,1 @@
+{"name":"Health/Redundancy Trend","stateSetId":5,"states":[{"name":"Unchnaged","value":1},{"name":"Improving","value":2},{"name":"Degrading","value":3}],"vendorIANA":412,"vendorName":"DMTF"}

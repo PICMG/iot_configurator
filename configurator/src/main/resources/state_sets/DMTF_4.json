@@ -1,0 +1,1 @@
+{"name":"Redundancy Status","stateSetId":4,"states":[{"name":"Fully Redundant","value":1},{"name":"Redundancy Degraded","value":2},{"name":"Redundancy Lost","value":3}],"vendorIANA":412,"vendorName":"DMTF"}

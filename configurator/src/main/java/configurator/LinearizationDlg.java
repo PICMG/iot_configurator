@@ -63,14 +63,6 @@ public class LinearizationDlg extends Stage {
         lineChart.setLegendVisible(false);
         lineChart.setAxisSortingPolicy(SortingPolicy.NONE);
 
-//        // create the data series for the line chart and populate it our data
-//        
-//        tableData.getData().add(new XYChart.Data<Number,Number>( 1, 567));
-//        tableData.getData().add(new XYChart.Data<Number,Number>(10, 800));
-//        tableData.getData().add(new XYChart.Data<Number,Number>(20, 780));
-//        tableData.getData().add(new XYChart.Data<Number,Number>(40, 810));
-//        tableData.getData().add(new XYChart.Data<Number,Number>(80, 850));
-
         // attach the data series to the chart
         lineChart.getData().add(tableData);
 

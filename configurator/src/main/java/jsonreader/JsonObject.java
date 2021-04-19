@@ -37,7 +37,7 @@ public class JsonObject extends TreeMap<String, JsonAbstractValue> implements Js
 				  this.put(key, new JsonObject((JsonObject)value));
 			  } else {
 				  this.put(key, new JsonValue((JsonValue)value));
-			  }
+			  } 
 		}
 	}
 	

@@ -1,0 +1,1 @@
+{"name":"Operational Connection Status","stateSetId":12,"states":[{"name":"Normal","value":1},{"name":"No Contact","value":2},{"name":"Lost Communication","value":3}],"vendorIANA":412,"vendorName":"DMTF"}

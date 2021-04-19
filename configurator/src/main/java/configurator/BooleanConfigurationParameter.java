@@ -7,6 +7,7 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.Tooltip;
 import javafx.util.Duration;
+import jsonreader.JsonArray;
 
 public class BooleanConfigurationParameter implements ConfigurationParameter {
 	private ComboBox<String> control = new ComboBox<String>();
@@ -23,7 +24,7 @@ public class BooleanConfigurationParameter implements ConfigurationParameter {
 			control.getSelectionModel().select(1);			
 		}
 		// if the access does not include "Full", don't allow the user to change the value
-		if (!accessList.contains("Full")) { 
+		if (!accessList.contains("full")) { 
 			control.setDisable(true);
 		}
 
@@ -35,7 +36,33 @@ public class BooleanConfigurationParameter implements ConfigurationParameter {
 		access.setItems(accessList);
 		access.getSelectionModel().select(0);
 	}
-	
+
+	public BooleanConfigurationParameter(String name, boolean value, String tooltipText, JsonArray jaccessList) {
+		ObservableList<String> accessList = FXCollections.observableArrayList();
+		jaccessList.forEach(v -> {
+			accessList.add(v.getValue(""));
+		});
+		parameterName.set(name);
+		control.setItems(FXCollections.observableArrayList("true","false"));
+		if (value) {
+			control.getSelectionModel().select(0);
+		} else {
+			control.getSelectionModel().select(1);			
+		}
+		// if the access does not include "Full", don't allow the user to change the value
+		if (!accessList.contains("full")) { 
+			control.setDisable(true);
+		}
+
+		// add the tooltip if there is one
+		if ((tooltipText!=null)&&(!tooltipText.isEmpty())) {
+			tooltip.setText(tooltipText);
+			control.setTooltip(tooltip);
+		}
+		access.setItems(accessList);
+		access.getSelectionModel().select(0);
+	}
+
 	@Override
 	public String getParameterName() {
 		return parameterName.get();

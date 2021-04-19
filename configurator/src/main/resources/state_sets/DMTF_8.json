@@ -1,0 +1,1 @@
+{"name":"Operational Status","stateSetId":8,"states":[{"name":"Normal","value":1},{"name":"Degraded","value":2},{"name":"Completed","value":3},{"name":"Migrating","value":4},{"name":"Emigrating","value":5},{"name":"Immigrating","value":6}],"vendorIANA":412,"vendorName":"DMTF"}

@@ -25,7 +25,11 @@ public class JsonValue implements JsonAbstractValue {
 	 * create a deep clone of the specified json value
 	 */
 	public JsonValue(JsonValue val) {
-		this.value = new String(val.value);
+		if (val.value == null) {
+			this.value = null;
+		} else {
+			this.value = new String(val.value);
+		}
 	}
 	
     @Override

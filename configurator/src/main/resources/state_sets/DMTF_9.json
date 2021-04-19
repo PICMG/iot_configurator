@@ -1,0 +1,1 @@
+{"name":"Operational Stress Status","stateSetId":9,"states":[{"name":"Normal","value":1},{"name":"Stressed","value":2}],"vendorIANA":412,"vendorName":"DMTF"}

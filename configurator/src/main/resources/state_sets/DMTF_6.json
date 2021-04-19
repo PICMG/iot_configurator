@@ -1,0 +1,1 @@
+{"name":"Group Resource Level","stateSetId":6,"states":[{"name":"Sufficient Resources","value":1},{"name":"Excess Resources","value":2},{"name":"Insufficient Resources","value":3}],"vendorIANA":412,"vendorName":"DMTF"}

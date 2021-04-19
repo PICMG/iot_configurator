@@ -1,0 +1,1 @@
+{"name":"Operational Fault Status","stateSetId":10,"states":[{"name":"Normal","value":1},{"name":"Error","value":2},{"name":"Non-Recoverable Errror","value":3}],"vendorIANA":412,"vendorName":"DMTF"}

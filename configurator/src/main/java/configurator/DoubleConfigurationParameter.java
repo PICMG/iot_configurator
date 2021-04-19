@@ -43,7 +43,7 @@ public class DoubleConfigurationParameter implements ConfigurationParameter {
 		    return c;
 		}));
 		// if the access does not include "Full", don't allow the user to change the value
-		if (!accessList.contains("Full")) { 
+		if (!accessList.contains("full")) { 
 			control.setDisable(true);
 		}
 

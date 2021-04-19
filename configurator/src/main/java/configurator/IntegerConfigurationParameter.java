@@ -5,12 +5,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.Tooltip;
+import jsonreader.JsonArray;
 
 public class IntegerConfigurationParameter implements ConfigurationParameter {
 	private TextField control = new TextField();
@@ -41,7 +43,7 @@ public class IntegerConfigurationParameter implements ConfigurationParameter {
 		    return c;
 		}));	
 		// if the access does not include "Full", don't allow the user to change the value
-		if (!accessList.contains("Full")) { 
+		if (!accessList.contains("full")) { 
 			control.setDisable(true);
 		}
 		
@@ -57,6 +59,46 @@ public class IntegerConfigurationParameter implements ConfigurationParameter {
 		access.getSelectionModel().select(0);
 	}
 	
+	public IntegerConfigurationParameter(String name, int value, String tooltipText, int minValue, int maxValue, JsonArray jaccessList) {
+		ObservableList<String> accessList = FXCollections.observableArrayList();
+		jaccessList.forEach(v -> {
+			accessList.add(v.getValue(""));
+		});
+		parameterName.set(name);
+		control.setText(Integer.toString(value));
+		this.minValue = minValue;
+		this.maxValue = maxValue;
+		// Limit to characters for integers - this could be improved to check to make sure that
+		// the -/+ characters only appear in the right places.
+		control.setTextFormatter(new TextFormatter<String>((UnaryOperator<TextFormatter.Change>) c -> {
+		    if (c.isAdded()) {
+		    	Matcher m = regex.matcher(c.getControlNewText());
+		    	
+		    	if (!m.matches()) {
+		    		// if resulting text cannot match a floating point,
+		    		// don't add the new text
+		    		c.setText("");
+		    	}
+		    }
+		    return c;
+		}));	
+		// if the access does not include "Full", don't allow the user to change the value
+		if (!accessList.contains("full")) { 
+			control.setDisable(true);
+		}
+		
+		// add the tooltip if there is one
+		if ((tooltipText!=null)&&(!tooltipText.isEmpty())) {
+			tooltip.setText(tooltipText);
+			control.setTooltip(tooltip);
+		}
+		control.setMaxWidth(125);
+		control.setBorder(null);
+		control.setBackground(null);
+		access.setItems(accessList);
+		access.getSelectionModel().select(0);
+	}
+
 	@Override
 	public String getParameterName() {
 		return parameterName.get();

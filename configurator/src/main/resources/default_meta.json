@@ -1,4 +1,10 @@
 {
+	"name" 	     : {
+		"type"   : "string",
+		"description": "A human-readable name for the sensor",
+		"length" : 20,
+		"access" : ["hidden","read-only"]
+	},
 	"manufacturer" 	: {
 		"type"   : "string",
 		"description": "The manufacturer of the device",
@@ -77,7 +83,14 @@
 		"max_value" : null,
 		"access" : ["hidden","read-only","full"]
 	},
-	"__default" 	: {
+	"channel" 	: {
+		"type"      : "enum",
+		"description": "The device channel that the sensor/effector is connected to",
+		"min_value" : null,
+		"max_value" : null,
+		"access" : ["hidden","read-only","full"]
+	},
+	"_default" 	: {
 		"type"      : "string",
 		"description": null,
 		"min_value" : null,

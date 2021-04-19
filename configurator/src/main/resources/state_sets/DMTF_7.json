@@ -1,0 +1,1 @@
+{"name":"Redundancy Entity Role","stateSetId":7,"states":[{"name":"Is Hot Spare","value":1},{"name":"In Redundancy Group","value":2},{"name":"In (non-redundant) Group","value":3}],"vendorIANA":412,"vendorName":"DMTF"}

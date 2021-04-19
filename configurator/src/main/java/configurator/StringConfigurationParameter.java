@@ -3,6 +3,7 @@ package configurator;
 import java.util.function.UnaryOperator;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Control;
@@ -10,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.TextFormatter.Change;
 import javafx.scene.control.Tooltip;
+import jsonreader.JsonArray;
 
 public class StringConfigurationParameter implements ConfigurationParameter {
 	private TextField control = new TextField();
@@ -34,7 +36,7 @@ public class StringConfigurationParameter implements ConfigurationParameter {
 		    return c;
 		}));
 		// if the access does not include "Full", don't allow the user to change the value
-		if (!accessList.contains("Full")) { 
+		if (!accessList.contains("full")) { 
 			control.setDisable(true);
 		}
 		// add the tooltip if there is one
@@ -49,6 +51,41 @@ public class StringConfigurationParameter implements ConfigurationParameter {
 		access.getSelectionModel().select(0);
 	}
 	
+	public StringConfigurationParameter(String name, String value, String tooltipText, int maxLength, JsonArray jaccessList) {
+		ObservableList<String> accessList = FXCollections.observableArrayList();
+		jaccessList.forEach(v -> {
+			accessList.add(v.getValue(""));
+		});
+		parameterName.set(name);
+		control.setText(value);
+		this.maxLength = maxLength;
+		// Limit the length of the text to the length specified
+		control.setTextFormatter(new TextFormatter<String>((UnaryOperator<TextFormatter.Change>) c -> {
+		    if (c.isContentChange()) {
+		        int newLength = c.getControlNewText().length();
+		        if (newLength > this.maxLength) {
+		        	c.setText("");
+		            c.setRange(maxLength, maxLength);
+		        }
+		    }
+		    return c;
+		}));
+		// if the access does not include "Full", don't allow the user to change the value
+		if (!accessList.contains("full")) { 
+			control.setDisable(true);
+		}
+		// add the tooltip if there is one
+		if ((tooltipText!=null)&&(!tooltipText.isEmpty())) {
+			tooltip.setText(tooltipText);
+			control.setTooltip(tooltip);
+		}
+		control.setMaxWidth(125);
+		control.setBorder(null);
+		control.setBackground(null);
+		access.setItems(accessList);
+		access.getSelectionModel().select(0);
+	}
+
 	@Override
 	public String getParameterName() {
 		return parameterName.get();
