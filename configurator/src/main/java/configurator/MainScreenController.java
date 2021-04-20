@@ -81,6 +81,15 @@ public class MainScreenController implements Initializable {
                 });
         }        
 
+        void initializeParametersCell() {
+            // set the behavior when the cell is clicked by the mouse
+        	setOnMouseClicked(new EventHandler<MouseEvent>() {
+                public void handle(MouseEvent t) {                	
+                		//TODO: add code to set up the context pane for the fru record	
+                	}
+                });
+        }        
+
         void initializeLogicalEntityCell() {
             // initialize the menu
     		TreeData data = getTreeItem().getValue();
@@ -142,7 +151,17 @@ public class MainScreenController implements Initializable {
                     		JsonAbstractValue ent = device.addLogicalEntityConfigurationByName(name);
                         	TreeItem<TreeData> entityItem =
                                 new TreeItem<TreeData>(new TreeData(data.leaf, ent, "logicalEntity"));
+                        	entityItem.setExpanded(true);
                         	getTreeItem().getChildren().add(entityItem);
+                        	
+                        	// now add bindings and parameters for the entity
+                        	JsonArray bindings = (JsonArray)((JsonObject)ent).get("ioBindings");
+                        	bindings.forEach(binding -> {
+                        		TreeItem<TreeData> ti = new TreeItem<TreeData>(new TreeData(bindings, binding,"ioBinding"));
+                        		entityItem.getChildren().add(ti);
+                        	});                     	
+                        	JsonArray parameters = (JsonArray)((JsonObject)ent).get("parameters");
+                    		entityItem.getChildren().add(new TreeItem<TreeData>(new TreeData(ent, parameters,"parameters")));
                         }
                     });
             	});
@@ -180,6 +199,7 @@ public class MainScreenController implements Initializable {
             		JsonAbstractValue ent = device.addLogicalEntityConfigurationByName(name);
                 	TreeItem<TreeData> entityItem =
                         new TreeItem<TreeData>(new TreeData(data.leaf, ent, "logicalEntity"));
+                	entityItem.setExpanded(true);
                 	getTreeItem().getChildren().add(entityItem);
                 }
             });
@@ -205,8 +225,8 @@ public class MainScreenController implements Initializable {
             	case "logicalEntity":
             		initializeLogicalEntityCell();
             		break;
-            	case "iobinding":
-            		setText(getItem().nodeType);
+            	case "ioBinding":
+            		setText(getItem().leaf.getValue("name"));
                 	initializeIoBindingCell();
             		break;
             	case "parameter":
@@ -214,7 +234,6 @@ public class MainScreenController implements Initializable {
             		setText(getItem().nodeType);
                 	break;
             	case "fruRecord":
-            		//TODO: add code to set up the context pane for the fru record
             		setText(getItem().nodeType);
             		initializeFruRecordCell();
                 	break;
@@ -222,6 +241,11 @@ public class MainScreenController implements Initializable {
             		//TODO: add code to set up the context pane for the fru collection
             		setText(getItem().nodeType);
             		initializeFruCell();
+                	break;
+            	case "parameters":
+            		//TODO: add code to set up the context pane for the parameters collection
+            		setText(getItem().nodeType);
+            		initializeParametersCell();
                 	break;
             	default:
             		// do nothing
@@ -257,20 +281,32 @@ public class MainScreenController implements Initializable {
 	    fruRecords.forEach(record -> {
             // iterate to populate the rest of the tree
 			TreeItem<TreeData> fruLeafItem = new TreeItem<TreeData>(new TreeData(fruRecords, record, "fruRecord"));
-            fruRecordsItem.getChildren().add(fruLeafItem);	    	
+            fruRecordsItem.getChildren().add(fruLeafItem);	    
+            fruLeafItem.setExpanded(true);
 	    });
 
 		// add branch for Logical Entities
 	    JsonArray logicalEntities = (JsonArray)(configuration).get("logicalEntities");	    
 	    TreeItem<TreeData> logicalEntitiesItem = new TreeItem<TreeData>(new TreeData(configuration,logicalEntities,"logicalEntities"));
-	    localRoot.getChildren().add(logicalEntitiesItem);
-
+	    logicalEntitiesItem.setExpanded(true);
+	    
 	    // add leaf nodes for any logical entities records that already exist in the configuration
 	    logicalEntities.forEach(entity -> {
             // iterate to populate the rest of the tree
 			TreeItem<TreeData> entityItem = new TreeItem<TreeData>(new TreeData(logicalEntities,entity,"logicalEntity"));
-            logicalEntitiesItem.getChildren().add(entityItem);	    	
+            entityItem.setExpanded(true);
+            logicalEntitiesItem.getChildren().add(entityItem);
+
+        	// now add bindings and parameters for the entity
+        	JsonArray bindings = (JsonArray)((JsonObject)entity).get("ioBindings");
+        	bindings.forEach(binding -> {
+        		TreeItem<TreeData> ti = new TreeItem<TreeData>(new TreeData(bindings, binding,"ioBinding"));
+        		entityItem.getChildren().add(ti);
+        	});                     	
+        	JsonArray parameters = (JsonArray)((JsonObject)entity).get("parameters");
+    		entityItem.getChildren().add(new TreeItem<TreeData>(new TreeData(entity, parameters,"parameters")));
 	    });
+	    localRoot.getChildren().add(logicalEntitiesItem);
 	}
 
 	// addLibrariesFromResourceFolder()

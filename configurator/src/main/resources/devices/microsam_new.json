@@ -217,10 +217,10 @@
 						"description": "Global interlock input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "interlock_in",
-						"stateSetVendor": "DMTF",
-						"stateSet": "Lock State",
-						"stateWhenLow": "Locked",
-						"stateWhenHigh": "Unlocked" 
+						"stateSetVendor": 412,
+						"stateSet": 96,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -231,10 +231,10 @@
 						"description": "Global interlock ouput binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "interlock_out",
-						"stateSetVendor": "DMTF",
-						"stateSet": "Lock State",
-						"stateWhenLow": "Locked",
-						"stateWhenHigh": "Unlocked" 
+						"stateSetVendor": 412,
+						"stateSet": 96,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateSensor",
@@ -245,10 +245,10 @@
 						"description": "Trigger input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "trigger_in",
-						"stateSetVendor": "PICMG",
-						"stateSet": "Trigger State",
-						"stateWhenLow": "Trigger Activated",
-						"stateWhenHigh": "Trigger Deactivated" 
+						"stateSetVendor": 12634,
+						"stateSet": 2,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -258,10 +258,10 @@
 						"description": "Trigger output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "trigger_out",
-						"stateSetVendor": "PICMG",
-						"stateSet": "Trigger State",
-						"stateWhenLow": "Trigger Activated",
-						"stateWhenHigh": "Trigger Deactivated" 
+						"stateSetVendor": 12634,
+						"stateSet": 2,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "numericSensor",
@@ -355,10 +355,10 @@
 						"description": "Global interlock input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "interlock_in",
-						"stateSetVendor": "DMTF",
-						"stateSet": "Lock State",
-						"stateWhenLow": "Locked",
-						"stateWhenHigh": "Unlocked" 
+						"stateSetVendor": 412,
+						"stateSet": 96,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -369,10 +369,10 @@
 						"description": "Global interlock ouput binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "interlock_out",
-						"stateSetVendor": "DMTF",
-						"stateSet": "Lock State",
-						"stateWhenLow": "Locked",
-						"stateWhenHigh": "Unlocked" 
+						"stateSetVendor": 412,
+						"stateSet": 96,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateSensor",
@@ -383,10 +383,10 @@
 						"description": "Trigger input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "trigger_in",
-						"stateSetVendor": "PICMG",
-						"stateSet": "Trigger State",
-						"stateWhenLow": "Trigger Activated",
-						"stateWhenHigh": "Trigger Deactivated" 
+						"stateSetVendor": 12634,
+						"stateSet": 2,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -397,10 +397,10 @@
 						"description": "Trigger output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "trigger_out",
-						"stateSetVendor": "PICMG",
-						"stateSet": "Trigger State",
-						"stateWhenLow": "Trigger Activated",
-						"stateWhenHigh": "Trigger Deactivated" 
+						"stateSetVendor": 12634,
+						"stateSet": 2,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "numericSensor",
@@ -469,10 +469,10 @@
 						"description": "Global interlock input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "interlock_in",
-						"stateSetVendor": "DMTF",
-						"stateSet": "Lock State",
-						"stateWhenLow": "Locked",
-						"stateWhenHigh": "Unlocked" 
+						"stateSetVendor": 412,
+						"stateSet": 96,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -483,10 +483,10 @@
 						"description": "Global interlock ouput binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "interlock_out",
-						"stateSetVendor": "DMTF",
-						"stateSet": "Lock State",
-						"stateWhenLow": "Locked",
-						"stateWhenHigh": "Unlocked" 
+						"stateSetVendor": 412,
+						"stateSet": 96,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateSensor",
@@ -497,10 +497,10 @@
 						"description": "Trigger input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "trigger_in",
-						"stateSetVendor": "PICMG",
-						"stateSet": "Trigger State",
-						"stateWhenLow": "Trigger Activated",
-						"stateWhenHigh": "Trigger Deactivated" 
+						"stateSetVendor": 12634,
+						"stateSet": 2,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -511,10 +511,10 @@
 						"description": "Trigger output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "trigger_out",
-						"stateSetVendor": "PICMG",
-						"stateSet": "Trigger State",
-						"stateWhenLow": "Trigger Activated",
-						"stateWhenHigh": "Trigger Deactivated" 
+						"stateSetVendor": 12634,
+						"stateSet": 2,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateSensor",
@@ -525,8 +525,8 @@
 						"description": "positive limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": "PICMG",
-						"stateSet": "Switch State",
+						"stateSetVendor": 12634,
+						"stateSet": 67,
 						"stateWhenLow": null,
 						"stateWhenHigh": null 
 					},
@@ -539,8 +539,8 @@
 						"description": "negative limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": "PICMG",
-						"stateSet": "Switch State",
+						"stateSetVendor": 12634,
+						"stateSet": 67,
 						"stateWhenLow": null,
 						"stateWhenHigh": null 
 					},
@@ -729,10 +729,10 @@
 						"description": "Global interlock input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "interlock_in",
-						"stateSetVendor": "DMTF",
-						"stateSet": "Lock State",
-						"stateWhenLow": "Locked",
-						"stateWhenHigh": "Unlocked" 
+						"stateSetVendor": 412,
+						"stateSet": 96,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -743,10 +743,10 @@
 						"description": "Global interlock ouput binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "interlock_out",
-						"stateSetVendor": "DMTF",
-						"stateSet": "Lock State",
-						"stateWhenLow": "Locked",
-						"stateWhenHigh": "Unlocked" 
+						"stateSetVendor": 412,
+						"stateSet": 96,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateSensor",
@@ -757,10 +757,10 @@
 						"description": "Trigger input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "trigger_in",
-						"stateSetVendor": "PICMG",
-						"stateSet": "Trigger State",
-						"stateWhenLow": "Trigger Activated",
-						"stateWhenHigh": "Trigger Deactivated" 
+						"stateSetVendor": 12634,
+						"stateSet": 2,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -771,10 +771,10 @@
 						"description": "Trigger output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "trigger_out",
-						"stateSetVendor": "PICMG",
-						"stateSet": "Trigger State",
-						"stateWhenLow": "Trigger Activated",
-						"stateWhenHigh": "Trigger Deactivated" 
+						"stateSetVendor": 12634,
+						"stateSet": 2,
+						"stateWhenLow": 1,
+						"stateWhenHigh": 2 
 					},
 					{
 						"bindingType": "stateSensor",
@@ -785,8 +785,8 @@
 						"description": "positive limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": "PICMG",
-						"stateSet": "Switch State",
+						"stateSetVendor": 12634,
+						"stateSet": 67,
 						"stateWhenLow": null,
 						"stateWhenHigh": null 
 					},
@@ -799,8 +799,8 @@
 						"description": "negative limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": "PICMG",
-						"stateSet": "Switch State",
+						"stateSetVendor": 12634,
+						"stateSet": 67,
 						"stateWhenLow": null,
 						"stateWhenHigh": null 
 					},
