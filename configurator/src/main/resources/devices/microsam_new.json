@@ -201,6 +201,12 @@
 			}
 		],
 		"fruRecords": [
+			{
+				"name":"a",
+				"required": true,
+				"vendorIANA": 412,
+				"fields": []
+			}
 		],
 		"logicalEntities": [
 			{

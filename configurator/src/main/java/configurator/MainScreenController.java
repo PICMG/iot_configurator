@@ -231,6 +231,7 @@ public class MainScreenController implements Initializable {
             		fruRecord.put("name",new JsonValue("null"));
             		fruRecord.put("required",new JsonValue("false"));
             		fruRecord.put("vendorIANA",new JsonValue("412"));            			
+            		fruRecord.put("description",new JsonValue("null"));            			
             		fruRecord.put("fields",new JsonArray());
             		
             		// add the fru record to the record set
@@ -256,6 +257,7 @@ public class MainScreenController implements Initializable {
             		fruRecord.put("name",new JsonValue("null"));
             		fruRecord.put("required",new JsonValue("false"));
            			fruRecord.put("vendorIANA",new JsonValue("null"));
+            		fruRecord.put("description",new JsonValue("null"));            			
             		fruRecord.put("fields",new JsonArray());
             		
             		// add the fru record to the record set
