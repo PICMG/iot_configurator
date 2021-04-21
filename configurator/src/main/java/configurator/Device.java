@@ -33,6 +33,16 @@ public class Device {
         		addLogicalEntityConfigurationByName(name);
         	}
         });
+        
+        // add all required fru records to the configuration
+        JsonArray fruRecords = (JsonArray)((JsonObject)jdev.get("capabilities")).get("fruRecords");
+        fruRecords.forEach(record-> {
+        	String name = ((JsonObject)record).getValue("name");
+        	boolean required = ((JsonObject)record).getBoolean("required");
+        	if (required) {
+        		addFruRecordConfigurationByName(name);
+        	}
+        });
 	}
 	
 	public JsonObject getJson() {
@@ -112,7 +122,27 @@ public class Device {
 		return null;
 	}
 	
-	
+	/* add a named fru record to the configuration space
+	 * 
+	 */
+	public JsonAbstractValue addFruRecordConfigurationByName(String name) {
+		JsonObject cap = (JsonObject)jdev.get("capabilities");
+		JsonArray fruRecords = (JsonArray)cap.get("fruRecords");
+		Iterator<JsonAbstractValue> it = fruRecords.iterator();
+		while (it.hasNext()) {
+			JsonObject frec = (JsonObject)it.next();
+			if (frec.getValue("name").equals(name)) {
+				// here if the entity has been found - copy it and add it to the 
+				// configurations 
+				JsonObject cfg = (JsonObject)jdev.get("configuration");
+				JsonArray cfgFruRecords = (JsonArray)cfg.get("fruRecords");
+				JsonObject newrecord = new JsonObject(frec); 
+				cfgFruRecords.add(frec);				
+				return frec;
+			}
+		}
+		return null;
+	}	
 
 	/* add a named logical entity to the configuration space
 	 * NOTE: no checking is done on the validity of the request.  It

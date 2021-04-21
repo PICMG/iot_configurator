@@ -64,6 +64,8 @@ public class MainScreenController implements Initializable {
         }
  
         void initializeIoBindingCell() {
+        	setContextMenu(null);
+        	
             // set the behavior when the cell is clicked by the mouse
         	setOnMouseClicked(new EventHandler<MouseEvent>() {
                 public void handle(MouseEvent t) {                	
@@ -73,19 +75,44 @@ public class MainScreenController implements Initializable {
         }        
 
         void initializeFruRecordCell() {
-            // set the behavior when the cell is clicked by the mouse
-        	setOnMouseClicked(new EventHandler<MouseEvent>() {
-                public void handle(MouseEvent t) {                	
-                		//TODO: add code to set up the context pane for the fru record	
-                	}
-                });
+        	// set the behavior when the cell is clicked by the mouse
+    		TreeData data = getTreeItem().getValue();
+			contextMenu = new ContextMenu();
+   			MenuItem mi = new MenuItem("Delete Record");
+    		if (data.leaf.getBoolean("required")) {
+    			mi.setText("Restore Defaults");
+    		}
+   			contextMenu.getItems().add(mi);
+        	setContextMenu(contextMenu);
+
+        	// set the handler for the menu item
+            mi.setOnAction(new EventHandler<ActionEvent>() {
+            	@Override
+            	public void handle(ActionEvent t) {
+            		// get the name of the entity that was selected
+            		TreeItem<TreeData> ti = getTreeItem();
+            		TreeData data = ti.getValue();
+            		
+            		// remove the Logical Entity from the configuration
+           			if (data.leaf.getBoolean("required")) {
+           				// restore defaults by removing and adding the logical entity
+                		((JsonArray)data.parent).remove(data.leaf);
+                		device.addFruRecordConfigurationByName(data.leaf.getValue("name"));
+           			} else {                	
+           				ti.getParent().getChildren().remove(ti);
+           				((JsonArray)data.parent).remove(data.leaf);
+           			}
+            	}
+            });
         }        
 
         void initializeParametersCell() {
+        	setContextMenu(null);
+        	
             // set the behavior when the cell is clicked by the mouse
         	setOnMouseClicked(new EventHandler<MouseEvent>() {
                 public void handle(MouseEvent t) {                	
-                		//TODO: add code to set up the context pane for the fru record	
+                		//TODO: add code to set up the context pane for the parameters	
                 	}
                 });
         }        
@@ -183,28 +210,63 @@ public class MainScreenController implements Initializable {
         	}
         	
         	// add entities that can be added to the menu
-       		MenuItem mi = new MenuItem("add fru record");
+       		MenuItem mi  = new MenuItem("add standard fru record");
+       		MenuItem mi2 = new MenuItem("add OEM fru record");
             contextMenu.getItems().add(mi);
+            contextMenu.getItems().add(mi2);
+        	setContextMenu(contextMenu);
 
     		// set the handler for the menu item
             mi.setOnAction(new EventHandler<ActionEvent>() {
             	@Override
             	public void handle(ActionEvent t) {
-            		// get the name of the entity that was selected
-            		MenuItem obj = (MenuItem)t.getSource();
-            		String name = obj.getText().substring(12);
-            		
-            		// copy the possible Logical Entity into the configuration
+            		// create a new fru record entry
             		TreeData data = getTreeItem().getValue();
-            		JsonAbstractValue ent = device.addLogicalEntityConfigurationByName(name);
-                	TreeItem<TreeData> entityItem =
-                        new TreeItem<TreeData>(new TreeData(data.leaf, ent, "logicalEntity"));
-                	entityItem.setExpanded(true);
-                	getTreeItem().getChildren().add(entityItem);
+            		JsonArray fruSet = (JsonArray)data.leaf;
+            		
+            		// create the new fru record
+            		JsonObject fruRecord = new JsonObject();
+            	
+            		// insert the required fields
+            		fruRecord.put("name",new JsonValue("null"));
+            		fruRecord.put("required",new JsonValue("false"));
+            		fruRecord.put("vendorIANA",new JsonValue("412"));            			
+            		fruRecord.put("fields",new JsonArray());
+            		
+            		// add the fru record to the record set
+            		fruSet.add(fruRecord);
+            		
+            		// create the new menu item for the fru record
+                	TreeItem<TreeData> fruRecordItem =
+                        new TreeItem<TreeData>(new TreeData(data.leaf, fruRecord, "fruRecord"));
+                	getTreeItem().getChildren().add(fruRecordItem);
                 }
-            });
-        	            
-        	setContextMenu(contextMenu);
+            });        	            
+            mi2.setOnAction(new EventHandler<ActionEvent>() {
+            	@Override
+            	public void handle(ActionEvent t) {
+            		// create a new fru record entry
+            		TreeData data = getTreeItem().getValue();
+            		JsonArray fruSet = (JsonArray)data.leaf;
+            		
+            		// create the new fru record
+            		JsonObject fruRecord = new JsonObject();
+            	
+            		// insert the required fields
+            		fruRecord.put("name",new JsonValue("null"));
+            		fruRecord.put("required",new JsonValue("false"));
+           			fruRecord.put("vendorIANA",new JsonValue("null"));
+            		fruRecord.put("fields",new JsonArray());
+            		
+            		// add the fru record to the record set
+            		fruSet.add(fruRecord);
+            		
+            		// create the new menu item for the fru record
+                	TreeItem<TreeData> fruRecordItem =
+                        new TreeItem<TreeData>(new TreeData(data.leaf, fruRecord, "fruRecord"));
+                	getTreeItem().getChildren().add(fruRecordItem);
+                }
+            });        	            
         }        
 
         @Override
@@ -229,15 +291,11 @@ public class MainScreenController implements Initializable {
             		setText(getItem().leaf.getValue("name"));
                 	initializeIoBindingCell();
             		break;
-            	case "parameter":
-            		//TODO: add code to set up the context pane for the parameter
-            		setText(getItem().nodeType);
-                	break;
             	case "fruRecord":
             		setText(getItem().nodeType);
             		initializeFruRecordCell();
                 	break;
-            	case "fru":
+            	case "fruRecords":
             		//TODO: add code to set up the context pane for the fru collection
             		setText(getItem().nodeType);
             		initializeFruCell();
@@ -275,7 +333,8 @@ public class MainScreenController implements Initializable {
 		JsonObject configuration = (JsonObject)device.getJson().get("configuration");
 	    JsonArray fruRecords = (JsonArray)(configuration).get("fruRecords");	    
 		TreeItem<TreeData> fruRecordsItem = new TreeItem<TreeData>(new TreeData(configuration,fruRecords,"fruRecords"));
-	    localRoot.getChildren().add(fruRecordsItem);
+	    fruRecordsItem.setExpanded(true);
+		localRoot.getChildren().add(fruRecordsItem);
 
 	    // add leaf nodes for any FRU records that already exist in the configuration
 	    fruRecords.forEach(record -> {
