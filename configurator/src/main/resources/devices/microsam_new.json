@@ -200,6 +200,14 @@
 				"pins": [{"name":"J3.4.o","function":"in"}]
 			}
 		],
+		"fruRecords": [
+			{
+				"name":"a",
+				"required": true,
+				"vendorIANA": 412,
+				"fields": []
+			}
+		],
 		"logicalEntities": [
 			{
 				"entityVendorIANA" : 12634,
