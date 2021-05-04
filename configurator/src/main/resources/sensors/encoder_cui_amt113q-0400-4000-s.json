@@ -3,7 +3,7 @@
 	"manufacturer":"CUI Devices",
 	"partNumber":"AMT102-0400-N2000-S",
 	"description":"Encoder, modular, 400ppr, no index",
-	"supportedInterfaces":"quadrature",
+	"supportedInterfaces":"quadrature_in",
 	"maxSampleRate":null,
 	"baseUnit": 38,
 	"unitModifier":0,
