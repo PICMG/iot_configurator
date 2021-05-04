@@ -1,1 +1,21 @@
-{"NominalValue":11.3,"RatedMax":68.2,"auxUnit":"None","auxUnitModifier":0,"auxrateUnit":"None","baseUnit":"Newton-meters","description":"Motor, high-power dc, 18000rpm, 1.42a, 24v","inputUnits":"Amps","manufacturer":"digikey.com","minusTolerance":0.05,"name":"servo_18000rpm_24vdc","partNumber":"QBL5704-94-04-032","plusTolerance":0.05,"rateUnit":"None","rel":"multipledBy","responseCurve":[{"in":0.28,"out":0},{"in":7.22,"out":68.2}],"supportedChannels":["pwm_out","analog_out"],"unitModifier":-3}
+{
+	"name":"servo_18000rpm_24vdc",
+	"manufacturer":"digikey.com",
+	"partNumber":"QBL5704-94-04-032",
+	"description":"Motor, high-power dc, 18000rpm, 1.42a, 24v",
+	"supportedInterfaces":["pwm_out","analog_out"],
+	"maxSampleRate":null,
+	"baseUnit":69,
+	"unitModifier":-3,
+	"rateUnit":0,
+	"auxUnit":0,
+	"auxUnitModifier":0,
+	"rel":"multipledBy",
+	"auxRateUnit":0,
+	"plusAccuracy":0.05,
+	"minusAccuracy":0.05,
+	"inputUnits":"Amps",
+	"responseCurve":[{"in":0.28,"out":0},{"in":7.22,"out":68.2}],
+	"ratedMax":68.2,
+	"nominalValue":11.3
+}

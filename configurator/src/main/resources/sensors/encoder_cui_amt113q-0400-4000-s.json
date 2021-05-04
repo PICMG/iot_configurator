@@ -1,1 +1,19 @@
-{"auxUnit":"None","auxUnitModifier":0,"auxrateUnit":"None","baseUnit":"Revolutions","description":"Encoder, modular, 400ppr, no index","manufacturer":"CUI Devices","minusTolerance":0.0025,"name":"encoder_cui_amt113q-0400-4000-s","outputUnits":"Counts","partNumber":"AMT102-0400-N2000-S","plusTolerance":0.0025,"rateUnit":"None","rel":"multipledBy","responseCurve":[{"in":0,"out":0},{"in":1,"out":400}],"supportedChannels":"quadrature","unitModifier":0}
+{
+	"name":"encoder_cui_amt113q-0400-4000-s",
+	"manufacturer":"CUI Devices",
+	"partNumber":"AMT102-0400-N2000-S",
+	"description":"Encoder, modular, 400ppr, no index",
+	"supportedInterfaces":"quadrature_in",
+	"maxSampleRate":null,
+	"baseUnit": 38,
+	"unitModifier":0,
+	"rateUnit": 0,
+	"auxUnit": 0,
+	"auxUnitModifier":0,
+	"auxRateUnit": 0,
+	"rel":"multipledBy",
+	"plusAccuracy": 0.0025,
+	"minusAccuracy": 0.0025,
+	"outputUnits": "Counts",
+	"responseCurve":[{"in":0,"out":0},{"in":1,"out":400}]
+}
