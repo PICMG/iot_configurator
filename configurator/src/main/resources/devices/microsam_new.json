@@ -23,188 +23,225 @@
 			{
 				"name"  : "digital_in1",
 				"type": "digital_in",
+				"description":null,
 				"pins": [{"name":"J1.1","function":"in"}]
 			},
 			{
 				"name": "count_in1",
 				"type": "count_in",
+				"description":null,
 				"pins": [{"name":"J1.1","function":"in"}]
 			},
 			{
 				"name": "rate_in1",
 				"type": "rate_in",
+				"description":null,
 				"pins": [{"name":"J1.1","function":"in"}]
 			},
 			{
 				"name": "digital_in2",
 				"type": "digital_in",
+				"description":null,
 				"pins": [{"name":"J1.2","function":"in"}]
 			},
 			{
 				"name": "count_in2",
 				"type": "count_in",
+				"description":null,
 				"pins": [{"name":"J1.2","function":"in"}]
 			},
 			{
 				"name": "rate_in2",
 				"type": "rate_in",
+				"description":null,
 				"pins": [{"name":"J1.2","function":"in"}]
 			},
 			{
 				"name": "digital_out1",
 				"type": "digital_out",
+				"description":null,
 				"pins": [{"name":"J1.3","function":"out"}]
 			},
 			{
 				"name": "rate_out1",
 				"type": "rate_out",
+				"description":null,
 				"pins": [{"name":"J1.3","function":"out"}]
 			},
 			{
 				"name": "quadrature_in1",
 				"type": "quadrature_in",
+				"description":null,
 				"pins": [{"name":"J1.6","function":"Z"},{"name":"J1.7","function":"A"},{"name":"J1.8","function":"B"}]
 			},
 			{
 				"name": "step_dir_out1",
 				"type": "step_dir_out",
+				"description":null,
 				"pins": [{"name":"J1.6","function":"step"},{"name":"J1.7","function":"dir"},{"name":"J1.8","function":"enable"}]
 			},
 			{
 				"name": "digital_in3",
 				"type": "digital_in",
+				"description":null,
 				"pins": [{"name":"J1.6","function":"in"}]
 			},
 			{
 				"name": "count_in3",
 				"type": "count_in",
+				"description":null,
 				"pins": [{"name":"J1.6","function":"in"}]
 			},
 			{
 				"name": "rate_in3",
 				"type": "rate_in",
+				"description":null,
 				"pins": [{"name":"J1.6","function":"in"}]
 			},
 			{
 				"name": "digital_out2",
 				"type": "digital_out",
+				"description":null,
 				"pins": [{"name":"J1.6","function":"out"}]
 			},
 			{
 				"name": "rate_out2",
 				"type": "digital_out",
+				"description":null,
 				"pins": [{"name":"J1.6","function":"out"}]
 			},
 			{
 				"name": "digital_in4",
 				"type": "digital_in",
+				"description":null,
 				"pins": [{"name":"J1.7","function":"in"}]
 			},
 			{
 				"name": "count_in4",
 				"type": "count_in",
+				"description":null,
 				"pins": [{"name":"J1.7","function":"in"}]
 			},
 			{
 				"name": "rate_in4",
 				"type": "rate_in",
+				"description":null,
 				"pins": [{"name":"J1.7","function":"in"}]
 			},
 			{
 				"name": "digital_out3",
 				"type": "digital_out",
+				"description":null,
 				"pins": [{"name":"J1.7","function":"out"}]
 			},
 			{
 				"name": "rate_out3",
 				"type": "rate_out",
+				"description":null,
 				"pins": [{"name":"J1.7","function":"out"}]
 			},
 			{
 				"name": "digital_in5",
 				"type": "digital_in",
+				"description":null,
 				"pins": [{"name":"J1.7","function":"in"}]
 			},
 			{
 				"name": "count_in5",
 				"type": "count_in",
+				"description":null,
 				"pins": [{"name":"J1.7","function":"in"}]
 			},
 			{
 				"name": "rate_in5",
 				"type": "rate_in",
+				"description":null,
 				"pins": [{"name":"J1.8","function":"in"}]
 			},
 			{
 				"name": "digital_out4",
 				"type": "digital_out",
+				"description":null,
 				"pins": [{"name":"J1.8","function":"out"}]
 			},
 			{
 				"name": "rate_out4",
 				"type": "rate_out",
+				"description":null,
 				"pins": [{"name":"J1.8","function":"out"}]
 			},
 			{
 				"name": "pwm_out1",
 				"type": "pwm_out",
+				"description":null,
 				"pins": [{"name":"J1.10","function":"out"}]
 			},
 			{
 				"name": "analog_out1",
 				"type": "analog_out",
+				"description":null,
 				"pins": [{"name":"J1.10","function":"aout"}]
 			},
 			{
 				"name": "ain2_5v",
 				"type": "analog_in",
+				"description":null,
 				"pins": [{"name":"J1.14","function":"ain"}]
 			},
 			{
 				"name": "current_loop_in",
+				"type": "analog_in",
+				"description":null,
 				"pins": [{"name":"J1.14","function":"ain"}]
 			},
 			{
 				"name": "ain5v",
 				"type": "analog_in",
+				"description":null,
 				"pins": [{"name":"J1.16","function":"ain"}]
 			},
 			{
 				"name": "ain12v",
 				"type": "analog_in",
+				"description":null,
 				"pins": [{"name":"J1.17","function":"ain"}]
 			},
 			{
 				"name": "ain24v",
 				"type": "analog_in",
+				"description":null,
 				"pins": [{"name":"J1.18","function":"ain"}]
 			},
 			{
 				"name"  : "interlock_in",
 				"type": "digital_in",
+				"description":null,
 				"pins": [{"name":"J3.1.i","function":"in"}]
 			},
 			{
 				"name"  : "interlock_out",
 				"type": "digital_out",
+				"description":null,
 				"pins": [{"name":"J3.1.o","function":"in"}]
 			},
 			{
 				"name"  : "trigger_in",
 				"type": "digital_in",
+				"description":null,
 				"pins": [{"name":"J3.4.i","function":"in"}]
 			},
 			{
 				"name"  : "trigger_out",
 				"type": "digital_out",
+				"description":null,
 				"pins": [{"name":"J3.4.o","function":"in"}]
 			}
 		],
 		"fruRecords": [
 			{
-				"name":"a",
-				"required": true,
 				"vendorIANA": 412,
+				"required": true,
+				"description":null,
 				"fields": []
 			}
 		],
@@ -526,35 +563,35 @@
 					},
 					{
 						"bindingType": "stateSensor",
-						"name": "PosLimitSensor",
+						"name": "PositiveLimit",
 						"includeInPdr": true,				
 						"required": false,
 						"isVirtual": false,
 						"description": "positive limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": 12634,
+						"stateSetVendor": 412,
 						"stateSet": 67,
 						"stateWhenLow": null,
 						"stateWhenHigh": null 
 					},
 					{
 						"bindingType": "stateSensor",
-						"name": "NegLimitSensor",
+						"name": "NegativeLimit",
 						"includeInPdr": true,				
 						"required": false,
 						"isVirtual": false,
 						"description": "negative limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": 12634,
+						"stateSetVendor": 412,
 						"stateSet": 67,
 						"stateWhenLow": null,
 						"stateWhenHigh": null 
 					},
 					{
 						"bindingType": "numericSensor",
-						"name": "PositionFeedbackSensor",
+						"name": "PositionSensor",
 						"includeInPdr": null,				
 						"required": true,
 						"isVirtual": false,
@@ -602,7 +639,56 @@
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
 						"physicalAuxRateUnit": null						
-					}
+					},
+					{
+						"bindingType": "stateEffecter",
+						"name": "OutputEnable",
+						"includeInPdr": false,				
+						"required": false,
+						"isVirtual": false,
+						"description": "output enable from the controller",
+						"allowedInterfaceTypes": ["digital_out"],
+						"effecter": null,
+						"outputCurve": null, 
+						"boundChannel": null, 
+						"ouputGearingRatio": null,
+						"physicalBaseUnit": null,
+						"phsicalUnitModifier": null,
+						"physicalRateUnit": null,
+						"physicalAuxUnit": null,
+						"physicalAuxUnitModifier": null,
+						"physicalAuxRateUnit": null						
+					},
+					{
+						"bindingType": "stateEffecter",
+						"name": "Command",
+						"includeInPdr": true,				
+						"required": true,
+						"isVirtual": true,
+						"description": "command effecter",
+						"allowedInterfaceTypes": null,
+						"effecter": null,
+						"boundChannel": null,
+						"stateSetVendor": 12634,
+						"stateSet": 32769,
+						"stateWhenLow": null,
+						"stateWhenHigh": null 
+					},
+					{
+						"bindingType": "stateSensor",
+						"name": "motionState",
+						"includeInPdr": true,				
+						"required": true,
+						"isVirtual": true,
+						"description": "motion state sensor",
+						"allowedInterfaceTypes": null,
+						"sensor": null,
+						"boundChannel": null, 
+						"stateSetVendor": 12634,
+						"stateSet": 32770,
+						"stateWhenLow": null,
+						"stateWhenHigh": null 
+					}					
 				],
 				"parameters": [
 					{
@@ -673,7 +759,7 @@
 					},
 					{
 						"name": "OutputInDone",
-						"description": "Action to take when in the “Done” motion state.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+						"description": "Action to take when in the 'Done' motion state.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
 						"type": "string",
 						"value": null,
 						"allowedValues": [
@@ -685,7 +771,7 @@
 					},
 					{
 						"name": "OutputInIdle",
-						"description": "Action to take when in the 'Idle' and 'Waiting' motion states.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+						"description": "Action to take when in the 'Idle' and 'Waiting' motion states.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
 						"type": "string",
 						"value": null,
 						"allowedValues": [
@@ -697,7 +783,7 @@
 					},
 					{
 						"name": "OutputInConditionStop",
-						"description": "Action to take when in the “ConditionStop” motion state.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+						"description": "Action to take when in the 'ConditionStop�' motion state.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
 						"type": "string",
 						"value": null,
 						"allowedValues": [
@@ -709,7 +795,7 @@
 					},
 					{
 						"name": "OutputInErrorStop",
-						"description": "Action to take when in the “ErrorStop” motion state.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+						"description": "Action to take when in the 'ErrorStop' motion state.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
 						"type": "string",
 						"value": null,
 						"allowedValues": [
@@ -843,7 +929,56 @@
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
 						"physicalAuxRateUnit": null						
-					}
+					},
+										{
+						"bindingType": "stateEffecter",
+						"name": "OutputEnable",
+						"includeInPdr": false,				
+						"required": false,
+						"isVirtual": false,
+						"description": "output enable from the controller",
+						"allowedInterfaceTypes": ["digital_out"],
+						"effecter": null,
+						"outputCurve": null, 
+						"boundChannel": null, 
+						"ouputGearingRatio": null,
+						"physicalBaseUnit": null,
+						"phsicalUnitModifier": null,
+						"physicalRateUnit": null,
+						"physicalAuxUnit": null,
+						"physicalAuxUnitModifier": null,
+						"physicalAuxRateUnit": null						
+					},
+					{
+						"bindingType": "stateEffecter",
+						"name": "Command",
+						"includeInPdr": true,				
+						"required": true,
+						"isVirtual": true,
+						"description": "command effecter",
+						"allowedInterfaceTypes": null,
+						"effecter": null,
+						"boundChannel": null,
+						"stateSetVendor": 12634,
+						"stateSet": 32769,
+						"stateWhenLow": null,
+						"stateWhenHigh": null 
+					},
+					{
+						"bindingType": "stateSensor",
+						"name": "motionState",
+						"includeInPdr": true,				
+						"required": true,
+						"isVirtual": true,
+						"description": "motion state sensor",
+						"allowedInterfaceTypes": null,
+						"sensor": null,
+						"boundChannel": null, 
+						"stateSetVendor": 12634,
+						"stateSet": 32770,
+						"stateWhenLow": null,
+						"stateWhenHigh": null 
+					}					
 				],
 				"parameters": [
 					{
@@ -856,14 +991,14 @@
 					},
 					{
 						"name": "DoneTimeConstant",
-						"description": "System time constant – time to wait between profile generator reaching final position and when the controller registers as done",
+						"description": "System time constant - time to wait between profile generator reaching final position and when the controller registers as done",
 						"type": "numeric",
 						"minValue": 0,
 						"defaultValue": 0.01
 					},
 					{
 						"name": "OutputInDone",
-						"description": "Action to take when in the “Done” motion state.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+						"description": "Action to take when in the 'Done' motion state.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
 						"type": "string",
 						"allowedValues": [
 							"coast",
@@ -874,7 +1009,7 @@
 					},
 					{
 						"name": "OutputInIdle",
-						"description": "Action to take when in the 'Idle' and 'Waiting' motion states.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+						"description": "Action to take when in the 'Idle' and 'Waiting' motion states.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
 						"type": "string",
 						"allowedValues": [
 							"coast",
@@ -885,7 +1020,7 @@
 					},
 					{
 						"name": "OutputInConditionStop",
-						"description": "Action to take when in the “ConditionStop” motion state.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+						"description": "Action to take when in the ConditionStop' motion state.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
 						"type": "string",
 						"allowedValues": [
 							"coast",
@@ -896,7 +1031,7 @@
 					},
 					{
 						"name": "OutputInErrorStop",
-						"description": "Action to take when in the “ErrorStop” motion state.  Valid values are “brake” (apply mechanical brake), “hold” (hold the position using the motion controller), and “coast” (motion control is deactivated).",
+						"description": "Action to take when in the 'ErrorStop' motion state.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
 						"type": "string",
 						"allowedValues": [
 							"coast",
