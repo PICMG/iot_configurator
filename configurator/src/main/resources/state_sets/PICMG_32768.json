@@ -1,1 +1,20 @@
-{"name":"Trigger State","stateSetId":32768,"states":[{"name":"Trigger Activated","value":1},{"name":"Trigger Deactivated","value":2}],"vendorIANA":12634,"vendorName":"PICMG"}
+{
+	"name":"Trigger State",
+	"stateSetId":32768,
+	"vendorIANA":12634,
+	"vendorName":"PICMG",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Trigger Activated"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Trigger Deactivated"]
+		}
+	]
+}
