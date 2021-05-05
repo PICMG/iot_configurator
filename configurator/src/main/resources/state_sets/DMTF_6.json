@@ -1,1 +1,26 @@
-{"name":"Group Resource Level","stateSetId":6,"states":[{"name":"Sufficient Resources","value":1},{"name":"Excess Resources","value":2},{"name":"Insufficient Resources","value":3}],"vendorIANA":412,"vendorName":"DMTF"}
+{
+	"name":"Group Resource Level",
+	"stateSetId":6,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Sufficient Recources"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Excess Resources"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["Insufficient Resources"]
+		}
+	]
+}

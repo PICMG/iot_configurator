@@ -1,1 +1,20 @@
-{"name":"Switch State","stateSetId":67,"states":[{"name":"Pressed/On","value":1},{"name":"Released/Off","value":2}],"vendorIANA":412,"vendorName":"DMTF"}
+{
+	"name":"Switch State",
+	"stateSetId":67,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Pressed/On"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Released/Off"]
+		}
+	]
+}

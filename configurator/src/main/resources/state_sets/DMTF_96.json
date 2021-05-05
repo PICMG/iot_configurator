@@ -1,1 +1,26 @@
-{"name":"Lock State","stateSetId":96,"states":[{"name":"Locked","value":1},{"name":"Unlocked","value":2},{"name":"Locked Out","value":3}],"vendorIANA":412,"vendorName":"DMTF"}
+{
+	"name":"Lock State",
+	"stateSetId":96,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Locked"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Unlocked"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["Locked Out"]
+		}
+	]
+}

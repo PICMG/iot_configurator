@@ -1,1 +1,26 @@
-{"name":"Health/Redundancy Trend","stateSetId":5,"states":[{"name":"Unchnaged","value":1},{"name":"Improving","value":2},{"name":"Degrading","value":3}],"vendorIANA":412,"vendorName":"DMTF"}
+{
+	"name":"Health/Redundancy Trend",
+	"stateSetId":5,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Unchanged"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Improving"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["Degrading"]
+		}
+	]
+}
