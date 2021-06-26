@@ -1,0 +1,69 @@
+{
+	"effectors" : [
+		{
+			"name":"stepper_nema23_3_1nm_200steps",
+			"manufacturer":"BuildYourCNC.com",
+			"partNumber":"60bygh303-13",
+			"description": "Motor, stepper, 3.1nm, nema 23, 200 steps per revolution",
+			"supportedChannels": "step_dir_out",
+			"plusTolerance": 0.005,
+			"minusTolerance": 0.005,
+			"baseUnit": "Revolutions",
+			"unitModifier": 0,
+			"rateUnit": "None",
+			"auxUnit": "None",
+			"auxUnitModifier": 0,
+			"auxrateUnit": "None",
+			"rel": "multipledBy",
+			"inputUnits":"Counts",
+			"responseCurve": [
+				{"in":0,"out":0},
+				{"in":200,"out":1}
+			]				
+		},
+		{
+			"name":"stepper_nema34_4_6nm_200steps",
+			"manufacturer":"BuildYourCNC.com",
+			"partNumber":"85bygh450a-47-80",
+			"description": "Motor, stepper, 4.6nm, nema 34, 200 steps per revolution",
+			"supportedChannels": "step_dir_out",
+			"plusTolerance": 0.005,
+			"minusTolerance": 0.005,
+			"baseUnit": "Revolutions",
+			"unitModifier": 0,
+			"rateUnit": "None",
+			"auxUnit": "None",
+			"auxUnitModifier": 0,
+			"auxrateUnit": "None",
+			"rel": "multipledBy",
+			"inputUnits":"Counts",
+			"responseCurve": [
+				{"in":0,"out":0},
+				{"in":200,"out":1}
+			]				
+		},
+		{
+			"name":"servo_18000rpm_24vdc",
+			"manufacturer":"digikey.com",
+			"partNumber":"QBL5704-94-04-032",
+			"description": "Motor, high-power dc, 18000rpm, 1.42a, 24v",
+			"supportedChannels": ["pwm_out","analog_out"],
+			"plusTolerance": 0.05,
+			"minusTolerance": 0.05,
+			"baseUnit": "Newton-meters",
+			"unitModifier": -3,
+			"rateUnit": "None",
+			"auxUnit": "None",
+			"auxUnitModifier": 0,
+			"auxrateUnit": "None",
+			"rel": "multipledBy",
+			"NominalValue": 11.3,
+			"RatedMax": 68.2,
+			"inputUnits":"Amps",
+			"responseCurve": [
+				{"in":0.28,"out":0},
+				{"in":7.22,"out":68.2}
+			]				
+		}
+	]
+}

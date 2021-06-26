@@ -1,0 +1,20 @@
+{
+	"name":"Predictive Condition",
+	"stateSetId":3,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Normal"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Predictive Failure"]
+		}
+	]
+}

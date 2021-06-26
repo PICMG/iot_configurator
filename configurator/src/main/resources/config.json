@@ -8,6 +8,7 @@
 		"angular_velocity",
 		"linear_acceleration",
 		"angular_acceleration",
+		"flow_rate",
 		"pressure",
 		"torque",
 		"force",
@@ -25,23 +26,26 @@
 	],
 	
 	"effector_types" : [
-		"servo_motor",
+		"servo",
 		"solenoid",
-		"stepper_motor",
+		"stepper",
 		"analog_valve",
-		"binary_valve"
+		"binary",
 		"fan",
 		"pump"
 	],
 	
 	"channnel_types" : [
-		"digital_level_input",
-		"digital_pos_edge_input",
-		"digital_neg_edge_input",
-		"digital_pulse_input",
-		"quadrature_input",
-		"analog_input",
-		"current_loop_input"
+		"analog_in",
+		"analog_out",
+		"count_in",
+		"digital_in",
+		"digital_out",
+		"pwm_out",
+		"quadrature_in",
+		"rate_in",
+		"rate_out",
+		"step_dir_out"
 	]		
 }	
 		

@@ -1,0 +1,26 @@
+{
+	"name":"Redundancy Status",
+	"stateSetId":4,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Fully Redundant"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Redundancy Degraded"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["Redundancy Lost"]
+		}
+	]
+}

@@ -20,6 +20,27 @@ import java.util.TreeMap;
 public class JsonObject extends TreeMap<String, JsonAbstractValue> implements JsonAbstractValue {
 	private static final long serialVersionUID = 1L;
 
+	public JsonObject() {
+		super();
+	}
+	
+	/*
+	 * create a deep clone of the specified json object
+	 */
+	public JsonObject(JsonObject obj) {
+		for(Map.Entry<String,JsonAbstractValue> entry : obj.entrySet()) {
+			  String key = entry.getKey();
+			  JsonAbstractValue value = entry.getValue();
+			  if (value.getClass().isAssignableFrom(JsonArray.class)) {
+				  this.put(key, new JsonArray((JsonArray)value));
+			  } else if (value.getClass().isAssignableFrom(JsonObject.class)) {
+				  this.put(key, new JsonObject((JsonObject)value));
+			  } else {
+				  this.put(key, new JsonValue((JsonValue)value));
+			  } 
+		}
+	}
+	
 	@Override
 	/* 
 	 * diagnostic function - dumps the contents of the json object to the system output device

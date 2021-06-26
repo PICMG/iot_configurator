@@ -9,6 +9,7 @@ package jsonreader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * A JSON array object.  This is a concrete implementation of the JavaAbstractValue class.
@@ -16,6 +17,26 @@ import java.util.ArrayList;
 public class JsonArray extends ArrayList<JsonAbstractValue> implements JsonAbstractValue {
 	private static final long serialVersionUID = 1L;
 
+	public JsonArray() {
+		super();
+	}
+	
+	/*
+	 * create a deep clone of the specified json array
+	 */
+	public JsonArray(JsonArray ary) {
+		super();
+		ary.forEach(value -> {
+			  if (value.getClass().isAssignableFrom(JsonArray.class)) {
+				  this.add(new JsonArray((JsonArray)value));
+			  } else if (value.getClass().isAssignableFrom(JsonObject.class)) {
+				  this.add(new JsonObject((JsonObject)value));
+			  } else {
+				  this.add(new JsonValue((JsonValue)value));
+			  }
+		});
+	}
+	
 	@Override
 	/* 
 	 * diagnostic function - dumps the contents of the json array to the system output device
@@ -136,5 +157,53 @@ public class JsonArray extends ArrayList<JsonAbstractValue> implements JsonAbstr
             return false;
         }
         return true;
+    }
+    
+    /*
+     * returns true if the array contains any of the elements in the
+     * specified parameter
+     */
+    public boolean containsAny(JsonArray ary) {
+    	if (ary==null) return false;
+    	if (ary.isEmpty()) return false;
+    	for (int i=0;i<ary.size();i++) {
+    		for (int j=0;j<this.size();j++) {
+    			if (this.get(j).getValue("").equals(ary.get(i).getValue(""))) return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    /*
+     * returns true if the array values contain any elements whose values
+     * match the specified string array
+     */
+    public boolean containsAny(ArrayList<String> ary) {
+    	if (ary==null) return false;
+    	if (ary.isEmpty()) return false;
+    	for (int i=0;i<ary.size();i++) {
+    		for (int j=0;j<this.size();j++) {
+    			if (this.get(j).getValue("").equals(ary.get(i))) return true;
+    		}
+    	}
+    	return false;
+    }
+    
+    /*
+     * find an object in the array that contains a key value pair
+     * that matches the specified parameters.  
+     */
+    public JsonObject findMatching(String key, String value) {
+    	for (int i=0;i<this.size();i++) {
+			if (this.get(i).getClass().isAssignableFrom(JsonObject.class)) {
+				// here if the current array element is a json object
+				JsonObject jo = (JsonObject)this.get(i);
+				if (jo.containsKey(key)&&(jo.getValue(key).equals(value))) {
+					// return the matching object
+					return jo;
+				}
+			}
+		}
+    	return null;
     }
 }

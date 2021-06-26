@@ -1,0 +1,68 @@
+{
+	"name":"Health State",
+	"stateSetId":1,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Normal"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Non-Critical"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["Critical"]
+		},
+		{
+			"minStateValue":4,
+			"maxStateValue":4,
+			"languageTags":["en"],
+			"stateName":["Fatal"]
+		},
+		{
+			"minStateValue":5,
+			"maxStateValue":5,
+			"languageTags":["en"],
+			"stateName":["Upper Non-Critical"]
+		},
+		{
+			"minStateValue":6,
+			"maxStateValue":6,
+			"languageTags":["en"],
+			"stateName":["Lower Non-Critical"]
+		},
+		{
+			"minStateValue":7,
+			"maxStateValue":7,
+			"languageTags":["en"],
+			"stateName":["Upper Critical"]
+		},
+		{
+			"minStateValue":8,
+			"maxStateValue":8,
+			"languageTags":["en"],
+			"stateName":["Lower Critical"]
+		},
+		{
+			"minStateValue":9,
+			"maxStateValue":9,
+			"languageTags":["en"],
+			"stateName":["Upper Fatal"]
+		},
+		{
+			"minStateValue":10,
+			"maxStateValue":10,
+			"languageTags":["en"],
+			"stateName":["Lower Fatal"]
+		}
+	]
+}
