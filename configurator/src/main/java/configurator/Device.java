@@ -1,5 +1,7 @@
 package configurator;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 import jsonreader.*;
@@ -227,6 +229,71 @@ public class Device {
 			if (cdef.getValue("name").equals(channelName)) {
 				return cdef.getValue("type");
 			}
+		}
+		return null;
+	}
+	
+	/*
+	 * return the binding value for a specific key.  If the name of the binding
+	 * or the key is not found, null is returned
+	 */
+	public String getBindingValueFromKey(String bindingName, String bindingKey) {
+		JsonObject cfg = (JsonObject)jdev.get("configuration");
+		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
+		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
+		while (it.hasNext()) {
+			JsonObject edef = (JsonObject)it.next();
+			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator(); 
+	        while (it2.hasNext()) {
+	    		JsonObject binding = (JsonObject)it2.next();
+	    		String name = binding.getValue("name");
+	    		if(name.equals(bindingName)) {
+	    			return binding.getValue(bindingKey);
+	    		}
+	        }
+		}
+		return null;
+	}
+	
+	/*
+	 * set the binding value for a specific key.
+	 */
+	public void setBindingValueFromKey(String bindingName, String bindingKey, String newValue) {
+		JsonObject cfg = (JsonObject)jdev.get("configuration");
+		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
+		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
+		while (it.hasNext()) {
+			JsonObject edef = (JsonObject)it.next();
+			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator(); 
+	        while (it2.hasNext()) {
+	    		JsonObject binding = (JsonObject)it2.next();
+	    		String name = binding.getValue("name");
+	    		if(name.equals(bindingName)) {
+	    			binding.replace(bindingKey, new JsonValue(newValue));
+	    		}
+	    		
+	        }
+		}
+	}
+	
+	/*
+	 * return the binding for a specific name.  If the name of the binding
+	 * is not found, null is returned
+	 */
+	public JsonObject getBindingFromName(String bindingName) {
+		JsonObject cfg = (JsonObject)jdev.get("configuration");
+		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
+		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
+		while (it.hasNext()) {
+			JsonObject edef = (JsonObject)it.next();
+			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator(); 
+	        while (it2.hasNext()) {
+	    		JsonObject binding = (JsonObject)it2.next();
+	    		String name = binding.getValue("name");
+	    		if(name.equals(bindingName)) {
+	    			return binding;
+	    		}
+	        }
 		}
 		return null;
 	}
@@ -519,5 +586,22 @@ public class Device {
 			}
 		});
 		return result;
+	}
+	
+	public void writeToFile(String filename) {
+		try {     
+			JsonObject configuration = new JsonObject();
+	        configuration.put("stateSets",new JsonArray());
+	        configuration.put("fruRecords",new JsonArray());
+	        configuration.put("logicalEntities", new JsonArray());
+	        jdev.put("configuration",configuration);
+			FileWriter file = new FileWriter(filename);
+			file.write(jdev.toString());
+			file.close();
+			System.out.println("wrote to file");
+	      } catch (IOException e) {
+	    	  // TODO Auto-generated catch block
+	    	  e.printStackTrace();
+	      }
 	}
 }

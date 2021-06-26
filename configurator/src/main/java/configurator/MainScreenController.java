@@ -9,12 +9,23 @@ import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 
+import configurator.SearchTestController.TableData;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.util.Callback;
 import jsonreader.JsonAbstractValue;
@@ -34,14 +45,16 @@ public class MainScreenController implements Initializable {
 	JsonObject jdev;	
 	JsonObject defaultMeta;
 	Device     device;
-	@FXML private TextArea configText;
 	@FXML private TreeView<TreeData> treeView;
-
+	@FXML private AnchorPane bindingPane;
+	private AnchorPane stateSensorPane;
+	
 	// this class associates the relevant data with each node in the tree.
 	private class TreeData {
 		public JsonAbstractValue parent;
 		public JsonAbstractValue leaf;
 		public String nodeType;
+		public String name;
 		
 		public TreeData() {
 			nodeType = "unknown";
@@ -291,7 +304,8 @@ public class MainScreenController implements Initializable {
             		break;
             	case "ioBinding":
             		setText(getItem().leaf.getValue("name"));
-                	initializeIoBindingCell();
+            		item.name = getItem().leaf.getValue("name");
+            		initializeIoBindingCell();
             		break;
             	case "fruRecord":
             		setText(getItem().nodeType);
@@ -398,11 +412,20 @@ public class MainScreenController implements Initializable {
 		}
 	}
 	
+	// helper function that clears all panes
+	private void clearPanes() {
+		App.stateSensorContent.setVisible(false);
+		App.stateEffecterContent.setVisible(false);
+		App.numericSensorContent.setVisible(false);
+		App.numericEffecterContent.setVisible(false);
+	}
+
+	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
         JsonResultFactory factory = new JsonResultFactory();
         appConfig = (JsonObject)factory.buildFromResource("config.json");
-        hardware = (JsonObject)factory.buildFromResource("devices/microsam_new.json");
+        hardware = (JsonObject)factory.buildFromResource("microsam_new2.json");
         defaultMeta = (JsonObject)factory.buildFromResource("default_meta.json");
         
         // Load the libraries from the resource folders - these are the default
@@ -434,5 +457,49 @@ public class MainScreenController implements Initializable {
                 return new JsonTreeCell();
             }
         }); 
+        
+        
+        //treeview logic is contained in this event listener
+        treeView.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
+        {
+            public void handle(MouseEvent event)
+            {
+            	Node treeNode = event.getPickResult().getIntersectedNode();
+                
+            	if (treeNode instanceof Text || (treeNode instanceof TreeCell && ((TreeCell) treeNode).getText() != null)) {
+                    TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
+            		
+                    //checking if click is on ioBinding
+                    if(selectedNode.getValue().nodeType=="ioBinding") {
+                    	
+                    	// switch on type of binding
+                    	switch(device.getBindingValueFromKey(selectedNode.getValue().name,"bindingType")) {
+	                    	case "stateEffecter":
+	                    		clearPanes();
+	                    		App.stateEffecterContent.setVisible(true);
+	                    		break;
+	                    	case "stateSensor":
+	                    		clearPanes();
+	                    		App.stateSensorContent.setVisible(true);
+	                    		break;
+	                    	case "numericEffecter":
+	                    		clearPanes();
+	                    		App.numericEffecterContent.setVisible(true);
+	                    		break;
+	                    	case "numericSensor":
+	                    		clearPanes();
+	                    		App.numericSensorContent.setVisible(true);
+	                    		break;
+	                    	
+	                    	default:
+	                    		clearPanes();
+                    	}
+                    	
+            		}
+                }
+            	
+            	
+            }
+        });
 	}
 }
