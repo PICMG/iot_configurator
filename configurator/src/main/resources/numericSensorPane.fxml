@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="numericSensorPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.numericSensorController">
+   <children>
+      <VBox fx:id="numericSensorVBox" prefHeight="741.0" prefWidth="518.0">
+         <children>
+            <Label fx:id="nameText" prefHeight="35.0" prefWidth="518.0" text="  Name">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="descriptionText" prefHeight="35.0" prefWidth="518.0" text="  Description">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label prefHeight="20.0" prefWidth="518.0">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <Label prefHeight="32.0" prefWidth="518.0" text="  Bound Channel">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="boundChannelCBox" prefHeight="26.0" prefWidth="525.0" />
+            <Label prefHeight="35.0" prefWidth="518.0" text="  Physical Sensor">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="physicalSensor" editable="false" prefHeight="35.0" prefWidth="518.0" />
+            <Label prefHeight="35.0" prefWidth="518.0" text="  Input Curve">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="inputCurve" editable="false" prefHeight="35.0" prefWidth="518.0" />
+            <Label prefHeight="35.0" prefWidth="518.0" text="  Input Gearing Ratio">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="inputGearingRatio" prefHeight="35.0" prefWidth="518.0" />
+            <Label prefHeight="32.0" prefWidth="518.0" text="  Physical Base Unit">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="physicalBaseUnit" prefHeight="26.0" prefWidth="525.0" />
+            <Label prefHeight="35.0" prefWidth="518.0" text="  Physical Unit Modifier">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="physicalUnitModifier" editable="false" prefHeight="35.0" prefWidth="518.0" />
+            <Label prefHeight="32.0" prefWidth="518.0" text="  Physical Rate">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="physicalRate" prefHeight="26.0" prefWidth="525.0" />
+            <Label prefHeight="32.0" prefWidth="518.0" text="  Physical Aux">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="physicalAux" prefHeight="26.0" prefWidth="525.0" />
+            <Label prefHeight="32.0" prefWidth="518.0" text="  Physical Aux Rate">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <ComboBox fx:id="physicalAuxRate" prefHeight="26.0" prefWidth="525.0" />
+            <Label prefHeight="35.0" prefWidth="518.0" text="  Physical Aux Unit Modifier">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <TextField fx:id="physicalAuxUnitModifier" editable="false" prefHeight="35.0" prefWidth="518.0" />
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

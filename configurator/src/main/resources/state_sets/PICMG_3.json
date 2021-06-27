@@ -1,0 +1,20 @@
+{
+	"name":"PID Controller Command State",
+	"stateSetId":3,
+	"vendorIANA":12634,
+	"vendorName":"PICMG",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Start"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Stop"]
+		}
+	]
+}
