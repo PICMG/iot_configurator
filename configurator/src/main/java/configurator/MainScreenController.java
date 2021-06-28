@@ -418,6 +418,8 @@ public class MainScreenController implements Initializable {
 		App.stateEffecterContent.setVisible(false);
 		App.numericSensorContent.setVisible(false);
 		App.numericEffecterContent.setVisible(false);
+		App.fruContent.setVisible(false);
+		App.parameterContent.setVisible(false);
 	}
 
 	
@@ -471,7 +473,6 @@ public class MainScreenController implements Initializable {
             		
                     //checking if click is on ioBinding
                     if(selectedNode.getValue().nodeType=="ioBinding") {
-                    	
                     	// switch on type of binding
                     	switch(device.getBindingValueFromKey(selectedNode.getValue().name,"bindingType")) {
 	                    	case "stateEffecter":
@@ -496,10 +497,18 @@ public class MainScreenController implements Initializable {
                     	}
                     	
             		}
-                }
-            	
-            	
-            }
+                    else if(selectedNode.getValue().nodeType=="parameters") {
+						clearPanes();
+						App.parameterPaneController.update((JsonArray) selectedNode.getValue().leaf);
+						App.parameterContent.setVisible(true);
+					}
+					else if(selectedNode.getValue().nodeType=="fruRecord") {
+						clearPanes();
+						App.fruPaneController.update((JsonObject) selectedNode.getValue().leaf);
+						App.fruContent.setVisible(true);
+					}
+				}
+			}
         });
 	}
 }

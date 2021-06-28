@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="FruPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.FruPaneController">
+   <children>
+      <Label layoutX="228.0" layoutY="68.0" text="FRU Pane" />
+   </children>
+</AnchorPane>

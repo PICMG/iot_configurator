@@ -18,7 +18,15 @@ public class App extends Application {
     public static AnchorPane stateEffecterContent;
     public static AnchorPane numericSensorContent;
     public static AnchorPane numericEffecterContent;
-  
+	public static AnchorPane fruContent;
+	public static AnchorPane parameterContent;
+	public static StateSensorController stateSensorController;
+	public static StateEffecterController stateEffecterController;
+	public static NumericEffecterController numericEffecterController;
+	public static NumericSensorController numericSensorController;
+	public static FruPaneController fruPaneController;
+	public static ParameterPaneController parameterPaneController;
+
 	@Override
     public void start(Stage stage) { 
 	    Parent root;
@@ -34,23 +42,55 @@ public class App extends Application {
 	        bindingPane = (AnchorPane) scene.lookup("#bindingPane");
 	        
 	        // setup binding panes
-	        stateSensorContent = (AnchorPane) FXMLLoader.load(getClass().getClassLoader().getResource("stateSensorPane.fxml"));
-	        bindingPane.getChildren().add(stateSensorContent);
-	        stateSensorContent.setVisible(false);
-	        
-	        stateEffecterContent = (AnchorPane) FXMLLoader.load(getClass().getClassLoader().getResource("stateEffecterPane.fxml"));
-	        bindingPane.getChildren().add(stateEffecterContent);
-	        stateEffecterContent.setVisible(false);
-	        
-	        numericSensorContent = (AnchorPane) FXMLLoader.load(getClass().getClassLoader().getResource("numericSensorPane.fxml"));
-	        bindingPane.getChildren().add(numericSensorContent);
-	        numericSensorContent.setVisible(false);
-	        
-	        numericEffecterContent = (AnchorPane) FXMLLoader.load(getClass().getClassLoader().getResource("numericEffecterPane.fxml"));
-	        bindingPane.getChildren().add(numericEffecterContent);
-	        numericEffecterContent.setVisible(false);
-	        
-	        System.out.println();
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("stateSensorPane.fxml"));
+				stateSensorContent = (AnchorPane) loader.load();
+				stateSensorController = (StateSensorController) loader.getController();
+				bindingPane.getChildren().add(stateSensorContent);
+				stateSensorContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("stateEffecterPane.fxml"));
+				stateEffecterContent = (AnchorPane) loader.load();
+				stateEffecterController = (StateEffecterController) loader.getController();
+				bindingPane.getChildren().add(stateEffecterContent);
+				stateEffecterContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("numericSensorPane.fxml"));
+				numericSensorContent = (AnchorPane) loader.load();
+				numericSensorController = (NumericSensorController) loader.getController();
+				bindingPane.getChildren().add(numericSensorContent);
+				numericSensorContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("numericEffecterPane.fxml"));
+				numericEffecterContent = (AnchorPane) loader.load();
+				numericEffecterController = (NumericEffecterController) loader.getController();
+				bindingPane.getChildren().add(numericEffecterContent);
+				numericEffecterContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("FruPane.fxml"));
+				fruContent = (AnchorPane) loader.load();
+				fruPaneController = (FruPaneController) loader.getController();
+				bindingPane.getChildren().add(fruContent);
+				fruContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ParameterPane.fxml"));
+				parameterContent = (AnchorPane) loader.load();
+				parameterPaneController = (ParameterPaneController) loader.getController();
+				bindingPane.getChildren().add(parameterContent);
+				parameterContent.setVisible(false);
+			}
+
+			System.out.println();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
