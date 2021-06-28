@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="numericEffecterPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.numericEffecterController">
+<AnchorPane fx:id="numericEffecterPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.NumericEffecterController">
    <children>
       <VBox fx:id="numericEffecterVBox" prefHeight="741.0" prefWidth="518.0">
          <children>

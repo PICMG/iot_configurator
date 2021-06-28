@@ -24,7 +24,7 @@ public class App extends Application {
 	    Parent root;
 	    try {
 			// load the fxml object for the main screen
-			root = FXMLLoader.load(getClass().getClassLoader().getResource("test6.fxml"));
+			root = FXMLLoader.load(getClass().getClassLoader().getResource("MainPanel.fxml"));
 	        Scene scene = new Scene(root, 1024, 768);
 		  
 	        stage.setTitle("PICMG Configurator");

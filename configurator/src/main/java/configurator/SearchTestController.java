@@ -24,40 +24,22 @@
 //
 package configurator;
 import java.io.*;
-import java.lang.ModuleLayer.Controller;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Scanner;
-import java.util.Set;
 
-import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.control.TreeTableColumn.CellDataFeatures;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.util.Callback;
-import jsonreader.JsonAbstractValue;
-import jsonreader.JsonArray;
-import jsonreader.JsonObject;
-import jsonreader.JsonResultFactory;
-import jsonreader.JsonValue;
 
 public class SearchTestController implements Initializable {	
 	
@@ -214,7 +196,7 @@ public class SearchTestController implements Initializable {
             	if (stateSetTable.getSelectionModel().getSelectedItem() != null) {
                     TableData selectedRow = stateSetTable.getSelectionModel().getSelectedItem();
                                         
-                    stringTransfer.text=selectedRow.getNameData();
+                    StringTransfer.text=selectedRow.getNameData();
                     
                     Stage activeStage = (Stage) stateSetTable.getScene().getWindow();
                     activeStage.close();

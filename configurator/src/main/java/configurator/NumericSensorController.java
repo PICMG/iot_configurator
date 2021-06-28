@@ -4,7 +4,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.fxml.Initializable;
 
-public class stateEffecterController implements Initializable {
+public class NumericSensorController implements Initializable {
 	// TODO Auto-generated method stub
 	
 	@Override
