@@ -13,7 +13,7 @@ public class SearchTest extends Application {
 	    Parent root;
 		try {
 			// load the fxml object for the main screen
-			root = FXMLLoader.load(getClass().getClassLoader().getResource("test5.fxml"));
+			root = FXMLLoader.load(getClass().getClassLoader().getResource("SearchPane.fxml"));
 	        Scene scene = new Scene(root, 600, 400);
 		    
 	        stage.setTitle("State Set Selection");

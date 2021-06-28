@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane fx:id="stateSensorPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.ParameterPaneController">
+   <children>
+      <Label layoutX="196.0" layoutY="103.0" text="Parameter Pane" />
+   </children>
+</AnchorPane>

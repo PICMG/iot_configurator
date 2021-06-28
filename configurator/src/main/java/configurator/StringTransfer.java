@@ -1,5 +1,5 @@
 package configurator;
 
-public class stringTransfer {
+public class StringTransfer {
 	public static String text;
 }

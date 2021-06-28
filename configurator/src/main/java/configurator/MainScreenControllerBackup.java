@@ -2,17 +2,10 @@ package configurator;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.Set;
 
-import configurator.SearchTestController.TableData;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -468,7 +461,7 @@ public class MainScreenControllerBackup implements Initializable {
         			// load the fxml object for the main screen
         			
         	        Stage stage = new Stage();
-        	        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("test5.fxml"));
+        	        Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("SearchPane.fxml"));
                 	stage.setScene(new Scene(root));
         	        stage.setTitle("State Set Selection");
         	        stage.initModality(Modality.WINDOW_MODAL);
@@ -476,8 +469,8 @@ public class MainScreenControllerBackup implements Initializable {
         	        stage.showAndWait();
         	        
         	        
-        	        selectedState.setText(stringTransfer.text);
-        	        String state = stringTransfer.text;
+        	        selectedState.setText(StringTransfer.text);
+        	        String state = StringTransfer.text;
         	        
         	        TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
               	   	JsonArray stateSets1 = (JsonArray)stateLib.get("stateSets");

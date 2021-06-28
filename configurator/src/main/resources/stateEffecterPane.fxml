@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="stateEffecterPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.stateEffecterController">
+<AnchorPane fx:id="stateEffecterPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.StateEffecterController">
    <children>
       <VBox fx:id="stateEffecterVbox1" prefHeight="741.0" prefWidth="518.0">
          <children>
