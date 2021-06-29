@@ -504,7 +504,8 @@ public class MainScreenController implements Initializable {
 					}
 					else if(selectedNode.getValue().nodeType=="fruRecord") {
 						clearPanes();
-						App.fruPaneController.update((JsonObject) selectedNode.getValue().leaf);
+						App.fruPaneController.update((JsonObject) selectedNode.getValue().leaf,
+								(JsonObject) device.getCapabilitiesFruRecordByName(selectedNode.getValue().leaf.getValue("name")));
 						App.fruContent.setVisible(true);
 					}
 				}

@@ -3,6 +3,7 @@ import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.ResourceBundle;
 
 import javafx.event.ActionEvent;
@@ -211,6 +212,19 @@ public class MainScreenControllerBackup implements Initializable {
         	            
         	setContextMenu(contextMenu);
         }        
+
+        // this function returns a random string of alphanumeric characters with a
+		// length that matches the given length.
+        String getRandomString(int len)
+		{
+        	String result = "";
+        	Random rand = new Random(System.currentTimeMillis());
+
+        	for (int i=0;i<len;i++) {
+
+			}
+        	return result;
+		}
 
         void initializeFruCell() {
             // initialize the menu

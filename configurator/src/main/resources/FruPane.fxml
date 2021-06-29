@@ -1,10 +1,66 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane fx:id="FruPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.FruPaneController">
    <children>
-      <Label layoutX="228.0" layoutY="68.0" text="FRU Pane" />
+      <VBox prefHeight="742.0" prefWidth="518.0">
+         <children>
+            <Label text="FRU information">
+               <font>
+                  <Font name="System Bold" size="16.0" />
+               </font>
+            </Label>
+            <Separator prefWidth="200.0" />
+            <GridPane prefHeight="90.0" prefWidth="516.0">
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="252.0" minWidth="10.0" prefWidth="195.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="375.0" minWidth="10.0" prefWidth="323.0" />
+              </columnConstraints>
+              <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+              </rowConstraints>
+               <children>
+                  <Label text="Fru Record Type">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+                  <Label text="OEM Vendor ID (IANA)" GridPane.rowIndex="1">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                  </Label>
+                  <ChoiceBox fx:id="choiceBoxFruType" prefHeight="24.0" prefWidth="253.0" GridPane.columnIndex="1" />
+                  <TextField fx:id="textFieldOemId" prefHeight="24.0" prefWidth="233.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               </children>
+            </GridPane>
+            <ScrollPane prefHeight="637.0" prefWidth="518.0">
+               <content>
+                  <TableView fx:id="tableView" prefHeight="622.0" prefWidth="505.0">
+                    <columns>
+                      <TableColumn fx:id="tableColumnName" prefWidth="154.0" text="Name" />
+                      <TableColumn fx:id="tableColumnType" prefWidth="89.0" text="Type" />
+                        <TableColumn fx:id="tableColumnValue" prefWidth="259.0" text="Value" />
+                    </columns>
+                  </TableView>
+               </content>
+            </ScrollPane>
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

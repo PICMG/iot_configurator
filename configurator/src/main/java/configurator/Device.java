@@ -123,7 +123,23 @@ public class Device {
 		}
 		return null;
 	}
-	
+
+	/* return the fru record object that matches a given name.  If the
+	 * object is not found, return null
+	 */
+	public JsonObject getCapabilitiesFruRecordByName(String name) {
+		JsonObject cap = (JsonObject)jdev.get("capabilities");
+		JsonArray fruRecords = (JsonArray)cap.get("fruRecords");
+		Iterator<JsonAbstractValue> it = fruRecords.iterator();
+		while (it.hasNext()) {
+			JsonObject fruRecord = (JsonObject)it.next();
+			if (fruRecord.getValue("name").equals(name)) {
+				return fruRecord;
+			}
+		}
+		return null;
+	}
+
 	/* add a named fru record to the configuration space
 	 * 
 	 */
