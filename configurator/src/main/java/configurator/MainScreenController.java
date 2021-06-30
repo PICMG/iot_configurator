@@ -1,13 +1,7 @@
 package configurator;
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 
 import configurator.SearchTestController.TableData;
 import javafx.collections.FXCollections;
@@ -212,9 +206,35 @@ public class MainScreenController implements Initializable {
         	}
         	            
         	setContextMenu(contextMenu);
-        }        
+        }
 
-        void initializeFruCell() {
+		// this function returns a random string of alphanumeric characters with a
+		// length that matches the given length.
+		String getRandomString(int len)
+		{
+			StringBuilder result = new StringBuilder();
+			Random rand = new Random(System.currentTimeMillis());
+
+			for (int i=0;i<len;i++) {
+				int charCode = rand.nextInt(10+26+26);
+				if (charCode<10) {
+					// number
+					result.append(((char)(48+charCode)));
+				}
+				else if ((charCode>=10)&&(charCode<10+26)) {
+					// upper case letter
+					result.append(((char)(65+charCode - 10)));
+				}
+				else {
+					// lower case letter
+					result.append(((char)(97+charCode-10-26)));
+				}
+
+			}
+			return result.toString();
+		}
+
+		void initializeFruCell() {
             // initialize the menu
         	if (contextMenu!=null) {
         		contextMenu.getItems().clear();
@@ -241,7 +261,7 @@ public class MainScreenController implements Initializable {
             		JsonObject fruRecord = new JsonObject();
             	
             		// insert the required fields
-            		fruRecord.put("name",new JsonValue("null"));
+            		fruRecord.put("name",new JsonValue(getRandomString(25)));
             		fruRecord.put("required",new JsonValue("false"));
             		fruRecord.put("vendorIANA",new JsonValue("412"));            			
             		fruRecord.put("description",new JsonValue("null"));            			
@@ -267,7 +287,7 @@ public class MainScreenController implements Initializable {
             		JsonObject fruRecord = new JsonObject();
             	
             		// insert the required fields
-            		fruRecord.put("name",new JsonValue("null"));
+            		fruRecord.put("name",new JsonValue(getRandomString(25)));
             		fruRecord.put("required",new JsonValue("false"));
            			fruRecord.put("vendorIANA",new JsonValue("null"));
             		fruRecord.put("description",new JsonValue("null"));            			

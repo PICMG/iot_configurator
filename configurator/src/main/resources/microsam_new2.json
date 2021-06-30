@@ -243,7 +243,24 @@
 				"required": true,
 				"name": "test",
 				"description":null,
-				"fields": []
+				"fields": [
+					{
+						"type": 1,
+						"required": true,
+						"description": "Chassis Type",
+						"format": "string",
+						"length": null,
+						"value": "I/O Module"
+					},
+					{
+						"type": 2,
+						"required": true,
+						"description": "Model",
+						"format": "string",
+						"length": null,
+						"value": null
+					}
+				]
 			}
 		],
 		"logicalEntities": [
