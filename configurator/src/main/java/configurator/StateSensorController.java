@@ -74,88 +74,139 @@ public class StateSensorController implements Initializable {
 				}
 
 				// update state when low and state when high if applicable
-
-				// if stateWhenLow is-non null, set value according to json. Else, allow for population.
-				if(device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenLow")!=null){
-					lowInputCBox.getItems().clear();
-					Iterator<JsonAbstractValue> it = stateSets.iterator();
-					while (it.hasNext()) {
-						JsonObject cdef = (JsonObject)it.next();
-						if(cdef.getValue("name").equals(stateSet)) {
-							Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
-							while (it2.hasNext()) {
-								JsonObject binding = (JsonObject)it2.next();
-								int bindingInt = Integer.parseInt(binding.getValue("minStateValue"));
-								int jsonInt = Integer.parseInt(device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenLow"));
-								if(bindingInt == jsonInt){
+				try{
+					// if stateWhenLow is-non null, set value according to json. Else, allow for population.
+					if(device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenLow")!=null){
+						lowInputCBox.getItems().clear();
+						Iterator<JsonAbstractValue> it = stateSets.iterator();
+						while (it.hasNext()) {
+							JsonObject cdef = (JsonObject)it.next();
+							if(cdef.getValue("name").equals(stateSet)) {
+								Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
+								while (it2.hasNext()) {
+									JsonObject binding = (JsonObject)it2.next();
+									int bindingInt = Integer.parseInt(binding.getValue("minStateValue"));
+									int jsonInt = Integer.parseInt(device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenLow"));
+									if(bindingInt == jsonInt){
+										String name = binding.getValue("stateName");
+										lowInputCBox.setValue(name);
+										lowInputCBox.setDisable(true);
+									}
+								}
+							}
+						}
+					}else{
+						lowInputCBox.setDisable(false);
+						lowInputCBox.setValue(null);
+						Iterator<JsonAbstractValue> it = stateSets.iterator();
+						while (it.hasNext()) {
+							JsonObject cdef = (JsonObject)it.next();
+							if(cdef.getValue("name").equals(stateSet)) {
+								Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
+								while (it2.hasNext()) {
+									JsonObject binding = (JsonObject)it2.next();
 									String name = binding.getValue("stateName");
-									lowInputCBox.setValue(name);
-									lowInputCBox.setDisable(true);
+									lowInputCBox.getItems().add(name);
 								}
 							}
 						}
 					}
-				}else{
-					lowInputCBox.setDisable(false);
-					lowInputCBox.setValue(null);
-					Iterator<JsonAbstractValue> it = stateSets.iterator();
-					while (it.hasNext()) {
-						JsonObject cdef = (JsonObject)it.next();
-						if(cdef.getValue("name").equals(stateSet)) {
-							Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
-							while (it2.hasNext()) {
-								JsonObject binding = (JsonObject)it2.next();
-								String name = binding.getValue("stateName");
-								lowInputCBox.getItems().add(name);
+
+					// if stateWhenHigh is-non null, set value according to json. Else, allow for population.
+					String jsonStr = device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenHigh");
+					jsonStr = jsonStr.replaceAll("\\r","");
+					jsonStr = jsonStr.replaceAll("\\n","");
+					jsonStr = jsonStr.replaceAll("\\t","");
+					jsonStr = jsonStr.replaceAll(" ","");
+
+					if(!jsonStr.equals("null")&&jsonStr!=null){
+						highInputCBox.getItems().clear();
+						Iterator<JsonAbstractValue> it = stateSets.iterator();
+						while (it.hasNext()) {
+							JsonObject cdef = (JsonObject)it.next();
+							if(cdef.getValue("name").equals(stateSet)) {
+								Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
+								while (it2.hasNext()) {
+									JsonObject binding = (JsonObject)it2.next();
+
+									if(binding.getValue("maxStateValue").equals(jsonStr)){
+										String name = binding.getValue("stateName");
+										highInputCBox.setValue(name);
+										highInputCBox.setDisable(true);
+									}
+								}
 							}
 						}
-					}
-				}
-
-				// if stateWhenHigh is-non null, set value according to json. Else, allow for population.
-				String jsonStr = device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenHigh");
-				jsonStr = jsonStr.replaceAll("\\r","");
-				jsonStr = jsonStr.replaceAll("\\n","");
-				jsonStr = jsonStr.replaceAll("\\t","");
-				jsonStr = jsonStr.replaceAll(" ","");
-
-				if(!jsonStr.equals("null")&&jsonStr!=null){
-					highInputCBox.getItems().clear();
-					Iterator<JsonAbstractValue> it = stateSets.iterator();
-					while (it.hasNext()) {
-						JsonObject cdef = (JsonObject)it.next();
-						if(cdef.getValue("name").equals(stateSet)) {
-							Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
-							while (it2.hasNext()) {
-								JsonObject binding = (JsonObject)it2.next();
-
-								if(binding.getValue("maxStateValue").equals(jsonStr)){
+					}else{
+						highInputCBox.setDisable(false);
+						highInputCBox.setValue(null);
+						Iterator<JsonAbstractValue> it = stateSets.iterator();
+						while (it.hasNext()) {
+							JsonObject cdef = (JsonObject)it.next();
+							if(cdef.getValue("name").equals(stateSet)) {
+								Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
+								while (it2.hasNext()) {
+									JsonObject binding = (JsonObject)it2.next();
 									String name = binding.getValue("stateName");
-									highInputCBox.setValue(name);
-									highInputCBox.setDisable(true);
+									highInputCBox.getItems().add(name);
 								}
 							}
 						}
 					}
-				}else{
-					highInputCBox.setDisable(false);
-					highInputCBox.setValue(null);
-					Iterator<JsonAbstractValue> it = stateSets.iterator();
-					while (it.hasNext()) {
-						JsonObject cdef = (JsonObject)it.next();
-						if(cdef.getValue("name").equals(stateSet)) {
-							Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
-							while (it2.hasNext()) {
-								JsonObject binding = (JsonObject)it2.next();
-								String name = binding.getValue("stateName");
-								highInputCBox.getItems().add(name);
-							}
-						}
-					}
+				} catch (NullPointerException ex) {
+					// TODO Auto-generated catch block
+					//ex.printStackTrace();
 				}
-
 			}
 
+
+		});
+
+		// low input comboBox run on new value
+		lowInputCBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if(stateSets!=null) {
+				Iterator<JsonAbstractValue> it = stateSets.iterator();
+				while (it.hasNext()) {
+					JsonObject cdef = (JsonObject) it.next();
+					if (cdef.getValue("name").equals(selectedState.getText())) {
+						Iterator<JsonAbstractValue> it2 = ((JsonArray) cdef.get("oemStateValueRecords")).iterator();
+						while (it2.hasNext()) {
+							JsonObject binding = (JsonObject) it2.next();
+							if (binding.getValue("stateName").equals(newValue)) {
+								device.setBindingValueFromKey(selectedNode.getValue().name, "stateWhenLow", binding.getValue("minStateValue"));
+							}
+						}
+					}
+				}
+			}
+		});
+
+		// high input comboBox run on new value
+		highInputCBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if(stateSets!=null) {
+				Iterator<JsonAbstractValue> it = stateSets.iterator();
+				while (it.hasNext()) {
+					JsonObject cdef = (JsonObject) it.next();
+					if (cdef.getValue("name").equals(selectedState.getText())) {
+						Iterator<JsonAbstractValue> it2 = ((JsonArray) cdef.get("oemStateValueRecords")).iterator();
+						while (it2.hasNext()) {
+							JsonObject binding = (JsonObject) it2.next();
+							if (binding.getValue("stateName").equals(newValue)) {
+								device.setBindingValueFromKey(selectedNode.getValue().name, "stateWhenHigh", binding.getValue("maxStateValue"));
+							}
+						}
+					}
+				}
+			}
+		});
+
+		// bound channel comboBox run on new value
+		boundChannelCBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if(selectedNode!=null&&newValue!=null) {
+				if (device.getBindingValueFromKey(selectedNode.getValue().name, "isVirtual").equals("false")) {
+					device.setBindingValueFromKey(selectedNode.getValue().name, "boundChannel", (String) newValue);
+				}
+			}
 		});
 
 	}
@@ -209,84 +260,93 @@ public class StateSensorController implements Initializable {
 			selectedState.clear();
 			selectedState.setDisable(false);
 		}
+		try{
+			// if stateWhenLow is-non null, set value according to json. Else, allow for population.
+			String jsonStr = device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenLow");
+			jsonStr = jsonStr.replaceAll("\\r","");
+			jsonStr = jsonStr.replaceAll("\\n","");
+			jsonStr = jsonStr.replaceAll("\\t","");
+			jsonStr = jsonStr.replaceAll(" ","");
 
-		// if stateWhenLow is-non null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenLow")!=null){
-			lowInputCBox.getItems().clear();
-			Iterator<JsonAbstractValue> it = stateSets.iterator();
-			while (it.hasNext()) {
-				JsonObject cdef = (JsonObject)it.next();
-				if(cdef.getValue("name").equals(stateSet)) {
-					Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
-					while (it2.hasNext()) {
-						JsonObject binding = (JsonObject)it2.next();
-						int bindingInt = Integer.parseInt(binding.getValue("minStateValue"));
-						int jsonInt = Integer.parseInt(device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenLow"));
-						if(bindingInt == jsonInt){
+			if(!jsonStr.equals("null")&&jsonStr!=null){
+				lowInputCBox.getItems().clear();
+				Iterator<JsonAbstractValue> it = stateSets.iterator();
+				while (it.hasNext()) {
+					JsonObject cdef = (JsonObject)it.next();
+					if(cdef.getValue("name").equals(stateSet)) {
+						Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
+						while (it2.hasNext()) {
+							JsonObject binding = (JsonObject)it2.next();
+
+							if(binding.getValue("minStateValue").equals(jsonStr)){
+								String name = binding.getValue("stateName");
+								lowInputCBox.setValue(name);
+								lowInputCBox.setDisable(true);
+							}
+						}
+					}
+				}
+			}else{
+				lowInputCBox.setDisable(false);
+				lowInputCBox.setValue(null);
+				Iterator<JsonAbstractValue> it = stateSets.iterator();
+				while (it.hasNext()) {
+					JsonObject cdef = (JsonObject)it.next();
+					if(cdef.getValue("name").equals(stateSet)) {
+						Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
+						while (it2.hasNext()) {
+							JsonObject binding = (JsonObject)it2.next();
 							String name = binding.getValue("stateName");
-							lowInputCBox.setValue(name);
-							lowInputCBox.setDisable(true);
+							lowInputCBox.getItems().add(name);
 						}
 					}
 				}
 			}
-		}else{
-			lowInputCBox.setDisable(false);
-			lowInputCBox.setValue(null);
-			Iterator<JsonAbstractValue> it = stateSets.iterator();
-			while (it.hasNext()) {
-				JsonObject cdef = (JsonObject)it.next();
-				if(cdef.getValue("name").equals(stateSet)) {
-					Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
-					while (it2.hasNext()) {
-						JsonObject binding = (JsonObject)it2.next();
-						String name = binding.getValue("stateName");
-						lowInputCBox.getItems().add(name);
+
+			// if stateWhenHigh is-non null, set value according to json. Else, allow for population.
+			jsonStr = device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenHigh");
+			jsonStr = jsonStr.replaceAll("\\r","");
+			jsonStr = jsonStr.replaceAll("\\n","");
+			jsonStr = jsonStr.replaceAll("\\t","");
+			jsonStr = jsonStr.replaceAll(" ","");
+
+			if(!jsonStr.equals("null")&&jsonStr!=null){
+				highInputCBox.getItems().clear();
+				Iterator<JsonAbstractValue> it = stateSets.iterator();
+				while (it.hasNext()) {
+					JsonObject cdef = (JsonObject)it.next();
+					if(cdef.getValue("name").equals(stateSet)) {
+						Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
+						while (it2.hasNext()) {
+							JsonObject binding = (JsonObject)it2.next();
+
+							if(binding.getValue("maxStateValue").equals(jsonStr)){
+								String name = binding.getValue("stateName");
+								highInputCBox.setValue(name);
+								highInputCBox.setDisable(true);
+							}
+						}
 					}
 				}
-			}
-		}
-
-		// if stateWhenHigh is-non null, set value according to json. Else, allow for population.
-		String jsonStr = device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenHigh");
-		jsonStr = jsonStr.replaceAll("\\r","");
-		jsonStr = jsonStr.replaceAll("\\n","");
-		jsonStr = jsonStr.replaceAll("\\t","");
-		jsonStr = jsonStr.replaceAll(" ","");
-
-		if(!jsonStr.equals("null")&&jsonStr!=null){
-			highInputCBox.getItems().clear();
-			Iterator<JsonAbstractValue> it = stateSets.iterator();
-			while (it.hasNext()) {
-				JsonObject cdef = (JsonObject)it.next();
-				if(cdef.getValue("name").equals(stateSet)) {
-					Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
-					while (it2.hasNext()) {
-						JsonObject binding = (JsonObject)it2.next();
-
-						if(binding.getValue("maxStateValue").equals(jsonStr)){
+			}else{
+				highInputCBox.setDisable(false);
+				highInputCBox.setValue(null);
+				Iterator<JsonAbstractValue> it = stateSets.iterator();
+				while (it.hasNext()) {
+					JsonObject cdef = (JsonObject)it.next();
+					if(cdef.getValue("name").equals(stateSet)) {
+						Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
+						while (it2.hasNext()) {
+							JsonObject binding = (JsonObject)it2.next();
 							String name = binding.getValue("stateName");
-							highInputCBox.setValue(name);
-							highInputCBox.setDisable(true);
+							highInputCBox.getItems().add(name);
 						}
 					}
 				}
 			}
-		}else{
-			highInputCBox.setDisable(false);
-			highInputCBox.setValue(null);
-			Iterator<JsonAbstractValue> it = stateSets.iterator();
-			while (it.hasNext()) {
-				JsonObject cdef = (JsonObject)it.next();
-				if(cdef.getValue("name").equals(stateSet)) {
-					Iterator<JsonAbstractValue>it2 = ((JsonArray)cdef.get("oemStateValueRecords")).iterator();
-					while (it2.hasNext()) {
-						JsonObject binding = (JsonObject)it2.next();
-						String name = binding.getValue("stateName");
-						highInputCBox.getItems().add(name);
-					}
-				}
-			}
+		} catch (NullPointerException ex) {
+			// TODO Auto-generated catch block
+			//ex.printStackTrace();
 		}
 
 		this.stateSets = stateSets;
