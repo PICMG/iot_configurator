@@ -44,7 +44,7 @@ public class MainScreenController implements Initializable {
 	private AnchorPane stateSensorPane;
 	
 	// this class associates the relevant data with each node in the tree.
-	private class TreeData {
+	protected class TreeData {
 		public JsonAbstractValue parent;
 		public JsonAbstractValue leaf;
 		public String nodeType;
@@ -487,10 +487,11 @@ public class MainScreenController implements Initializable {
             public void handle(MouseEvent event)
             {
             	Node treeNode = event.getPickResult().getIntersectedNode();
-                
+
             	if (treeNode instanceof Text || (treeNode instanceof TreeCell && ((TreeCell) treeNode).getText() != null)) {
                     TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
-            		
+            		clearPanes();
+
                     //checking if click is on ioBinding
                     if(selectedNode.getValue().nodeType=="ioBinding") {
                     	// switch on type of binding
@@ -502,6 +503,7 @@ public class MainScreenController implements Initializable {
 	                    	case "stateSensor":
 	                    		clearPanes();
 	                    		App.stateSensorContent.setVisible(true);
+	                    		App.stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray)stateLib.get("stateSets"));
 	                    		break;
 	                    	case "numericEffecter":
 	                    		clearPanes();
