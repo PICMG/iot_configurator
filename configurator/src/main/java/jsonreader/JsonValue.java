@@ -51,7 +51,20 @@ public class JsonValue implements JsonAbstractValue {
         	this.value = value;
         }
     }
-    
+
+    /**
+     * set()
+     * Set the value of the json object to match the specified string.
+     * @param value - the new value to be set.
+     */
+    public void set(String value) {
+        if (value.equalsIgnoreCase("null")) {
+            this.value = null;
+        } else {
+            this.value = value;
+        }
+    }
+
     @Override
     /**
      * return the value as a string 
