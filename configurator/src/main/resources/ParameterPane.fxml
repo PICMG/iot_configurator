@@ -8,24 +8,24 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="stateSensorPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.ParameterPaneController">
+<AnchorPane prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.ParameterPaneController">
    <children>
       <VBox layoutY="-3.0" prefHeight="751.0" prefWidth="559.0">
          <children>
             <Label text="Parameters">
                <font>
-                  <Font size="16.0" />
+                  <Font name="System Bold" size="16.0" />
                </font>
             </Label>
             <ScrollPane prefHeight="740.0" prefWidth="559.0">
               <content>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
                      <children>
-                        <TableView prefHeight="731.0" prefWidth="559.0">
+                        <TableView fx:id="tableViewParameters" prefHeight="731.0" prefWidth="559.0">
                           <columns>
-                            <TableColumn prefWidth="75.0" text="Name" />
-                            <TableColumn prefWidth="75.0" text="Type" />
-                              <TableColumn prefWidth="75.0" text="Value" />
+                            <TableColumn fx:id="tableColumnParameterName" prefWidth="119.0" text="Name" />
+                            <TableColumn fx:id="tableColumnParameterType" prefWidth="114.0" text="Type" />
+                              <TableColumn fx:id="tableColumnParameterValue" onEditCommit="#valueCellCommit" prefWidth="325.0" text="Value" />
                           </columns>
                         </TableView>
                      </children>

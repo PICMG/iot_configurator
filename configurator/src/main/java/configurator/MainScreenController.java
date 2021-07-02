@@ -521,7 +521,9 @@ public class MainScreenController implements Initializable {
             		}
                     else if(selectedNode.getValue().nodeType=="parameters") {
 						clearPanes();
-						App.parameterPaneController.update((JsonArray) selectedNode.getValue().leaf);
+						JsonObject capabilitiesEntity = (JsonObject)selectedNode.getValue().parent;
+						JsonArray capabilitiesParameters = (JsonArray)capabilitiesEntity.get("parameters");
+						App.parameterPaneController.update((JsonArray) selectedNode.getValue().leaf, capabilitiesParameters);
 						App.parameterContent.setVisible(true);
 					}
 					else if(selectedNode.getValue().nodeType=="fruRecord") {
