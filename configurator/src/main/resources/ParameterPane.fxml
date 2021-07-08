@@ -25,7 +25,7 @@
                           <columns>
                             <TableColumn fx:id="tableColumnParameterName" prefWidth="119.0" text="Name" />
                             <TableColumn fx:id="tableColumnParameterType" prefWidth="114.0" text="Type" />
-                              <TableColumn fx:id="tableColumnParameterValue" onEditCommit="#valueCellCommit" prefWidth="325.0" text="Value" />
+                              <TableColumn fx:id="tableColumnParameterValue" onEditCommit="#onValueCommit" prefWidth="288.0" text="Value" />
                           </columns>
                         </TableView>
                      </children>

@@ -27,6 +27,53 @@ public class App extends Application {
 	public static FruPaneController fruPaneController;
 	public static ParameterPaneController parameterPaneController;
 
+	/**
+	 * isInteger()
+	 * A helper that returns true if the string parameter represents
+	 * a valid base-10 signed integer
+	 * @param num - the string to check
+	 * @return - true if the string is a valid integer
+	 */
+	static boolean isInteger(String num) {
+		try {
+			Integer.parseInt(num);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * isUnsignedInteger()
+	 * A helper that returns true if the string parameter represents
+	 * a valid base-10 unsigned integer
+	 * @param num - the string to check
+	 * @return - true if the string is a valid integer
+	 */
+	static boolean isUnsignedInteger(String num) {
+		try {
+			Integer.parseInt(num);
+			if (num.charAt(0) != '-') return true;
+		} catch (NumberFormatException e) {}
+		return false;
+	}
+
+	/**
+	 * isFloat()
+	 * A helper that returns true if the string parameter represents
+	 * a valid double-precision floating-point number.
+	 * @param num - the string to check
+	 * @return - true if the string is a valid integer
+	 */
+	static boolean isFloat(String num) {
+		try {
+			Double.parseDouble(num);
+			return true;
+		} catch (NumberFormatException e) {
+			return false;
+		}
+	}
+
 	@Override
     public void start(Stage stage) { 
 	    Parent root;
@@ -92,9 +139,7 @@ public class App extends Application {
 
 			System.out.println();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	       
+		}
     }
 
     public static void main(String[] args) {

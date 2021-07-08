@@ -1,21 +1,19 @@
 package configurator;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import jsonreader.JsonArray;
 import jsonreader.JsonObject;
 import jsonreader.JsonValue;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.function.UnaryOperator;
 
 /**
  * ParameterPaneController class
@@ -47,13 +45,20 @@ public class ParameterPaneController implements Initializable {
 		private SimpleStringProperty name = new SimpleStringProperty();
 		private SimpleStringProperty type = new SimpleStringProperty();
 		private SimpleStringProperty value = new SimpleStringProperty();
+		private SimpleStringProperty maxValue = new SimpleStringProperty();
+		private SimpleStringProperty minValue = new SimpleStringProperty();
+		private SimpleStringProperty description = new SimpleStringProperty();
+		private SimpleStringProperty state = new SimpleStringProperty();
 		private boolean editable;
 		JsonObject parameterObject;
 		public ParameterTableInfo(JsonObject parameter, JsonObject capabilitiesParameter) {
+			update(parameter, capabilitiesParameter);
+		}
+		public void update(JsonObject parameter, JsonObject capabilitiesParameter) {
 			parameterObject = parameter;
 			if ((capabilitiesParameter.get("value") != null) &&
 					(capabilitiesParameter.getValue("value") != null) &&
-							(!capabilitiesParameter.getValue("value").toLowerCase().contains("null"))) {
+					(!capabilitiesParameter.getValue("value").toLowerCase().contains("null"))) {
 				// capabilities value is specified
 				editable = false;
 				value.set(capabilitiesParameter.getValue("value"));
@@ -68,6 +73,9 @@ public class ParameterPaneController implements Initializable {
 							(parameter.getValue("defaultValue") != null) &&
 							(!parameter.getValue("defaultValue").toLowerCase().contains("null"))) {
 						value.set(parameter.getValue("defaultValue"));
+
+						// set the value in the json structure to the default value also
+						((JsonValue)getJsonObject().get("value")).set(parameter.getValue("defaultValue"));
 					} else {
 						value.set("");
 					}
@@ -75,36 +83,46 @@ public class ParameterPaneController implements Initializable {
 			}
 			name.set(capabilitiesParameter.getValue("name"));
 			type.set(capabilitiesParameter.getValue("type"));
+			description.set(capabilitiesParameter.getValue("description"));
+			maxValue.set(capabilitiesParameter.getValue("maxValue"));
+			minValue.set(capabilitiesParameter.getValue("minValue"));
+
+			// set the state of this parameter, since parameter values are always
+			// required if they are specified in the capabilities section, incorrect
+			// parameter values constitute an error.
+			if (isValueValid(parameter.getValue("value"), parameter)) {
+				setState("valid");
+			} else {
+				setState("error");
+			}
 		}
 		public String getName() { return name.get();}
 		public void setName(String name) {this.name.set(name);}
 		public String getType() {return type.get();	}
 		public void setType(String type) {this.type.set(type);}
+		public String getState() {return state.get();	}
+		public void setState(String state) {this.state.set(state);}
 		public String getValue() {return value.get();	}
-		public void setValue(String type) {this.value.set(type);}
+		public String getMaxValue() {return maxValue.get();	}
+		public String getMinValue() {return minValue.get();	}
+		public void setValue(String value) {this.value.set(value);}
+		public String getDescription() {return description.get();	}
+		public boolean getEditable() {return editable;};
+		public void setDescription(String description) {this.description.set(description);}
 		public JsonObject getJsonObject() {return parameterObject;}
 		public boolean isEditable() {return editable;}
-	}
-
-	/**
-	 * This function is used to check the text entered into the value field
-	 * of the table as it is written.
-	 */
-	UnaryOperator<TextFormatter.Change> numericOnlyOperator = change -> {
-		ParameterTableInfo info = tableViewParameters.getSelectionModel().getSelectedItem();
-
-		if (info!=null) {
-			String regex = "-?([1-9][0-9]*\\.?[0-9]*)?";
-			if (change.getText().matches(regex)) {
-				// change is allowed because it matches the regex
-				return change;
-			}
+		public ObservableList<String> getChoices() {
+			// this getter provides a list of allowed values for enumerated parameters
+			// otherwise it returns null.
+			if (parameterObject.get("allowedValues")==null) return null;
+			if (!(parameterObject.get("allowedValues") instanceof JsonArray)) return null;
+			JsonArray choices = (JsonArray) parameterObject.get("allowedValues");
+			if (choices.size()==0) return null;
+			ObservableList<String> result = FXCollections.observableArrayList();
+			choices.forEach((choice) -> result.add(choice.getValue("")));
+			return result;
 		}
-		// make no change
-		change.setText("");
-		change.setRange( change.getRangeStart(),change.getRangeStart());
-		return change;
-	};
+	}
 
 	/**
 	 * initialize()
@@ -113,24 +131,94 @@ public class ParameterPaneController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		tableColumnParameterName.setCellValueFactory(new PropertyValueFactory<>("name"));
-		//tableColumnParameterName.setCellFactory(TextFieldTableCell.forTableColumn());
 		tableColumnParameterName.setSortable(false);
 		tableColumnParameterName.setEditable(false);
 
 		tableColumnParameterType.setCellValueFactory(new PropertyValueFactory<>("type"));
-		//tableColumnParameterType.setCellFactory(TextFieldTableCell.forTableColumn());
 		tableColumnParameterType.setSortable(false);
 		tableColumnParameterType.setEditable(false);
 
-		// TODO: Create custom cell factory that builds either a list box or a textedit box based on type
-		// TODO: Create custom cell factory that includes tool tips (description max/min)
-		// TODO: create a text formatter that changes the color of the textbox if the value is invalid
 		tableColumnParameterValue.setCellValueFactory(new PropertyValueFactory<>("value"));
-		tableColumnParameterValue.setCellFactory(ValidatedTextFieldTableCell.forTableColumn(numericOnlyOperator));
-		tableColumnParameterValue.setCellFactory(TextFieldTableCell.forTableColumn());
+		tableColumnParameterValue.setCellFactory(combobox -> {
+			// create a new list for each combo box.  This will allow the drop-down options to be
+			// different for each row.
+			ObservableList<String> list = FXCollections.observableArrayList();
+			return new UniqueComboBoxTableCell<>(null, list);
+		});
 		tableColumnParameterValue.setSortable(false);
 
 		tableViewParameters.setEditable(true);
+	}
+
+	/**
+	 * isValueValid
+	 * check to see if the cell value is of the right format and
+	 * range.
+	 * @param newValue - the value to check
+	 * @param paramObject - the parameter object for this object
+	 * @returns true if the value is valid, otherwise, false.
+	 */
+	private boolean isValueValid(String newValue, JsonObject paramObject) {
+		switch (paramObject.getValue("type")) {
+			case "integer":
+				// check to make sure the new value is a numeric format
+				if (!App.isInteger(newValue)) {
+					return false;
+				}
+				int valueInteger = Integer.parseInt(newValue,10);
+				// check against the maximum and minimum values
+				if ((paramObject.get("maxValue") != null) &&
+						(paramObject.getValue("maxValue")!=null) &&
+						(!paramObject.getValue("maxValue").toLowerCase().contains("null"))) {
+					int maxValue = paramObject.getInteger("maxValue");
+					if (valueInteger > maxValue) {
+						return false;
+					}
+				}
+				if ((paramObject.get("minValue") != null) &&
+						(paramObject.getValue("minValue")!=null) &&
+						(!paramObject.getValue("minValue").toLowerCase().contains("null"))) {
+					int minValue = paramObject.getInteger("minValue");
+					if (valueInteger < minValue) {
+						return false;
+					}
+				}
+				break;
+			case "real":
+				// check to make sure the new value is a numeric format
+				if (!App.isFloat(newValue)) {
+					// regex failed
+					return false;
+				}
+				double valueDouble = Double.parseDouble(newValue);
+				// check against the maximum and minimum values
+				if ((paramObject.get("maxValue") != null) &&
+						(paramObject.getValue("maxValue")!=null) &&
+						(!paramObject.getValue("maxValue").toLowerCase().contains("null"))) {
+					double maxValue = paramObject.getDouble("maxValue");
+					if (valueDouble > maxValue) {
+						return false;
+					}
+				}
+				if ((paramObject.get("minValue") != null) &&
+						(paramObject.getValue("minValue")!=null) &&
+						(!paramObject.getValue("minValue").toLowerCase().contains("null"))) {
+					double minValue = paramObject.getDouble("minValue");
+					if (valueDouble < minValue) {
+						return false;
+					}
+				}
+				break;
+			case "enum":
+				// since enums are assigned from a choiceBox, there is no need
+				// to check the value specifically - just make sure it is not
+				// empty or null.
+				if (newValue == null) return false;
+				if (newValue.equals("")) return false;
+				break;
+			default:  // assume string
+		}
+		return true;
 	}
 
 	/**
@@ -140,58 +228,13 @@ public class ParameterPaneController implements Initializable {
 	 * @param e - a Cell Edit Event for the cell.
 	 *
 	 */
-	@FXML private void valueCellCommit(TableColumn.CellEditEvent e) {
+	@FXML private void onValueCommit(TableColumn.CellEditEvent e) {
 		int row = e.getTablePosition().getRow();
 		ParameterTableInfo info = (ParameterTableInfo)e.getTableView().getItems().get(row);
 		String newValue = (String)e.getNewValue();
 
-		// TODO - commit the change to json only if there are no errors
-		// TODO - abort the property value commit if there are errors
-		// TODO - Move this code to a text checker
-		// TODO - create a checker member function
-		switch (info.getType()) {
-			case "integer":
-				break;
-			case "real":
-				// check to make sure the string is a numeric format
-				if (!newValue.matches("^-?\\d+(\\.\\d+(e\\d+)?)?$")) {
-					// regex failed
-					Alert alertDlg = new Alert(Alert.AlertType.ERROR);
-					alertDlg.setContentText("Entry must be a valid real number");
-					alertDlg.show();
-					return;
-				}
-				double valueDouble = Double.parseDouble(newValue);
-				// check against the maximum and minimum values
-				if ((info.getJsonObject().get("maxValue") != null) &&
-					(info.getJsonObject().getValue("maxValue")!=null) &&
-					(!info.getJsonObject().getValue("maxValue").toLowerCase().contains("null"))) {
-					double maxValue = info.getJsonObject().getDouble("maxValue");
-					if (valueDouble > maxValue) {
-						Alert alertDlg = new Alert(Alert.AlertType.ERROR);
-						alertDlg.setContentText("Entry must be equal or less than "+ maxValue);
-						alertDlg.show();
-						// set the cell value to the old value
-						return;
-					}
-				}
-				if ((info.getJsonObject().get("minValue") != null) &&
-					(info.getJsonObject().getValue("minValue")!=null) &&
-					(!info.getJsonObject().getValue("minValue").toLowerCase().contains("null"))) {
-					double minValue = info.getJsonObject().getDouble("minValue");
-					if (valueDouble < minValue) {
-						Alert alertDlg = new Alert(Alert.AlertType.ERROR);
-						alertDlg.setContentText("Entry must be equal or greater than "+ minValue);
-						alertDlg.show();
-						return;
-					}
-				}
-			case "enum":
-			default:  // assume string
-				// There is no format or range checking for these types
-				// just update the json value
-				((JsonValue)info.getJsonObject().get("value")).set(newValue);
-		}
+		((JsonValue) info.getJsonObject().get("value")).set(newValue);
+		updateControls();
 	}
 
 	/** updateControls()
@@ -201,13 +244,15 @@ public class ParameterPaneController implements Initializable {
 	private void updateControls()
 	{
 		// update the tableview
-		tableViewParameters.getItems().clear();
 		for (int i=0;i<jsonParameters.size();i++) {
 			JsonObject parameter = (JsonObject)jsonParameters.get(i);
 			JsonObject capParam = (JsonObject)jsonCapabilitiesParameters.get(i);
-			ParameterTableInfo info = new ParameterTableInfo(parameter, capParam);
-			// TODO - set the color of the row if the value is invalid
-			tableViewParameters.getItems().add(info);
+			if (i<tableViewParameters.getItems().size()) {
+				tableViewParameters.getItems().get(i).update(parameter, capParam);
+			} else {
+				ParameterTableInfo info = new ParameterTableInfo(parameter, capParam);
+				tableViewParameters.getItems().add(info);
+			}
 		}
 	}
 
@@ -223,7 +268,9 @@ public class ParameterPaneController implements Initializable {
 		// do any configuration required prior to making the pane visible
 		jsonParameters = parameters;
 		jsonCapabilitiesParameters = capabilitiesParameters;
+		tableViewParameters.getItems().clear();
 
 		updateControls();
 	}
+
 }

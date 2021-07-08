@@ -29,7 +29,6 @@ import jsonreader.JsonResultFactory;
 import jsonreader.JsonValue;
 
 public class MainScreenController implements Initializable {
-	// TODO Auto-generated method stub
 	JsonObject appConfig;
 	JsonObject hardware;
 	JsonObject sensorLib;
