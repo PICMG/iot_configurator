@@ -1,5 +1,6 @@
 package configurator;
 
+import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TextField;
@@ -16,9 +17,6 @@ import java.util.function.UnaryOperator;
  * @param <S> The type of data that is held in the table
  * @param <T> The type of data stored in the cell
  *
- * TODO: Change of focus during editing does not commit any changes - this
- *           is a well known feature.  Modify the functionality to commit on
- *           loss of focus
  */
 public class ValidatedTextFieldTableCell<S,T> extends TextFieldTableCell<S,T> {
     private TextFormatter<String> formatter;        // the text formatter

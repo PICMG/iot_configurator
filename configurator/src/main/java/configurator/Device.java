@@ -616,8 +616,6 @@ public class Device {
 			file.close();
 			System.out.println("wrote to file");
 	      } catch (IOException e) {
-	    	  // TODO Auto-generated catch block
-	    	  e.printStackTrace();
 	      }
 	}
 }
