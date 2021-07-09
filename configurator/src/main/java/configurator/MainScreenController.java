@@ -499,7 +499,8 @@ public class MainScreenController implements Initializable {
 	                    	case "stateEffecter":
 	                    		clearPanes();
 	                    		App.stateEffecterContent.setVisible(true);
-	                    		break;
+								App.stateEffecterController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray)stateLib.get("stateSets"));
+								break;
 	                    	case "stateSensor":
 	                    		clearPanes();
 	                    		App.stateSensorContent.setVisible(true);

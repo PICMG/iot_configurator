@@ -783,7 +783,7 @@
 					},
 					{
 						"name": "OutputInConditionStop",
-						"description": "Action to take when in the 'ConditionStopâ' motion state.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
+						"description": "Action to take when in the 'ConditionStopï¿½' motion state.  Valid values are 'brake' (apply mechanical brake), 'hold' (hold the position using the motion controller), and 'coast' (motion control is deactivated).",
 						"type": "string",
 						"value": null,
 						"allowedValues": [
