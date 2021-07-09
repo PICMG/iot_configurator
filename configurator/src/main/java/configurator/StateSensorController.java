@@ -114,12 +114,17 @@ public class StateSensorController implements Initializable {
 
 					// if stateWhenHigh is-non null, set value according to json. Else, allow for population.
 					String jsonStr = device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenHigh");
-					jsonStr = jsonStr.replaceAll("\\r","");
-					jsonStr = jsonStr.replaceAll("\\n","");
-					jsonStr = jsonStr.replaceAll("\\t","");
-					jsonStr = jsonStr.replaceAll(" ","");
-
-					if(!jsonStr.equals("null")&&jsonStr!=null){
+					boolean isStrNull = false;
+					if(jsonStr!=null) {
+						jsonStr = jsonStr.replaceAll("\\r", "");
+						jsonStr = jsonStr.replaceAll("\\n", "");
+						jsonStr = jsonStr.replaceAll("\\t", "");
+						jsonStr = jsonStr.replaceAll(" ", "");
+						if(jsonStr.equals("null")){
+							isStrNull=true;
+						}
+					}
+					if(!isStrNull&&jsonStr!=null){
 						highInputCBox.getItems().clear();
 						Iterator<JsonAbstractValue> it = stateSets.iterator();
 						while (it.hasNext()) {

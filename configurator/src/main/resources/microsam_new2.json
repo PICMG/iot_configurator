@@ -291,13 +291,14 @@
 						"includeInPdr": true,				
 						"required": true,
 						"isVirtual": false,
-						"description": "Global interlock ouput binding",
+						"description": "Global interlock output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "interlock_out",
 						"stateSetVendor": 412,
 						"stateSet": 96,
+						"defaultState": 1,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2
 					},
 					{
 						"bindingType": "stateSensor",
@@ -323,6 +324,7 @@
 						"boundChannel": "trigger_out",
 						"stateSetVendor": 12634,
 						"stateSet": 2,
+						"defaultState": null,
 						"stateWhenLow": 1,
 						"stateWhenHigh": 2 
 					},
@@ -387,7 +389,8 @@
 						"allowedInterfaceTypes": ["digital_out"],
 						"stateSetVendor": null,
 						"stateSet": null,
-						"stateWhenHigh": null, 
+						"defaultState": null,
+						"stateWhenHigh": null,
 						"stateWhenLow" : null 
 					}
 				],
@@ -435,6 +438,7 @@
 						"boundChannel": "interlock_out",
 						"stateSetVendor": 412,
 						"stateSet": 96,
+						"defaultState": null,
 						"stateWhenLow": 1,
 						"stateWhenHigh": 2 
 					},
@@ -463,6 +467,7 @@
 						"boundChannel": "trigger_out",
 						"stateSetVendor": 12634,
 						"stateSet": 2,
+						"defaultState": null,
 						"stateWhenLow": 1,
 						"stateWhenHigh": 2 
 					},
@@ -549,6 +554,7 @@
 						"boundChannel": "interlock_out",
 						"stateSetVendor": 412,
 						"stateSet": 96,
+						"defaultState": null,
 						"stateWhenLow": 1,
 						"stateWhenHigh": 2 
 					},
@@ -577,6 +583,7 @@
 						"boundChannel": "trigger_out",
 						"stateSetVendor": 12634,
 						"stateSet": 2,
+						"defaultState": null,
 						"stateWhenLow": 1,
 						"stateWhenHigh": 2 
 					},
@@ -690,6 +697,7 @@
 						"boundChannel": null,
 						"stateSetVendor": 12634,
 						"stateSet": 32769,
+						"defaultState": null,
 						"stateWhenLow": null,
 						"stateWhenHigh": null 
 					},
@@ -871,6 +879,7 @@
 						"boundChannel": "interlock_out",
 						"stateSetVendor": 412,
 						"stateSet": 96,
+						"defaultState": null,
 						"stateWhenLow": 1,
 						"stateWhenHigh": 2 
 					},
@@ -899,6 +908,7 @@
 						"boundChannel": "trigger_out",
 						"stateSetVendor": 12634,
 						"stateSet": 2,
+						"defaultState": null,
 						"stateWhenLow": 1,
 						"stateWhenHigh": 2 
 					},
@@ -993,6 +1003,7 @@
 						"boundChannel": null,
 						"stateSetVendor": 12634,
 						"stateSet": 32769,
+						"defaultState": null,
 						"stateWhenLow": null,
 						"stateWhenHigh": null 
 					},
