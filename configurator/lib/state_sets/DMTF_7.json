@@ -1,0 +1,26 @@
+{
+	"name":"Redundancy Entity Role",
+	"stateSetId":7,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Is Hot Spare"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["In Redundancy Group"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["In (non-redundant) Group"]
+		}
+	]
+}
