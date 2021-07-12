@@ -1,0 +1,19 @@
+{
+	"name":"encoder_cui_amt113q-0400-4000-s",
+	"manufacturer":"CUI Devices",
+	"partNumber":"AMT102-0400-N2000-S",
+	"description":"Encoder, modular, 400ppr, no index",
+	"supportedInterfaces":["quadrature_in"],
+	"maxSampleRate":null,
+	"baseUnit": 38,
+	"unitModifier":0,
+	"rateUnit": 0,
+	"auxUnit": 0,
+	"auxUnitModifier":0,
+	"auxRateUnit": 0,
+	"rel":"multipliedBy",
+	"plusAccuracy": 0.0025,
+	"minusAccuracy": 0.0025,
+	"outputUnits": "Counts",
+	"responseCurve":[{"in":0,"out":0},{"in":1,"out":400}]
+}

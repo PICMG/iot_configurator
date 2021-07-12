@@ -1,9 +1,12 @@
 package org.picmg.jsonreader;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 /*
@@ -83,7 +86,7 @@ public class JsonResultFactory {
     
     /**
      * entry point for the builder.  Builds a JsonAbstractValue from a file
-     * @param str - the JSON formatted string that specifies the structure to build
+     * @param resource - the JSON formatted string that specifies the structure to build
      * @return A JsonAbstractValue structure that matches the input string
      * @throws  
      */
@@ -96,6 +99,30 @@ public class JsonResultFactory {
         String st = reader.lines().collect(Collectors.joining(System.lineSeparator()));
         // convert the string that was read into a JsonObject
         return build(st.toString());
+    }
+
+    /**
+     * entry point for the builder.  Builds a JsonAbstractValue from a file
+     * @param path - a path object to the file to read.
+     * @return A JsonAbstractValue structure that matches the input string
+     * @throws
+     */
+    public JsonAbstractValue buildFromFile(Path path) {
+        try {
+            // open the file for reading
+            InputStream is = Files.newInputStream(path);
+            if (is == null) return null;
+            InputStreamReader isr = new InputStreamReader(is,StandardCharsets.UTF_8);
+            BufferedReader reader = new BufferedReader(isr);
+
+            // read the entire file
+            String st = reader.lines().collect(Collectors.joining(System.lineSeparator()));
+
+            // convert the string that was read into a JsonObject
+            return build(st.toString());
+        } catch (IOException e) {
+            return null;
+        }
     }
 
     /*

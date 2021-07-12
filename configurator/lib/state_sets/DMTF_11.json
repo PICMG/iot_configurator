@@ -1,0 +1,44 @@
+{
+	"name":"Operational Running State",
+	"stateSetId":11,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Starting"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Stopping"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["Stopped"]
+		},
+		{
+			"minStateValue":4,
+			"maxStateValue":4,
+			"languageTags":["en"],
+			"stateName":["In Service"]
+		},
+		{
+			"minStateValue":5,
+			"maxStateValue":5,
+			"languageTags":["en"],
+			"stateName":["Aborted"]
+		},
+		{
+			"minStateValue":6,
+			"maxStateValue":6,
+			"languageTags":["en"],
+			"stateName":["Dormant"]
+		}
+	]
+}
