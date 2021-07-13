@@ -7,6 +7,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -15,8 +16,8 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -29,11 +30,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
 public class SensorsTabController implements Initializable {
 	@FXML private TableView<SensorTableData> SensorTableView;
-	@FXML private TableColumn<SensorTableData, String> filenameColumn;
 	@FXML private TableColumn<SensorTableData, String> manufacturerColumn;
 	@FXML private TableColumn<SensorTableData, String> modelColumn;
 	@FXML private TableColumn<SensorTableData, String> typeColumn;
@@ -173,11 +174,29 @@ public class SensorsTabController implements Initializable {
 		public String getOutputUnits() {return outputUnits.get();}
 		public void setOutputUnits(String outputUnits) {this.outputUnits.set(outputUnits);}
 		public ArrayList<Point2D> getOutputCurve() {return outputCurve;}
-		public void setOutputCurve(ArrayList<Point2D> outputCurve) {
-			this.outputCurve.clear();
-			for (Point2D point:outputCurve) {
-				Point2D p = new Point2D(point.getX(),point.getY());
+
+		public String getType() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(baseUnit.get());
+			if ((!auxUnit.get().equals("None"))&&(!auxUnit.get().equals("Unspecified"))) {
+				if (rel.get().equals("multipliedBy")) {
+					sb.append("_");
+				} else {
+					sb.append("_per_");
+				}
+				sb.append(auxUnit.get());
 			}
+			if (!rateUnit.get().equals("None")) {
+				sb.append("_");
+				sb.append(rateUnit.get());
+			}
+			if (!auxRateUnit.get().equals("None")) {
+				sb.append("_");
+				sb.append(auxRateUnit.get());
+			}
+			// remove any special characters from the string
+			String type = sb.toString();
+			return type.replaceAll("[^a-z,A-Z,0-9]","_");
 		}
 
 		// construction
@@ -238,26 +257,26 @@ public class SensorsTabController implements Initializable {
 			if (!((JsonObject)json).get("responseCurve").getClass().isAssignableFrom(JsonArray.class)) return;
 
 			// make sure numeric types are actual numbers
-			if (!App.isUnsignedInteger(((JsonObject)json).getValue("baseUnit"))) return;
-			if (!App.isUnsignedInteger(((JsonObject)json).getValue("auxUnit"))) return;
-			if (!App.isUnsignedInteger(((JsonObject)json).getValue("rateUnit"))) return;
-			if (!App.isUnsignedInteger(((JsonObject)json).getValue("auxRateUnit"))) return;
-			if (!App.isInteger(((JsonObject)json).getValue("unitModifier"))) return;
-			if (!App.isInteger(((JsonObject)json).getValue("auxUnitModifier"))) return;
-			if (!App.isFloat(((JsonObject)json).getValue("plusAccuracy"))) return;
-			if (!App.isFloat(((JsonObject)json).getValue("minusAccuracy"))) return;
-			if ((((JsonObject)json).getValue("maxSampleRate")!=null)&&
-				   (!App.isUnsignedInteger(((JsonObject)json).getValue("maxSampleRate")))) return;
+			if (!App.isUnsignedInteger(json.getValue("baseUnit"))) return;
+			if (!App.isUnsignedInteger(json.getValue("auxUnit"))) return;
+			if (!App.isUnsignedInteger(json.getValue("rateUnit"))) return;
+			if (!App.isUnsignedInteger(json.getValue("auxRateUnit"))) return;
+			if (!App.isInteger(json.getValue("unitModifier"))) return;
+			if (!App.isInteger(json.getValue("auxUnitModifier"))) return;
+			if (!App.isFloat(json.getValue("plusAccuracy"))) return;
+			if (!App.isFloat(json.getValue("minusAccuracy"))) return;
+			if ((json.getValue("maxSampleRate")!=null)&&
+				   (!App.isUnsignedInteger(json.getValue("maxSampleRate")))) return;
 			
 			// check the values of the enumerated fields to make sure they match one of the
 			// possible selections
-			if ((((JsonObject)json).getInteger("baseUnit"))>=unitsChoices.length) return;
-			if ((((JsonObject)json).getInteger("auxUnit"))>=unitsChoices.length) return;
-			if ((((JsonObject)json).getInteger("rateUnit"))>=rateChoices.length) return;
-			if ((((JsonObject)json).getInteger("auxRateUnit"))>=rateChoices.length) return;
+			if ((json.getInteger("baseUnit"))>=unitsChoices.length) return;
+			if ((json.getInteger("auxUnit"))>=unitsChoices.length) return;
+			if ((json.getInteger("rateUnit"))>=rateChoices.length) return;
+			if ((json.getInteger("auxRateUnit"))>=rateChoices.length) return;
 			boolean foundMatch = false;
-			for (int i=0;i<relChoices.length;i++) {
-				if (relChoices[i].equals(((JsonObject)json).getValue("rel"))) {
+			for (String relChoice : relChoices) {
+				if (relChoice.equals(json.getValue("rel"))) {
 					foundMatch = true;
 					break;
 				}
@@ -266,30 +285,30 @@ public class SensorsTabController implements Initializable {
 
 			//====================
 			// Json checks are done.  Now, populate the object from the json data
-			name.set(((JsonObject)json).getValue("name"));
-			manufacturer.set(((JsonObject)json).getValue("manufacturer"));
-			model.set(((JsonObject)json).getValue("partNumber"));
-			description.set(((JsonObject)json).getValue("description"));
-			if (((JsonObject)json).getValue("maxSampleRate")!=null) {
-				maxSampleRate.set(((JsonObject)json).getValue("maxSampleRate"));
+			name.set(json.getValue("name"));
+			manufacturer.set(json.getValue("manufacturer"));
+			model.set(json.getValue("partNumber"));
+			description.set(json.getValue("description"));
+			if (json.getValue("maxSampleRate")!=null) {
+				maxSampleRate.set(json.getValue("maxSampleRate"));
 			} else {
 				maxSampleRate.set("0");
 			}
-			baseUnit.set(unitsChoices[((JsonObject)json).getInteger("baseUnit")]);
-			unitModifier.set(((JsonObject)json).getValue("unitModifier"));
-			rateUnit.set(rateChoices[((JsonObject)json).getInteger("rateUnit")]);
-			auxUnit.set(unitsChoices[((JsonObject)json).getInteger("auxUnit")]);
-			auxModifier.set(((JsonObject)json).getValue("auxUnitModifier"));
-			rel.set(((JsonObject)json).getValue("rel"));
-			auxRateUnit.set(rateChoices[((JsonObject)json).getInteger("auxRateUnit")]);
-			plusAccuracy.set(((JsonObject)json).getValue("plusAccuracy"));
-			minusAccuracy.set(((JsonObject)json).getValue("minusAccuracy"));
-			outputUnits.set(((JsonObject)json).getValue("outputUnits"));
+			baseUnit.set(unitsChoices[json.getInteger("baseUnit")]);
+			unitModifier.set(json.getValue("unitModifier"));
+			rateUnit.set(rateChoices[json.getInteger("rateUnit")]);
+			auxUnit.set(unitsChoices[json.getInteger("auxUnit")]);
+			auxModifier.set(json.getValue("auxUnitModifier"));
+			rel.set(json.getValue("rel"));
+			auxRateUnit.set(rateChoices[json.getInteger("auxRateUnit")]);
+			plusAccuracy.set(json.getValue("plusAccuracy"));
+			minusAccuracy.set(json.getValue("minusAccuracy"));
+			outputUnits.set(json.getValue("outputUnits"));
 			// set the supported interfaces values
 			JsonArray interfaces = (JsonArray)((JsonObject)json).get("supportedInterfaces");
-			for (int i=0;i<interfaces.size();i++) {
-				if (!interfaces.get(i).getClass().isAssignableFrom(JsonValue.class)) continue;
-				JsonValue interfaceName = (JsonValue)interfaces.get(i);
+			for (JsonAbstractValue anInterface : interfaces) {
+				if (!anInterface.getClass().isAssignableFrom(JsonValue.class)) continue;
+				JsonValue interfaceName = (JsonValue) anInterface;
 				switch (interfaceName.getValue("")) {
 					case "analog_in":
 						analog.set(true);
@@ -313,15 +332,15 @@ public class SensorsTabController implements Initializable {
 			// set the input curve data point values
 			JsonArray datapoints = (JsonArray)((JsonObject)json).get("responseCurve");
 			int datapointCount = 0;
-			for (int i=0;i<datapoints.size();i++) {
-				if (!datapoints.get(i).getClass().isAssignableFrom(JsonObject.class)) continue;
-				JsonObject datapoint = (JsonObject)datapoints.get(i);
-				if (!datapoint.containsKey("in"))  continue;
+			for (JsonAbstractValue jsonAbstractValue : datapoints) {
+				if (!jsonAbstractValue.getClass().isAssignableFrom(JsonObject.class)) continue;
+				JsonObject datapoint = (JsonObject) jsonAbstractValue;
+				if (!datapoint.containsKey("in")) continue;
 				if (!datapoint.containsKey("out")) continue;
 				if (!App.isFloat(datapoint.getValue("in"))) continue;
 				if (!App.isFloat(datapoint.getValue("out"))) continue;
 				datapointCount++;
-				Point2D p = new Point2D(datapoint.getDouble("in"),datapoint.getDouble("out"));
+				Point2D p = new Point2D(datapoint.getDouble("in"), datapoint.getDouble("out"));
 				outputCurve.add(p);
 			}
 			// there must be at least two data points
@@ -329,6 +348,98 @@ public class SensorsTabController implements Initializable {
 
 			// the structure is valid - set the flag
 			valid = true;
+		}
+
+		/**
+		 * SaveToFile()
+		 * Save the sensor data to the specified file path
+		 */
+		public void SaveToFile(String path) {
+			// create the Json Object
+			JsonObject json = new JsonObject();
+			
+			// check to make sure the json has all the right fields
+			json.put("name", new JsonValue(name.get()));
+			json.put("manufacturer", new JsonValue(manufacturer.get()));
+			json.put("partNumber", new JsonValue(model.get()));
+			json.put("description", new JsonValue(description.get()));
+			json.put("supportedInterfaces", new JsonValue());
+			{
+				String str = "0";
+				for (int i=0;i<unitsChoices.length;i++) {
+					if (unitsChoices[i].equals(baseUnit.get())) {
+						str = Integer.toString(i);
+						break;
+					}
+				}
+				json.put("baseUnit", new JsonValue(str));
+			}
+			if ((maxSampleRate.get().isBlank())||((App.isFloat(maxSampleRate.get())&&(Double.parseDouble(maxSampleRate.get())<=0)))) {
+				json.put("maxSampleRate", new JsonValue("null"));
+			} else json.put("maxSampleRate", new JsonValue(maxSampleRate.get()));
+			json.put("unitModifier", new JsonValue(unitModifier.get()));
+			{
+				String str = "0";
+				for (int i=0;i<rateChoices.length;i++) {
+					if (unitsChoices[i].equals(rateUnit.get())) {
+						str = Integer.toString(i);
+						break;
+					}
+				}
+				json.put("rateUnit", new JsonValue(str));
+			}
+			{
+				String str = "0";
+				for (int i=0;i<unitsChoices.length;i++) {
+					if (unitsChoices[i].equals(auxUnit.get())) {
+						str = Integer.toString(i);
+						break;
+					}
+				}
+				json.put("auxUnit", new JsonValue(str));
+			}
+			json.put("auxUnitModifier", new JsonValue(auxModifier.get()));
+			json.put("rel", new JsonValue(rel.get()));
+			{
+				String str = "0";
+				for (int i=0;i<rateChoices.length;i++) {
+					if (unitsChoices[i].equals(auxRateUnit.get())) {
+						str = Integer.toString(i);
+						break;
+					}
+				}
+				json.put("auxRateUnit", new JsonValue(str));
+			}
+			json.put("plusAccuracy", new JsonValue(plusAccuracy.get()));
+			json.put("minusAccuracy", new JsonValue(minusAccuracy.get()));
+			json.put("outputUnits", new JsonValue(outputUnits.get()));
+			JsonArray responseData = new JsonArray();
+			for (Point2D point:outputCurve) {
+				JsonObject obj = new JsonObject();
+				obj.put("in", new JsonValue(Double.toString(point.getX())));
+				obj.put("out", new JsonValue(Double.toString(point.getY())));
+				responseData.add(obj);
+			}
+			json.put("responseCurve", responseData);
+
+			JsonArray interfaces = new JsonArray();
+			if (analog.get()) interfaces.add(new JsonValue("analog_in"));
+			if (digital.get()) interfaces.add(new JsonValue("digital_in"));
+			if (count.get()) interfaces.add(new JsonValue("count_in"));
+			if (rate.get()) interfaces.add(new JsonValue("rate_in"));
+			if (quadrature.get()) interfaces.add(new JsonValue("quadrature_in"));
+			json.put("supportedInterfaces", interfaces);
+
+			// write the json to the file
+			try {
+				FileWriter fw;
+				fw = new FileWriter(path);
+				BufferedWriter br = new BufferedWriter(fw);
+				json.writeToFile(br);
+				br.close();
+			} catch (IOException e) {
+				System.out.println("error writing file");
+			}
 		}
 
 		/**
@@ -412,6 +523,26 @@ public class SensorsTabController implements Initializable {
 		}
 	}
 
+	/**
+	 * updateName()
+	 * update the name field based on data within the current working set.
+	 */
+	public void updateName() {
+		String name = workingData.getManufacturer() +
+				'-' +
+				workingData.getModel() +
+				'_' +
+				workingData.getType();
+		nameTextField.setText(name.replaceAll("[^a-z,A-Z,0-9]","_"));
+		workingData.setName(name.replaceAll("[^a-z,A-Z,0-9]","_"));
+	}
+
+	/**
+	 * isValid()
+	 * return true if the current working data set is valid.  This check is performed by
+	 * evaluating each "indicator light" to see if any are visible.
+	 * @return true if valid, otherwise, false
+	 */
 	public boolean isValid() {
 		if (manufacturerImage.isVisible()) return false;
 		if (unitModifierImage.isVisible()) return false;
@@ -438,6 +569,7 @@ public class SensorsTabController implements Initializable {
 		else manufacturerImage.setVisible(false);
 		workingData.setManufacturer(manufacturerTextfield.getText());
 		modified = true;
+		updateName();
 		saveChangesButton.setDisable(!isValid());
 	}
 
@@ -447,6 +579,7 @@ public class SensorsTabController implements Initializable {
 		else modelImage.setVisible(false);
 		workingData.setModel(partNumberTextField.getText());
 		modified = true;
+		updateName();
 		saveChangesButton.setDisable(!isValid());
 	}
 
@@ -610,14 +743,52 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onSaveChangesAction(ActionEvent event) {
-
+		String path = System.getProperty("user.dir")+"/lib/sensors/" + workingData.getName()+".json";
+		workingData.SaveToFile(path);
+		modified = false;
+		saveChangesButton.setDisable(true);
+		initializeTable();
+		selectDefaultSensor();
 	}
 
+	Tooltip createTooltip(String tip) {
+		Tooltip tt = new Tooltip(tip);
+		tt.setWrapText(true);
+		return tt;
+	}
+	/**
+	 * setTooltips()
+	 * set the tooltip for each control
+	 */
+	private void setTooltips() {
+		nameTextField.setTooltip(createTooltip("The name of the sensor data file (not editable)"));
+		manufacturerTextfield.setTooltip(createTooltip("The name of the manufacturer of the sensor"));
+		partNumberTextField.setTooltip(createTooltip("The manufacturer's part number or model number for the sensor"));
+		descriptionTextArea.setTooltip(createTooltip("A brief description of the sensor."));
+		analogCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
+		digitalCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
+		countCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
+		rateCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
+		quadratureCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
+		maxSampleRateTextfield.setTooltip(createTooltip("The maximum sample rate for the sensor (in Hertz).  Leave blank or set to 0 for no maximum"));
+		baseUnitChoicebox.setTooltip(createTooltip("The base units for the sensor"));
+		rateUnitChoicebox.setTooltip(createTooltip("The rate units for the sensor (if any)"));
+		auxUnitChoicebox.setTooltip(createTooltip("The auxiliary units for the sensor (if any)"));
+		relChoicebox.setTooltip(createTooltip("The relationship between the base units and the auxiliary units of the sensor"));
+		auxRateChoicebox.setTooltip(createTooltip("The auxiliary rate units for the sensor (if any)"));
+		unitModifierTextField.setTooltip(createTooltip("The power of 10 modifier for the base units"));
+		auxUnitModifierTextfield.setTooltip(createTooltip("The power of 10 modifier for the auxiliary units"));
+		plusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the positive accuracy of the sensor"));
+		minusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the negative accuracy of the sensor"));
+		outputUnitsTextfield.setTooltip(createTooltip("The output electrical units of the sensor"));
+	}
+	
 	/**
 	 * initializeTable()
 	 * initialize the contents of the table with contents from the library folder
 	 */
 	private void initializeTable() {
+		SensorTableView.getItems().clear();
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/sensors"))) {
 			for (Path path : stream) {
 				if (!Files.isDirectory(path)) {
@@ -653,6 +824,7 @@ public class SensorsTabController implements Initializable {
 		auxRateChoicebox.setValue(data.getAuxRateUnit());
 		plusAccuracyTextfield.setText(data.getPlusAccuracy());
 		minusAccuracyTextfield.setText(data.getMinusAccuracy());
+		outputUnitsTextfield.setText(data.getOutputUnits());
 	}
 
 	public void clearIndicators() {
@@ -674,13 +846,20 @@ public class SensorsTabController implements Initializable {
 		auxRateUnitImage.setVisible(false);
 	}
 
+	private void selectDefaultSensor() {
+		SensorTableView.getSelectionModel().select(0);
+		SensorTableData selecteddata = SensorTableView.getSelectionModel().getSelectedItem();
+		workingData.set(selecteddata);
+		setSensorData(selecteddata);
+		modified = false;
+		saveChangesButton.setDisable(true);
+	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		filenameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-		filenameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 		manufacturerColumn.setCellValueFactory(new PropertyValueFactory<>("manufacturer"));
 		modelColumn.setCellValueFactory(new PropertyValueFactory<>("model"));
-		typeColumn.setCellValueFactory(new PropertyValueFactory<>("baseUnit"));
+		typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
 
 		// set up the table view with sensors from the library
 		initializeTable();
@@ -696,26 +875,43 @@ public class SensorsTabController implements Initializable {
 		descriptionTextArea.setWrapText(true);
 
 		// set up the sensor configuration with default data
-		SensorTableView.getSelectionModel().select(0);
-		SensorTableData selecteddata = SensorTableView.getSelectionModel().getSelectedItem();
-		workingData.set(selecteddata);
-		setSensorData(selecteddata);
-		modified = false;
-		saveChangesButton.setDisable(true);
+		selectDefaultSensor();
 
 		// clear error indicators
 		clearIndicators();
 
 		// set tooltips for each control
+		setTooltips();
 
+		//====================================
 		// set any additional listeners
+		//====================================
+		// add an event filter to the tableview to prevent changing selections without permission
+		SensorTableView.addEventFilter(
+				MouseEvent.MOUSE_PRESSED,
+				new EventHandler<MouseEvent>() {
+					public void handle(final MouseEvent mouseEvent) {
+						if (modified) {
+							Alert alert = new Alert(Alert.AlertType.WARNING,
+									"If you select a new sensor now, unsaved work on the existing sensor will be lost.",
+									ButtonType.OK, ButtonType.CANCEL);
+							alert.setTitle("Loss of Data Warning");
+							Optional<ButtonType> result = alert.showAndWait();
+							if (result.get() != ButtonType.OK) {
+								mouseEvent.consume();
+							}
+						}
+					}
+				});
+		// select new sensor from table view
 		ObservableList<SensorTableData> tableSelection = SensorTableView.getSelectionModel().getSelectedItems();
 		tableSelection.addListener(new ListChangeListener<SensorTableData>() {
 			@Override
-			public void onChanged(Change<? extends SensorTableData> change) {
+			public void onChanged(Change<? extends SensorTableData> c) {
 				// here if a new selection has been made from the table - populate the
 				// controls with the data
-				SensorTableData data = change.getList().get(0);
+				SensorTableData data = SensorTableView.getSelectionModel().getSelectedItem();
+				if (data==null) return;
 				workingData.set(data);
 				setSensorData(workingData);
 				clearIndicators();
@@ -723,6 +919,54 @@ public class SensorsTabController implements Initializable {
 				saveChangesButton.setDisable(true);
 			}
 		});
+
+		// selection choice changes for each choice box
+		baseUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observableValue, String oldString, String newString) {
+				workingData.setBaseUnit(newString);
+				updateName();
+				modified = true;
+				saveChangesButton.setDisable(!isValid());
+			}
+		});
+		auxUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observableValue, String oldString, String newString) {
+				workingData.setAuxUnit(newString);
+				updateName();
+				modified = true;
+				saveChangesButton.setDisable(!isValid());
+			}
+		});
+		rateUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observableValue, String oldString, String newString) {
+				workingData.setRateUnit(newString);
+				updateName();
+				modified = true;
+				saveChangesButton.setDisable(!isValid());
+			}
+		});
+		auxRateChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observableValue, String oldString, String newString) {
+				workingData.setAuxRateUnit(newString);
+				updateName();
+				modified = true;
+				saveChangesButton.setDisable(!isValid());
+			}
+		});
+		relChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
+			@Override
+			public void changed(ObservableValue<? extends String> observableValue, String oldString, String newString) {
+				workingData.setRel(newString);
+				updateName();
+				modified = true;
+				saveChangesButton.setDisable(!isValid());
+			}
+		});
+
 		// fire action events if focus is lost on our text fields - this allows the normal action handler
 		// to update and check values.
 		manufacturerTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {

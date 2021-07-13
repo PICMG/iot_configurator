@@ -26,10 +26,9 @@
          <items>
             <TableView fx:id="SensorTableView" prefHeight="738.0" prefWidth="498.0">
               <columns>
-                <TableColumn fx:id="filenameColumn" maxWidth="1.7976931348623157E308" prefWidth="119.0" text="filename" />
-                <TableColumn fx:id="manufacturerColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="132.0" text="manufacturer" />
-                  <TableColumn fx:id="modelColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="113.0" text="model #" />
-                  <TableColumn fx:id="typeColumn" maxWidth="1.7976931348623157E308" prefWidth="133.0" text="type" />
+                <TableColumn fx:id="manufacturerColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="153.0" text="manufacturer" />
+                  <TableColumn fx:id="modelColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="158.0" text="model #" />
+                  <TableColumn fx:id="typeColumn" maxWidth="1.7976931348623157E308" prefWidth="187.0" text="type" />
               </columns>
             </TableView>
             <VBox prefHeight="200.0" prefWidth="100.0">
@@ -69,7 +68,7 @@
                         <Label text="Name" />
                         <Label text="Manufacturer" GridPane.rowIndex="1" />
                         <Label text="Part Number" GridPane.rowIndex="2" />
-                        <TextField fx:id="nameTextField" GridPane.columnIndex="2" />
+                        <TextField fx:id="nameTextField" editable="false" GridPane.columnIndex="2" />
                         <TextField fx:id="manufacturerTextfield" onAction="#onManufacturerAction" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <TextField fx:id="partNumberTextField" onAction="#onPartNumberAction" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <Label text="Description" GridPane.rowIndex="3" />
