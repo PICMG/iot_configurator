@@ -30,7 +30,7 @@ public class JsonValue implements JsonAbstractValue {
 			this.value = new String(val.value);
 		}
 	}
-	
+
     @Override
     /**
      * diagnostic function to dump the value to the system output device
@@ -137,6 +137,14 @@ public class JsonValue implements JsonAbstractValue {
      */
     public boolean writeToFile(BufferedWriter br) {
         boolean isNumber = false;
+        if (value == null) {
+            try {
+                br.append("null");
+            } catch (IOException e) {
+                return false;
+            }
+            return true;
+        }
         try {
             Double.parseDouble(value);
             isNumber = true;
@@ -148,7 +156,7 @@ public class JsonValue implements JsonAbstractValue {
         try {
             if (!isNumber) br.append('"');
             br.append(value);
-            if (!isNumber) br.append('"');            
+            if (!isNumber) br.append('"');
         } catch (IOException ex) {
             return false;
         }

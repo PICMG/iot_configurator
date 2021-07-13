@@ -1,0 +1,20 @@
+{
+	"name":"Trigger State",
+	"stateSetId":1,
+	"vendorIANA":12634,
+	"vendorName":"PICMG",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Trigger Activated"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Trigger Deactivated"]
+		}
+	]
+}

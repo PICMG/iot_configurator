@@ -1,0 +1,26 @@
+{
+	"name":"Profiled Motion Contoller Command State",
+	"stateSetId":5,
+	"vendorIANA":12634,
+	"vendorName":"PICMG",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Start"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Stop"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["Wait"]
+		}
+	]
+}
