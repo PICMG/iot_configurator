@@ -381,7 +381,7 @@ public class SensorsTabController implements Initializable {
 			{
 				String str = "0";
 				for (int i=0;i<rateChoices.length;i++) {
-					if (unitsChoices[i].equals(rateUnit.get())) {
+					if (rateChoices[i].equals(rateUnit.get())) {
 						str = Integer.toString(i);
 						break;
 					}
@@ -403,7 +403,7 @@ public class SensorsTabController implements Initializable {
 			{
 				String str = "0";
 				for (int i=0;i<rateChoices.length;i++) {
-					if (unitsChoices[i].equals(auxRateUnit.get())) {
+					if (rateChoices[i].equals(auxRateUnit.get())) {
 						str = Integer.toString(i);
 						break;
 					}
