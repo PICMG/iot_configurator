@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.layout.BorderPane?>
+
+
+<BorderPane xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.picmg.configurator.responseCurveViewController">
+   <center>
+      <LineChart fx:id="responseChart" legendVisible="false" BorderPane.alignment="CENTER">
+         <xAxis>
+            <NumberAxis label="Input" side="BOTTOM" />
+         </xAxis>
+         <yAxis>
+            <NumberAxis label="Output" side="LEFT" />
+         </yAxis>
+      </LineChart>
+   </center>
+   <padding>
+      <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   </padding>
+</BorderPane>

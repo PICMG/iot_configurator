@@ -1,0 +1,44 @@
+{
+	"name":"Operational Status",
+	"stateSetId":8,
+	"vendorIANA":412,
+	"vendorName":"DMTF",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Normal"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["Degraded"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["Completed"]
+		},
+		{
+			"minStateValue":4,
+			"maxStateValue":4,
+			"languageTags":["en"],
+			"stateName":["Migrating"]
+		},
+		{
+			"minStateValue":5,
+			"maxStateValue":5,
+			"languageTags":["en"],
+			"stateName":["Emigrating"]
+		},
+		{
+			"minStateValue":6,
+			"maxStateValue":6,
+			"languageTags":["en"],
+			"stateName":["Immigrating"]
+		}
+	]
+}

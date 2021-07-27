@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -9,12 +10,13 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="FruPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="configurator.FruPaneController">
+<AnchorPane fx:id="FruPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.picmg.configurator.FruPaneController">
    <children>
       <VBox prefHeight="742.0" prefWidth="518.0">
          <children>
@@ -47,15 +49,23 @@
                   </Label>
                   <ChoiceBox fx:id="choiceBoxFruType" prefHeight="24.0" prefWidth="253.0" GridPane.columnIndex="1" />
                   <TextField fx:id="textFieldOemId" prefHeight="24.0" prefWidth="233.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
+                     <children>
+                        <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#addRow" text="+" />
+                        <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#deleteRow" text=" - " />
+                     </children>
+                  </FlowPane>
                </children>
             </GridPane>
             <ScrollPane prefHeight="637.0" prefWidth="518.0">
                <content>
-                  <TableView fx:id="tableView" prefHeight="622.0" prefWidth="505.0">
+                  <TableView fx:id="tableViewFruInfo" prefHeight="622.0" prefWidth="505.0">
                     <columns>
-                      <TableColumn fx:id="tableColumnName" prefWidth="154.0" text="Name" />
-                      <TableColumn fx:id="tableColumnType" prefWidth="89.0" text="Type" />
-                        <TableColumn fx:id="tableColumnValue" prefWidth="259.0" text="Value" />
+                      <TableColumn fx:id="tableColumnType" onEditCommit="#typeChanged" prefWidth="89.0" text="Type" />
+                        <TableColumn fx:id="tableColumnOEMType" onEditCommit="#oemTypeCommit" prefWidth="89.0" text="OEM Type" />
+                        <TableColumn fx:id="tableColumnFormat" onEditCommit="#formatCellCommit" prefWidth="85.0" text="Format" />
+                        <TableColumn fx:id="tableColumnValue" onEditCommit="#valueCellCommit" prefWidth="96.0" text="Value" />
+                      <TableColumn fx:id="tableColumnName" prefWidth="234.0" text="Description" />
                     </columns>
                   </TableView>
                </content>
