@@ -13,6 +13,12 @@ import javafx.fxml.FXMLLoader;
 public class App extends Application {	
 	
 	private static Scene scene;
+	@FXML AnchorPane deviceTabAnchorPane;
+	@FXML AnchorPane sensorsTabAnchorPane;
+	@FXML AnchorPane effectersTabAnchorPane;
+	@FXML AnchorPane stateSetsTabAnchorPane;
+
+/* TODO: Move to device pane controller
     @FXML AnchorPane bindingPane;
     public static AnchorPane stateSensorContent;
     public static AnchorPane stateEffecterContent;
@@ -26,7 +32,7 @@ public class App extends Application {
 	public static NumericSensorController numericSensorController;
 	public static FruPaneController fruPaneController;
 	public static ParameterPaneController parameterPaneController;
-
+*/
 	/**
 	 * isInteger()
 	 * A helper that returns true if the string parameter represents
@@ -78,10 +84,46 @@ public class App extends Application {
     public void start(Stage stage) { 
 	    Parent root;
 	    try {
-			// load the fxml object for the main screen
+			root = FXMLLoader.load(getClass().getClassLoader().getResource("topTabScene.fxml"));
+			Scene scene = new Scene(root, 1024, 768);
+
+			stage.setTitle("PICMG Configurator");
+			stage.setScene(scene);
+			stage.show();
+
+			// find the anchor panes for each of the tabs
+			deviceTabAnchorPane = (AnchorPane) scene.lookup("#deviceTabAnchorPane");
+			sensorsTabAnchorPane = (AnchorPane) scene.lookup("#sensorsTabAnchorPane");
+			effectersTabAnchorPane = (AnchorPane) scene.lookup("#effectersTabAnchorPane");
+			stateSetsTabAnchorPane = (AnchorPane) scene.lookup("#stateSetsTabAnchorPane");
+
+			// set up the tab panes
+			{
+				// device configuration
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("MainPanel.fxml"));
+				deviceTabAnchorPane.getChildren().add(loader.load());
+			}
+
+			{
+				// sensors
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("sensorsTabView.fxml"));
+				sensorsTabAnchorPane.getChildren().add(loader.load());
+			}
+
+			{
+				// effecters
+			}
+
+			{
+				// state sets
+			}
+
+/*		TODO: move to device configuration controller
+  			// load the fxml object for the main screen
+
 			root = FXMLLoader.load(getClass().getClassLoader().getResource("MainPanel.fxml"));
 	        Scene scene = new Scene(root, 1024, 768);
-		  
+
 	        stage.setTitle("PICMG Configurator");
 	        stage.setScene(scene);
 	        stage.show();
@@ -136,9 +178,9 @@ public class App extends Application {
 				bindingPane.getChildren().add(parameterContent);
 				parameterContent.setVisible(false);
 			}
-
-			System.out.println();
+*/
 		} catch (IOException e) {
+	    	System.out.println(e);
 		}
     }
 

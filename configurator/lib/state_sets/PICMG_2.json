@@ -1,0 +1,32 @@
+{
+	"name":"PID Controller State",
+	"stateSetId":2,
+	"vendorIANA":12634,
+	"vendorName":"PICMG",
+	"oemStateValueRecords":[
+		{
+			"minStateValue":1,
+			"maxStateValue":1,
+			"languageTags":["en"],
+			"stateName":["Idle"]
+		},
+		{
+			"minStateValue":2,
+			"maxStateValue":2,
+			"languageTags":["en"],
+			"stateName":["ConditionStop"]
+		},
+		{
+			"minStateValue":3,
+			"maxStateValue":3,
+			"languageTags":["en"],
+			"stateName":["ErrorStop"]
+		},
+		{
+			"minStateValue":4,
+			"maxStateValue":4,
+			"languageTags":["en"],
+			"stateName":["Running"]
+		}
+	]
+}

@@ -5,6 +5,7 @@ import java.util.*;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -32,7 +33,20 @@ public class MainScreenController implements Initializable {
 	@FXML private TreeView<TreeData> treeView;
 	@FXML private AnchorPane bindingPane;
 	private AnchorPane stateSensorPane;
-	
+
+	public static AnchorPane stateSensorContent;
+	public static AnchorPane stateEffecterContent;
+	public static AnchorPane numericSensorContent;
+	public static AnchorPane numericEffecterContent;
+	public static AnchorPane fruContent;
+	public static AnchorPane parameterContent;
+	public static StateSensorController stateSensorController;
+	public static StateEffecterController stateEffecterController;
+	public static NumericEffecterController numericEffecterController;
+	public static NumericSensorController numericSensorController;
+	public static FruPaneController fruPaneController;
+	public static ParameterPaneController parameterPaneController;
+
 	// this class associates the relevant data with each node in the tree.
 	protected class TreeData {
 		public JsonAbstractValue parent;
@@ -424,17 +438,77 @@ public class MainScreenController implements Initializable {
 	
 	// helper function that clears all panes
 	private void clearPanes() {
-		App.stateSensorContent.setVisible(false);
-		App.stateEffecterContent.setVisible(false);
-		App.numericSensorContent.setVisible(false);
-		App.numericEffecterContent.setVisible(false);
-		App.fruContent.setVisible(false);
-		App.parameterContent.setVisible(false);
+		stateSensorContent.setVisible(false);
+		stateEffecterContent.setVisible(false);
+		numericSensorContent.setVisible(false);
+		numericEffecterContent.setVisible(false);
+		fruContent.setVisible(false);
+		parameterContent.setVisible(false);
 	}
 
+	/**
+	 * setPaneBindings()
+	 * This helper function binds each FXML pane to the conext-sensitive
+	 * right pane in this view.
+	 */
+	void setPaneBindings() {
+		try {
+			// setup binding panes
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("stateSensorPane.fxml"));
+				stateSensorContent = (AnchorPane) loader.load();
+				stateSensorController = (StateSensorController) loader.getController();
+				bindingPane.getChildren().add(stateSensorContent);
+				stateSensorContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("stateEffecterPane.fxml"));
+				stateEffecterContent = (AnchorPane) loader.load();
+				stateEffecterController = (StateEffecterController) loader.getController();
+				bindingPane.getChildren().add(stateEffecterContent);
+				stateEffecterContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("numericSensorPane.fxml"));
+				numericSensorContent = (AnchorPane) loader.load();
+				numericSensorController = (NumericSensorController) loader.getController();
+				bindingPane.getChildren().add(numericSensorContent);
+				numericSensorContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("numericEffecterPane.fxml"));
+				numericEffecterContent = (AnchorPane) loader.load();
+				numericEffecterController = (NumericEffecterController) loader.getController();
+				bindingPane.getChildren().add(numericEffecterContent);
+				numericEffecterContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("FruPane.fxml"));
+				fruContent = (AnchorPane) loader.load();
+				fruPaneController = (FruPaneController) loader.getController();
+				bindingPane.getChildren().add(fruContent);
+				fruContent.setVisible(false);
+			}
+
+			{
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("ParameterPane.fxml"));
+				parameterContent = (AnchorPane) loader.load();
+				parameterPaneController = (ParameterPaneController) loader.getController();
+				bindingPane.getChildren().add(parameterContent);
+				parameterContent.setVisible(false);
+			}
+		} catch (IOException e) {
+		}
+	}
 	
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		setPaneBindings();
+
         JsonResultFactory factory = new JsonResultFactory();
         appConfig = (JsonObject)factory.buildFromResource("config.json");
         hardware = (JsonObject)factory.buildFromResource("microsam_new2.json");
@@ -468,10 +542,9 @@ public class MainScreenController implements Initializable {
             public TreeCell<TreeData> call(TreeView<TreeData> p) {
                 return new JsonTreeCell();
             }
-        }); 
-        
-        
-        //treeview logic is contained in this event listener
+        });
+
+		//treeview logic is contained in this event listener
         treeView.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>()
         {
             public void handle(MouseEvent event)
@@ -488,21 +561,21 @@ public class MainScreenController implements Initializable {
                     	switch(device.getBindingValueFromKey(selectedNode.getValue().name,"bindingType")) {
 	                    	case "stateEffecter":
 	                    		clearPanes();
-	                    		App.stateEffecterContent.setVisible(true);
-								App.stateEffecterController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray)stateLib.get("stateSets"));
+	                    		stateEffecterContent.setVisible(true);
+								stateEffecterController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray)stateLib.get("stateSets"));
 								break;
 	                    	case "stateSensor":
 	                    		clearPanes();
-	                    		App.stateSensorContent.setVisible(true);
-	                    		App.stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray)stateLib.get("stateSets"));
+	                    		stateSensorContent.setVisible(true);
+	                    		stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray)stateLib.get("stateSets"));
 	                    		break;
 	                    	case "numericEffecter":
 	                    		clearPanes();
-	                    		App.numericEffecterContent.setVisible(true);
+	                    		numericEffecterContent.setVisible(true);
 	                    		break;
 	                    	case "numericSensor":
 	                    		clearPanes();
-	                    		App.numericSensorContent.setVisible(true);
+	                    		numericSensorContent.setVisible(true);
 	                    		break;
 	                    	
 	                    	default:
@@ -514,14 +587,14 @@ public class MainScreenController implements Initializable {
 						clearPanes();
 						JsonObject capabilitiesEntity = (JsonObject)selectedNode.getValue().parent;
 						JsonArray capabilitiesParameters = (JsonArray)capabilitiesEntity.get("parameters");
-						App.parameterPaneController.update((JsonArray) selectedNode.getValue().leaf, capabilitiesParameters);
-						App.parameterContent.setVisible(true);
+						parameterPaneController.update((JsonArray) selectedNode.getValue().leaf, capabilitiesParameters);
+						parameterContent.setVisible(true);
 					}
 					else if(selectedNode.getValue().nodeType=="fruRecord") {
 						clearPanes();
-						App.fruPaneController.update((JsonObject) selectedNode.getValue().leaf,
+						fruPaneController.update((JsonObject) selectedNode.getValue().leaf,
 								(JsonObject) device.getCapabilitiesFruRecordByName(selectedNode.getValue().leaf.getValue("name")));
-						App.fruContent.setVisible(true);
+						fruContent.setVisible(true);
 					}
 				}
 			}
