@@ -37,7 +37,7 @@
 	        	<artifactId>javafx-maven-plugin</artifactId>
 	        	<version>0.0.4</version>
 				<configuration>
-					<executable>/usr/java/openjdk/jdk-16.0.1/bin/java</executable>
+					<executable>C:\Users\David\.jdks\openjdk-16.0.1\bin\java</executable>
 	            	<mainClass>configurator/org.picmg.configurator.Main</mainClass>
 					<compress>2</compress>
 					<noHeaderFiles>true</noHeaderFiles>
