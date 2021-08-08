@@ -3,7 +3,10 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -26,29 +29,65 @@
                   <Font size="15.0" />
                </font>
             </Label>
-            <Label prefHeight="32.0" prefWidth="518.0" text="  Bound Channel">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Label>
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="channelIndicator" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="109.0" text="  Bound Channel">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
             <ComboBox fx:id="boundChannelCBox" prefHeight="26.0" prefWidth="525.0" />
-            <Label prefHeight="35.0" prefWidth="518.0" text="  State Set">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Label>
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="setIndicator" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="35.0" prefWidth="70.0" text="  State Set">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
             <TextField fx:id="selectedState" editable="false" prefHeight="35.0" prefWidth="518.0" />
-            <Label prefHeight="32.0" prefWidth="518.0" text="  State With Low Input">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Label>
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="lowIndicator" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="141.0" text="  State With Low Input">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
             <ComboBox fx:id="lowInputCBox" prefHeight="26.0" prefWidth="525.0" />
-            <Label prefHeight="32.0" prefWidth="518.0" text="  State With High Input">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Label>
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="highIndicator" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="141.0" text="  State With High Input">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
             <ComboBox fx:id="highInputCBox" prefHeight="26.0" prefWidth="525.0" />
          </children>
       </VBox>

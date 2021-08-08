@@ -1,13 +1,20 @@
 package org.picmg.configurator;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.Paths;
 import java.util.*;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -53,36 +60,69 @@ public class MainScreenController implements Initializable {
 		public JsonAbstractValue leaf;
 		public String nodeType;
 		public String name;
+		public SimpleBooleanProperty error = new SimpleBooleanProperty(false);
 		
 		public TreeData() {
 			nodeType = "unknown";
 		}		
-		
+
+
 		public TreeData(JsonAbstractValue parent, JsonAbstractValue leaf, String nodeType) {
 			this.parent = parent;
 			this.leaf = leaf;
 			this.nodeType = nodeType;
-		}		
+		}
 	}
 	
     private final class JsonTreeCell extends TreeCell<TreeData> {
         private ContextMenu contextMenu;
-        
-        // JsonTreeCell
+		static Image redDotImage;
+
+		// JsonTreeCell
         //
         // Constructor for the tree cell - initialize the control
         public JsonTreeCell() {
-        }
- 
+			if (redDotImage==null) {
+				ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+				InputStream is = classLoader.getResourceAsStream("red_dot.png");
+				if (is != null) redDotImage = new Image(is);
+			}
+		}
+
+		void setError(boolean errorValue){
+        	if(errorValue){
+				ImageView iv = new ImageView(redDotImage);
+				iv.setFitWidth(12);
+				iv.setFitHeight(12);
+				iv.setVisible(true);
+				setGraphic(iv);
+			}else{
+        		setGraphic(null);
+			}
+		}
+
         void initializeIoBindingCell() {
         	setContextMenu(null);
-        	
-            // set the behavior when the cell is clicked by the mouse
+			TreeItem selectedNode = treeView.getSelectionModel().getSelectedItem();
+        	TreeItem<TreeData> it = getTreeItem();
+			errorCheck(it.getParent());
+        	boolean err = getItem().error.getValue();
+        	setError(err);
+			treeView.getSelectionModel().select(selectedNode);
+
+			getItem().error.addListener((observable, oldValue, newValue) -> {
+				boolean errorVal = getItem().error.getValue();
+				setError(errorVal);
+        	});
+
+				// set the behavior when the cell is clicked by the mouse
         	setOnMouseClicked(new EventHandler<MouseEvent>() {
                 public void handle(MouseEvent t) {                	
-                		//TODO: add code to set up the context pane for the io binding	
+                		//TODO: add code to set up the context pane for the io binding
+
                 	}
                 });
+
         }        
 
         void initializeFruRecordCell() {
@@ -152,6 +192,7 @@ public class MainScreenController implements Initializable {
                 		device.removeLogicalEntityConfigurationByName(data.leaf.getValue("name"));
            				device.addLogicalEntityConfigurationByName(data.leaf.getValue("name"));
            			} else {                	
+           				errorClear(ti);
            				ti.getParent().getChildren().remove(ti);
            				device.removeLogicalEntityConfigurationByName(data.leaf.getValue("name"));
            			}
@@ -167,7 +208,7 @@ public class MainScreenController implements Initializable {
         	} else {
         		contextMenu = new ContextMenu();
         	}
-        	
+
         	// add entities that can be added to the menu
         	ArrayList<String> possibles = device.getListOfPossibleEntities();
         	if (possibles.size()>0) {
@@ -196,11 +237,13 @@ public class MainScreenController implements Initializable {
                         	JsonArray bindings = (JsonArray)((JsonObject)ent).get("ioBindings");
                         	bindings.forEach(binding -> {
                         		TreeItem<TreeData> ti = new TreeItem<TreeData>(new TreeData(bindings, binding,"ioBinding"));
+                        		errorCheck(ti);
                         		entityItem.getChildren().add(ti);
-                        	});                     	
+                        	});
                         	JsonArray parameters = (JsonArray)((JsonObject)ent).get("parameters");
                     		entityItem.getChildren().add(new TreeItem<TreeData>(new TreeData(ent, parameters,"parameters")));
-                        }
+							errorCheck(treeView.getRoot());
+                    	}
                     });
             	});
         	} else {
@@ -311,14 +354,12 @@ public class MainScreenController implements Initializable {
         @Override
         public void updateItem(TreeData item, boolean empty) {
             super.updateItem(item, empty);
-            
+
             if (empty) {
                 setText(null);
                 setGraphic(null);
             } else {
-            	setGraphic(null);
-            	
-            	switch (item.nodeType) {
+				switch (item.nodeType) {
             	case "logicalEntities":
             		setText(getItem().nodeType);
                 	initializeLogicalEntitiesCell();
@@ -328,6 +369,7 @@ public class MainScreenController implements Initializable {
             		break;
             	case "ioBinding":
             		setText(getItem().leaf.getValue("name"));
+            		String name = getItem().leaf.getValue("name");
             		item.name = getItem().leaf.getValue("name");
             		initializeIoBindingCell();
             		break;
@@ -400,7 +442,7 @@ public class MainScreenController implements Initializable {
         	JsonArray bindings = (JsonArray)((JsonObject)entity).get("ioBindings");
         	bindings.forEach(binding -> {
         		TreeItem<TreeData> ti = new TreeItem<TreeData>(new TreeData(bindings, binding,"ioBinding"));
-        		entityItem.getChildren().add(ti);
+				entityItem.getChildren().add(ti);
         	});                     	
         	JsonArray parameters = (JsonArray)((JsonObject)entity).get("parameters");
     		entityItem.getChildren().add(new TreeItem<TreeData>(new TreeData(entity, parameters,"parameters")));
@@ -427,11 +469,12 @@ public class MainScreenController implements Initializable {
 		JsonArray ary = (JsonArray)lib.get(key);
 
 	    ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-		String path = classLoader.getResource(folder).getPath();
+		String path = System.getProperty("user.dir")+"/lib/"+folder+"/";
 		File   fileobj = new File(path);
 		File[] files = fileobj.listFiles();
 		for (int i=0;i<files.length;i++) {
-			JsonObject obj = (JsonObject)factory.buildFromResource(folder+"/"+files[i].getName());
+			String file = path+files[i].getName();
+			JsonObject obj = (JsonObject)factory.buildFromFile(Paths.get(file));
 			ary.add(obj);
 		}
 	}
@@ -504,7 +547,119 @@ public class MainScreenController implements Initializable {
 		} catch (IOException e) {
 		}
 	}
-	
+
+	// Checks for errors in all logical entites. displays error icon if found.
+	public void errorCheck(TreeItem<TreeData> treeNode) {
+
+		if (treeNode.getChildren().isEmpty()) {
+			// Do nothing if the node is empty.
+		} else {
+
+			// Otherwise, loop through every child
+			for (TreeItem<TreeData> node : treeNode.getChildren()) {
+				if (node.getValue().nodeType=="ioBinding") {
+					node.setExpanded(true);
+					treeView.getSelectionModel().select(node);
+					TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
+					try {
+						String name = selectedNode.getValue().leaf.getValue("name");
+						String bindingType = device.getBindingValueFromKey(selectedNode.getValue().name, "bindingType");
+						switch (bindingType) {
+							case "stateEffecter":
+								//clearPanes();
+								break;
+							case "stateSensor":
+								//clearPanes();
+								stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray) stateLib.get("stateSets"));
+								if (stateSensorController.isError()) {
+									selectedNode.getValue().error.setValue(true);
+									ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+									InputStream is = classLoader.getResourceAsStream("red_dot.png");
+									ImageView iv = new ImageView(new Image(is));
+									iv.setFitWidth(12);
+									iv.setFitHeight(12);
+									iv.setVisible(true);
+									selectedNode.setGraphic(iv);
+
+								} else {
+									selectedNode.getValue().error.setValue(false);
+									selectedNode.setGraphic(null);
+								}
+								break;
+							case "numericEffecter":
+								//clearPanes();
+								break;
+							case "numericSensor":
+								//clearPanes();
+								numericSensorController.update(device, treeView.getSelectionModel().getSelectedItem());
+								if (numericSensorController.isError()) {
+									selectedNode.getValue().error.setValue(true);
+									ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+									InputStream is = classLoader.getResourceAsStream("red_dot.png");
+									ImageView iv = new ImageView(new Image(is));
+									iv.setFitWidth(12);
+									iv.setFitHeight(12);
+									iv.setVisible(true);
+									selectedNode.setGraphic(iv);
+
+								} else {
+									selectedNode.getValue().error.setValue(false);
+									selectedNode.setGraphic(null);
+								}
+								break;
+
+							default:
+								clearPanes();
+						}
+
+					}catch(NullPointerException ex){
+						//catch block
+					}
+				} else {
+					node.setExpanded(true);
+				}
+
+
+
+				// If the current node has children then check
+				if (!treeNode.getChildren().isEmpty()) {
+					errorCheck(node);
+				}
+
+			}
+
+		}
+
+	}
+
+	// Clears error value in all treeItems by setting the error value to false.
+	public void errorClear(TreeItem<TreeData> treeNode) {
+		if (treeNode.getChildren().isEmpty()) {
+			// Do nothing if the node is empty.
+		} else {
+			// Otherwise, loop through every child
+			for (TreeItem<TreeData> node : treeNode.getChildren()) {
+				if (node.getValue().nodeType=="ioBinding") {
+					node.setExpanded(true);
+					treeView.getSelectionModel().select(node);
+					TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
+					try {
+						selectedNode.getValue().error.setValue(false);
+					}catch(NullPointerException ex){
+						//catch block
+					}
+				} else {
+					node.setExpanded(true);
+				}
+				// If the current node has children then check
+				if (!treeNode.getChildren().isEmpty()) {
+					errorCheck(node);
+				}
+			}
+		}
+	}
+
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		setPaneBindings();
@@ -513,29 +668,29 @@ public class MainScreenController implements Initializable {
         appConfig = (JsonObject)factory.buildFromResource("config.json");
         hardware = (JsonObject)factory.buildFromResource("microsam_new2.json");
         defaultMeta = (JsonObject)factory.buildFromResource("default_meta.json");
-        
+
         // Load the libraries from the resource folders - these are the default
         // picmg libraries and sensors
         sensorLib = new JsonObject();
-        addLibrariesFromResourceFolder(sensorLib,"sensors","sensors");       
+        addLibrariesFromResourceFolder(sensorLib,"sensors","sensors");
         effecterLib = new JsonObject();
-        addLibrariesFromResourceFolder(effecterLib,"effecters","effecters");       
+        addLibrariesFromResourceFolder(effecterLib,"effecters","effecters");
         stateLib = new JsonObject();
         addLibrariesFromResourceFolder(stateLib,"stateSets","state_sets");
         deviceLib = new JsonObject();
         addLibrariesFromResourceFolder(deviceLib,"devices","devices");
-        
+
         device = new Device(hardware);
-        
+
         device.canEntityBeAdded("servo1");
-        
+
         // create the tree based on the device
-        TreeItem<TreeData> rootNode = treeView.getRoot(); 
+        TreeItem<TreeData> rootNode = treeView.getRoot();
         rootNode = new TreeItem<TreeData>(new TreeData(null,null,"device"));
         treeView.setRoot(rootNode);
         rootNode.setExpanded(true);
         populateTree(rootNode);
- 
+
         treeView.setEditable(true);
         treeView.setCellFactory(new Callback<TreeView<TreeData>,TreeCell<TreeData>>(){
             @Override
@@ -551,24 +706,29 @@ public class MainScreenController implements Initializable {
             {
             	Node treeNode = event.getPickResult().getIntersectedNode();
 
-            	if (treeNode instanceof Text || (treeNode instanceof TreeCell && ((TreeCell) treeNode).getText() != null)) {
+				if (treeNode instanceof Text || (treeNode instanceof TreeCell && ((TreeCell) treeNode).getText() != null)) {
                     TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
-            		clearPanes();
+					errorClear(treeView.getRoot());
+					errorCheck(treeView.getRoot());
+					treeView.getSelectionModel().select(selectedNode);
+					clearPanes();
 
-                    //checking if click is on ioBinding
+					//checking if click is on ioBinding
                     if(selectedNode.getValue().nodeType=="ioBinding") {
-                    	// switch on type of binding
-                    	switch(device.getBindingValueFromKey(selectedNode.getValue().name,"bindingType")) {
+
+						// switch on type of binding
+						String name = selectedNode.getValue().leaf.getValue("name");
+      					String bindingType = device.getBindingValueFromKey(selectedNode.getValue().name,"bindingType");
+                    	switch(bindingType) {
 	                    	case "stateEffecter":
 	                    		clearPanes();
 	                    		stateEffecterContent.setVisible(true);
-								stateEffecterController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray)stateLib.get("stateSets"));
 								break;
 	                    	case "stateSensor":
 	                    		clearPanes();
 	                    		stateSensorContent.setVisible(true);
 	                    		stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray)stateLib.get("stateSets"));
-	                    		break;
+								break;
 	                    	case "numericEffecter":
 	                    		clearPanes();
 	                    		numericEffecterContent.setVisible(true);
@@ -576,12 +736,13 @@ public class MainScreenController implements Initializable {
 	                    	case "numericSensor":
 	                    		clearPanes();
 	                    		numericSensorContent.setVisible(true);
-	                    		break;
-	                    	
+								numericSensorController.update(device, treeView.getSelectionModel().getSelectedItem());
+								break;
+
 	                    	default:
 	                    		clearPanes();
                     	}
-                    	
+
             		}
                     else if(selectedNode.getValue().nodeType=="parameters") {
 						clearPanes();
