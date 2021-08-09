@@ -1,20 +1,32 @@
+//*******************************************************************
+//    LinearizationDlg.java
+//
+//    This class implements the structure and functionality associated
+//    with a dialog box that contains both tabular and graphical
+//    representation of an sensor's linearization curve.  The
+//    horixontal (X) axis of the chart is expressed in sensor output
+//    units (e.g. Volts), and the vertical axis is expressed in
+//    the native units for the sensor (e.g. Newtons).
+//    This dialog box is intended to be opened in the process of
+//    configuring a sensor node.
+//
+//    Copyright (C) 2020,  PICMG
+//
+//    This program is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    This program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+//
 package org.picmg.configurator;
-/********************************************************************
- * LinearizeDlg
- * 
- * This class implements the structure and functionality associated
- * with a dialog box that contains both tabular and graphical
- * representation of an sensor's linearization curve.  The 
- * horixontal (X) axis of the chart is expressed in sensor output
- * units (e.g. Volts), and the vertical axis is expressed in
- * the native units for the sensor (e.g. Newtons). 
- * This dialog box is intended to be opened in the process of
- * configuring a sensor node.
- * 
- * =================================================================
- * Copyright(C) 2020, PICMG
- * All Rights Reserved
- */
+
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
