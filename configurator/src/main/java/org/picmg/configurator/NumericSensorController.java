@@ -113,7 +113,7 @@ public class NumericSensorController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-	
+	//TODO: add device save configuration on new value listners
 	}
 
 	public void update(Device device, TreeItem<MainScreenController.TreeData> selectedNode){
@@ -154,7 +154,7 @@ public class NumericSensorController implements Initializable {
 			physicalSensor.setDisable(true);
 		}else{
 			physicalSensor.setDisable(false);
-			//TODO: hook up physical sensor select
+			//TODO: add physical sensor select
 		}
 
 		// if input curve is non-null, set value according to json. Else, allow for population.

@@ -103,6 +103,8 @@ public class StateSensorController implements Initializable {
 			isNull = true;
 		}
 		if(isNull){
+			jsonStr = device.getConfiguredBindingValueFromKey(selectedNode.getValue().name,"stateWhenLow");
+
 			lowInputCBox.setDisable(false);
 			lowInputCBox.setValue(null);
 			lowInputCBox.getItems().clear();
@@ -116,6 +118,16 @@ public class StateSensorController implements Initializable {
 						String name = binding.getValue("stateName");
 						lowInputCBox.getItems().add(name);
 					}
+				}
+			}
+			if(jsonStr!=null) {
+				jsonStr = jsonStr.replaceAll("\\r", "");
+				jsonStr = jsonStr.replaceAll("\\n", "");
+				jsonStr = jsonStr.replaceAll("\\t", "");
+				jsonStr = jsonStr.replaceAll(" ", "");
+
+				if (!jsonStr.equals("null")) {
+					lowInputCBox.setValue(jsonStr);
 				}
 			}
 		}
@@ -226,7 +238,7 @@ public class StateSensorController implements Initializable {
 							}
 						}
 					} catch (IOException ex) {
-						// TODO Auto-generated catch block
+						//Auto-generated catch block
 						ex.printStackTrace();
 					}
 
@@ -255,7 +267,7 @@ public class StateSensorController implements Initializable {
 						while (it2.hasNext()) {
 							JsonObject binding = (JsonObject) it2.next();
 							if (binding.getValue("stateName").equals(newValue)) {
-								//device.setBindingValueFromKey(selectedNode.getValue().name, "stateWhenLow", binding.getValue("minStateValue"));
+								device.setBindingValueFromKey(selectedNode.getValue().name, "stateWhenLow", binding.getValue("minStateValue"));
 							}
 						}
 					}
@@ -279,7 +291,7 @@ public class StateSensorController implements Initializable {
 						while (it2.hasNext()) {
 							JsonObject binding = (JsonObject) it2.next();
 							if (binding.getValue("stateName").equals(newValue)) {
-								//device.setBindingValueFromKey(selectedNode.getValue().name, "stateWhenHigh", binding.getValue("maxStateValue"));
+								device.setBindingValueFromKey(selectedNode.getValue().name, "stateWhenHigh", binding.getValue("maxStateValue"));
 							}
 						}
 					}
@@ -296,7 +308,7 @@ public class StateSensorController implements Initializable {
 		boundChannelCBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			if(selectedNode!=null&&newValue!=null&&updated) {
 				if (device.getBindingValueFromKey(selectedNode.getValue().name, "isVirtual").equals("false")) {
-					//device.setBindingValueFromKey(selectedNode.getValue().name, "boundChannel", (String) newValue);
+					device.setBindingValueFromKey(selectedNode.getValue().name, "boundChannel", (String) newValue);
 				}
 				if(boundChannelCBox.getValue()!=null){
 					channelIndicator.setVisible(false);
@@ -333,6 +345,9 @@ public class StateSensorController implements Initializable {
 				boundChannelCBox.setValue(device.getBindingValueFromKey(selectedNode.getValue().name,"boundChannel"));
 				boundChannelCBox.setDisable(true);
 			}else{
+				if(device.getConfiguredBindingValueFromKey(selectedNode.getValue().name,"boundChannel")!=null) {
+					boundChannelCBox.setValue(device.getConfiguredBindingValueFromKey(selectedNode.getValue().name,"boundChannel"));
+				}
 				boundChannelCBox.setDisable(false);
 				for(int i=0; i<arr.size(); i++) {
 					boundChannelCBox.getItems().add(arr.get(i));

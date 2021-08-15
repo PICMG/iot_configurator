@@ -280,7 +280,7 @@ public class Device {
 	 * or the key is not found, null is returned
 	 */
 	public String getBindingValueFromKey(String bindingName, String bindingKey) {
-		JsonObject cfg = (JsonObject)jdev.get("configuration");
+		JsonObject cfg = (JsonObject)jdev.get("capabilities");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
 		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
 		while (it.hasNext()) {
@@ -296,7 +296,25 @@ public class Device {
 		}
 		return null;
 	}
-	
+
+	public String getConfiguredBindingValueFromKey(String bindingName, String bindingKey) {
+		JsonObject cfg = (JsonObject)jdev.get("configuration");
+		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
+		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
+		while (it.hasNext()) {
+			JsonObject edef = (JsonObject)it.next();
+			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator();
+			while (it2.hasNext()) {
+				JsonObject binding = (JsonObject)it2.next();
+				String name = binding.getValue("name");
+				if(name.equals(bindingName)) {
+					return binding.getValue(bindingKey);
+				}
+			}
+		}
+		return null;
+	}
+
 	/*
 	 * set the binding value for a specific key.
 	 */

@@ -124,9 +124,9 @@ public class SearchTestController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		//create vendor and name arraylists
-		File stateSetFolder = new File("C:\\\\Users\\\\David\\\\git\\\\picmg_iot_config\\\\configurator\\\\src\\\\main\\\\resources\\\\state_sets");
+		File stateSetFolder = new File(String.valueOf(SearchTestController.class.getClassLoader().getResource("state_sets")));
         File[] stateSets = stateSetFolder.listFiles();
-        
+
         ArrayList<String> vendorList = new ArrayList<String>();
         ArrayList<String> nameList   = new ArrayList<String>();
         ArrayList<String> fileList   = new ArrayList<String>();

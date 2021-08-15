@@ -118,6 +118,7 @@ public class MainScreenController implements Initializable {
 			}
 		}
 
+		
 		void setError(boolean errorValue,String req){
         	if(errorValue){
         		boolean required = true;
