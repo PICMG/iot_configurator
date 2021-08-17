@@ -172,7 +172,7 @@ public class NumericSensorController implements Initializable {
 	private NumericSensorData data = new NumericSensorData();
 
 	private void updateIcons(){
-		//update icons
+		//TODO: add call to mainScreenController to update error icons in tree
 		if (boundChannel.getValue() == null) {
 			boundChannelIcon.setVisible(true);
 		}else {
@@ -281,6 +281,7 @@ public class NumericSensorController implements Initializable {
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		//TODO: add logic for ALL listeners to use configured value if one exists rather than capabilities
 
 		// input curve enabled listener. This changes the error icon, and the enabled property of the buttons, nothing else.
 		inputCurveEnabled.selectedProperty().addListener((options, oldValue, newValue) -> {
@@ -334,7 +335,7 @@ public class NumericSensorController implements Initializable {
 		});
 
 
-		//TODO: add device save configuration on new value listeners
+		//TODO: add device save configuration on ALL new value listeners
 
 		// comboboxes run on new value
 		boundChannel.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
@@ -359,8 +360,9 @@ public class NumericSensorController implements Initializable {
 			updateIcons();
 		});
 
-		//textboxes run on new value
+		//TODO: add type checking on textboxes
 
+		//textboxes run on new value
 		inputGearingRatio.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				data.inputGearingRatio = inputGearingRatio.getText();
@@ -391,6 +393,9 @@ public class NumericSensorController implements Initializable {
 	}
 
 	public void update(Device device, TreeItem<MainScreenController.TreeData> selectedNode){
+		//TODO; add logic for update such that if there exists a configured value, use it on creation, rather
+		// than defaulting to the capabilites
+
 		// do any configuration required prior to making the pane visible
 
 		this.device = device;

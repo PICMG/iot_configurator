@@ -160,6 +160,31 @@ public class StateSensorController implements Initializable {
 			}
 		}
 	}
+
+	private void updateIcons(){
+		//TODO: add call to mainScreenController to update error icons in tree
+		if(boundChannelCBox.getValue()!=null){
+			channelIndicator.setVisible(false);
+		}else{
+			channelIndicator.setVisible(true);
+		}
+		if(stateSet!=null){
+			setIndicator.setVisible(false);
+		}else{
+			setIndicator.setVisible(true);
+		}
+		if(lowInputCBox.getValue()!=null){
+			lowIndicator.setVisible(false);
+		}else{
+			lowIndicator.setVisible(true);
+		}
+		if(highInputCBox.getValue()!=null){
+			highIndicator.setVisible(false);
+		}else{
+			highIndicator.setVisible(true);
+		}
+	}
+
 	public boolean isError(){
 		if(updated){
 			boolean isError = false;
@@ -179,8 +204,11 @@ public class StateSensorController implements Initializable {
 		}
 		return true;
 	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		//TODO: add logic for ALL listeners to use configured value if one exists rather than capabilities
+
 		// state set search listener
 		selectedState.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>(){
 			@Override public void handle(MouseEvent e) {
@@ -198,16 +226,8 @@ public class StateSensorController implements Initializable {
 						selectedState.setText(StringTransfer.text);
 						String state = StringTransfer.text;
 						stateSet = state;
-						Iterator<JsonAbstractValue> it1 = stateSets.iterator();
-						while (it1.hasNext()) {
-							JsonObject cdef = (JsonObject)it1.next();
-							if(cdef.getValue("name").equals(selectedState.getText())) {
-								//device.setBindingValueFromKey(selectedNode.getValue().name, "stateSetVendor", cdef.getValue("vendorIANA"));
-								//device.setBindingValueFromKey(selectedNode.getValue().name, "stateSet", cdef.getValue("stateSetId"));
-							}
-						}
+						//TODO: add device save functionality
 					} catch (IOException ex) {
-						// TODO Auto-generated catch block
 						ex.printStackTrace();
 					}
 					lowStatePopulate();
@@ -231,6 +251,7 @@ public class StateSensorController implements Initializable {
 						while (it2.hasNext()) {
 							JsonObject binding = (JsonObject) it2.next();
 							if (binding.getValue("stateName").equals(newValue)) {
+								//TODO: add device save functionality
 								//device.setBindingValueFromKey(selectedNode.getValue().name, "stateWhenLow", binding.getValue("minStateValue"));
 							}
 						}
@@ -254,6 +275,7 @@ public class StateSensorController implements Initializable {
 						while (it2.hasNext()) {
 							JsonObject binding = (JsonObject) it2.next();
 							if (binding.getValue("stateName").equals(newValue)) {
+								//TODO: add device save functionality
 								//device.setBindingValueFromKey(selectedNode.getValue().name, "stateWhenHigh", binding.getValue("maxStateValue"));
 							}
 						}
@@ -270,6 +292,7 @@ public class StateSensorController implements Initializable {
 		boundChannelCBox.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			if(selectedNode!=null&&newValue!=null&&updated) {
 				if (device.getBindingValueFromKey(selectedNode.getValue().name, "isVirtual").equals("false")) {
+					//TODO: add device save functionality
 					//device.setBindingValueFromKey(selectedNode.getValue().name, "boundChannel", (String) newValue);
 				}
 				if(boundChannelCBox.getValue()!=null){
@@ -281,6 +304,9 @@ public class StateSensorController implements Initializable {
 		});
 	}
 	public void update(Device device, TreeItem<MainScreenController.TreeData> selectedNode, JsonArray stateSets){
+		//TODO; add logic for update such that if there exists a configured value, use it on creation, rather
+		// than defaulting to the capabilites
+
 		// do any configuration required prior to making the pane visible
 		this.device = device;
 		// set name and description text at the top of the pane
@@ -329,25 +355,6 @@ public class StateSensorController implements Initializable {
 		lowStatePopulate();
 		highStatePopulate();
 		updated = true;
-		if(boundChannelCBox.getValue()!=null){
-			channelIndicator.setVisible(false);
-		}else{
-			channelIndicator.setVisible(true);
-		}
-		if(stateSet!=null){
-			setIndicator.setVisible(false);
-		}else{
-			setIndicator.setVisible(true);
-		}
-		if(lowInputCBox.getValue()!=null){
-			lowIndicator.setVisible(false);
-		}else{
-			lowIndicator.setVisible(true);
-		}
-		if(highInputCBox.getValue()!=null){
-			highIndicator.setVisible(false);
-		}else{
-			highIndicator.setVisible(true);
-		}
+		updateIcons();
 	}
 }
