@@ -4,7 +4,6 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
@@ -15,198 +14,186 @@
 
 <AnchorPane fx:id="numericSensorPane" prefHeight="742.0" prefWidth="518.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.picmg.configurator.NumericSensorController">
    <children>
-      <ScrollPane pannable="true" prefHeight="742.0" prefWidth="518.0" vbarPolicy="ALWAYS">
-        <content>
-          <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+      <VBox fx:id="numericSensorVBox" layoutX="7.0" prefHeight="686.0" prefWidth="414.0">
+         <children>
+            <Label fx:id="nameText" prefHeight="35.0" prefWidth="518.0" text="  Name">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <Label fx:id="descriptionText" prefHeight="35.0" prefWidth="518.0" text="  Description">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Label>
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
                <children>
-                  <VBox fx:id="numericSensorVBox" prefHeight="741.0" prefWidth="518.0">
-                     <children>
-                        <Label fx:id="nameText" prefHeight="35.0" prefWidth="518.0" text="  Name">
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="descriptionText" prefHeight="35.0" prefWidth="518.0" text="  Description">
-                           <font>
-                              <Font size="13.0" />
-                           </font>
-                        </Label>
-                        <Label prefHeight="20.0" prefWidth="518.0">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                        </Label>
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="boundChannelIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="146.0" text="  Bound Channel">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <ComboBox fx:id="boundChannel" prefHeight="26.0" prefWidth="525.0" />
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="physicalSensorIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Sensor">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <TextField fx:id="physicalSensor" editable="false" prefHeight="35.0" prefWidth="518.0" />
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="inputCurveIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="496.0" text="  Input Curve">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="inputCurveEnabled" mnemonicParsing="false" prefHeight="18.0" prefWidth="88.0" text="Enabled" />
-                              <Button fx:id="selectCurve" mnemonicParsing="false" prefHeight="26.0" prefWidth="420.0" text="Select Curve" />
-                           </children>
-                        </FlowPane>
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="inputGearingRatioIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="146.0" text="  Input Gearing Ratio">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <TextField fx:id="inputGearingRatio" prefHeight="35.0" prefWidth="518.0" />
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="physicalBaseUnitIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Base Unit">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <ComboBox fx:id="physicalBaseUnit" prefHeight="26.0" prefWidth="525.0" />
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="physicalUnitModifierIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Unit Modifier">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <TextField fx:id="physicalUnitModifier" editable="false" prefHeight="35.0" prefWidth="518.0" />
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="physicalRateIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Rate">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <ComboBox fx:id="physicalRate" prefHeight="26.0" prefWidth="525.0" />
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="relIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="166.0" text="  Rel">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <TextField fx:id="rel" editable="false" prefHeight="35.0" prefWidth="518.0" />
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="physicalAuxIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Aux">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <ComboBox fx:id="physicalAux" prefHeight="26.0" prefWidth="525.0" />
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="physicalAuxRateIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Aux Rate">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <ComboBox fx:id="physicalAuxRate" prefHeight="26.0" prefWidth="525.0" />
-                        <FlowPane prefHeight="33.0" prefWidth="518.0">
-                           <children>
-                              <ImageView fx:id="physicalAuxRateModifierIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
-                                 <image>
-                                    <Image url="@red_dot.png" />
-                                 </image>
-                              </ImageView>
-                              <Label prefHeight="32.0" prefWidth="166.0" text="  Physical Aux Modifier">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                              </Label>
-                           </children>
-                        </FlowPane>
-                        <TextField fx:id="physicalAuxUnitModifier" editable="false" prefHeight="35.0" prefWidth="518.0" />
-                     </children>
-                  </VBox>
+                  <ImageView fx:id="boundChannelIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="146.0" text="  Bound Channel">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
                </children>
-            </AnchorPane>
-        </content>
-      </ScrollPane>
+            </FlowPane>
+            <ComboBox fx:id="boundChannel" prefHeight="26.0" prefWidth="230.0" />
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="physicalSensorIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Sensor">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
+            <ComboBox fx:id="physicalSensor" prefHeight="26.0" prefWidth="230.0" />
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="inputCurveIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="383.0" text="  Input Curve">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+                  <CheckBox fx:id="inputCurveEnabled" mnemonicParsing="false" prefHeight="18.0" prefWidth="88.0" text="Enabled" />
+                  <Button fx:id="selectCurve" mnemonicParsing="false" prefHeight="26.0" prefWidth="138.0" text="Select From File" />
+                  <Button fx:id="view" mnemonicParsing="false" prefHeight="26.0" prefWidth="125.0" text="View" />
+               </children>
+            </FlowPane>
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="inputGearingRatioIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="146.0" text="  Input Gearing Ratio">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
+            <TextField fx:id="inputGearingRatio" prefHeight="26.0" prefWidth="230.0" />
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="physicalBaseUnitIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Base Unit">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
+            <ComboBox fx:id="physicalBaseUnit" prefHeight="26.0" prefWidth="230.0" />
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="physicalUnitModifierIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Unit Modifier">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
+            <TextField fx:id="physicalUnitModifier" prefHeight="26.0" prefWidth="230.0" />
+            <FlowPane prefHeight="32.0" prefWidth="442.0">
+               <children>
+                  <ImageView fx:id="physicalRateIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Rate">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
+            <ComboBox fx:id="physicalRate" prefHeight="26.0" prefWidth="230.0" />
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="physicalAuxIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Aux">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
+            <ComboBox fx:id="physicalAux" prefHeight="26.0" prefWidth="230.0" />
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="relIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="166.0" text="  Rel">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
+            <ComboBox fx:id="rel" prefHeight="26.0" prefWidth="230.0" />
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="physicalAuxRateIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Aux Rate">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
+            <ComboBox fx:id="physicalAuxRate" prefHeight="26.0" prefWidth="230.0" />
+            <FlowPane prefHeight="33.0" prefWidth="518.0">
+               <children>
+                  <ImageView fx:id="physicalAuxRateModifierIcon" fitHeight="12.0" fitWidth="122.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@red_dot.png" />
+                     </image>
+                  </ImageView>
+                  <Label prefHeight="32.0" prefWidth="166.0" text="  Physical Aux Modifier">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </Label>
+               </children>
+            </FlowPane>
+            <TextField fx:id="physicalAuxUnitModifier" prefHeight="26.0" prefWidth="230.0" />
+         </children>
+      </VBox>
    </children>
 </AnchorPane>

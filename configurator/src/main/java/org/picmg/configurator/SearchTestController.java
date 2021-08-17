@@ -25,6 +25,10 @@
 package org.picmg.configurator;
 import java.io.*;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.Scanner;
@@ -40,6 +44,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.picmg.jsonreader.JsonAbstractValue;
+import org.picmg.jsonreader.JsonResultFactory;
 
 public class SearchTestController implements Initializable {	
 	
@@ -124,9 +130,20 @@ public class SearchTestController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		
 		//create vendor and name arraylists
-		File stateSetFolder = new File("C:\\\\Users\\\\David\\\\git\\\\picmg_iot_config\\\\configurator\\\\src\\\\main\\\\resources\\\\state_sets");
-        File[] stateSets = stateSetFolder.listFiles();
-        
+		File[] stateSets;
+		ArrayList<File> list = new ArrayList<File>();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/state_sets"))) {
+			int i = 0;
+			for (Path path : stream) {
+				if (!Files.isDirectory(path)) {
+					list.add(new File(String.valueOf(path)));
+				}
+			}
+		} catch (IOException e) {
+			// unable to find the directory
+		}
+        stateSets = list.toArray(File[]::new);
+
         ArrayList<String> vendorList = new ArrayList<String>();
         ArrayList<String> nameList   = new ArrayList<String>();
         ArrayList<String> fileList   = new ArrayList<String>();

@@ -82,6 +82,7 @@ public class MainScreenController implements Initializable {
 		public JsonAbstractValue leaf;
 		public String nodeType;
 		public String name;
+		public boolean required;
 		public SimpleBooleanProperty error = new SimpleBooleanProperty(false);
 		
 		public TreeData() {
@@ -99,6 +100,7 @@ public class MainScreenController implements Initializable {
     private final class JsonTreeCell extends TreeCell<TreeData> {
         private ContextMenu contextMenu;
 		static Image redDotImage;
+		static Image yellowDotImage;
 
 		// JsonTreeCell
         //
@@ -109,15 +111,38 @@ public class MainScreenController implements Initializable {
 				InputStream is = classLoader.getResourceAsStream("red_dot.png");
 				if (is != null) redDotImage = new Image(is);
 			}
+			if (yellowDotImage==null) {
+				ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+				InputStream is = classLoader.getResourceAsStream("yellow_dot.png");
+				if (is != null) yellowDotImage = new Image(is);
+			}
 		}
 
-		void setError(boolean errorValue){
+		
+		void setError(boolean errorValue,String req){
         	if(errorValue){
-				ImageView iv = new ImageView(redDotImage);
-				iv.setFitWidth(12);
-				iv.setFitHeight(12);
-				iv.setVisible(true);
-				setGraphic(iv);
+        		boolean required = true;
+        		if(req!=null){
+        			if(req.equals("false")){
+						required = false;
+					}
+				}else{
+        			required = false;
+				}
+        		if(required){
+					ImageView iv = new ImageView(redDotImage);
+					iv.setFitWidth(12);
+					iv.setFitHeight(12);
+					iv.setVisible(true);
+					setGraphic(iv);
+				}else{
+					ImageView iv = new ImageView(yellowDotImage);
+					iv.setFitWidth(12);
+					iv.setFitHeight(12);
+					iv.setVisible(true);
+					setGraphic(iv);
+				}
+
 			}else{
         		setGraphic(null);
 			}
@@ -129,12 +154,12 @@ public class MainScreenController implements Initializable {
         	TreeItem<TreeData> it = getTreeItem();
 			errorCheck(it.getParent());
         	boolean err = getItem().error.getValue();
-        	setError(err);
+        	setError(err,getItem().leaf.getValue("required"));
 			treeView.getSelectionModel().select(selectedNode);
 
 			getItem().error.addListener((observable, oldValue, newValue) -> {
 				boolean errorVal = getItem().error.getValue();
-				setError(errorVal);
+				setError(errorVal,getItem().leaf.getValue("required"));
         	});
 
 				// set the behavior when the cell is clicked by the mouse
@@ -730,8 +755,6 @@ public class MainScreenController implements Initializable {
 
 				if (treeNode instanceof Text || (treeNode instanceof TreeCell && ((TreeCell) treeNode).getText() != null)) {
                     TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
-					errorClear(treeView.getRoot());
-					errorCheck(treeView.getRoot());
 					treeView.getSelectionModel().select(selectedNode);
 					clearPanes();
 
@@ -748,6 +771,7 @@ public class MainScreenController implements Initializable {
 								break;
 	                    	case "stateSensor":
 	                    		clearPanes();
+
 	                    		stateSensorContent.setVisible(true);
 	                    		stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray)stateLib.get("stateSets"));
 								break;
