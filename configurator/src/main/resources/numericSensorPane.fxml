@@ -63,7 +63,7 @@
                         <Image url="@red_dot.png" />
                      </image>
                   </ImageView>
-                  <Label prefHeight="32.0" prefWidth="383.0" text="  Output Curve">
+                  <Label prefHeight="32.0" prefWidth="383.0" text="  Input Curve">
                      <font>
                         <Font size="13.0" />
                      </font>

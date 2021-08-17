@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -332,7 +334,60 @@ public class NumericSensorController implements Initializable {
 		});
 
 
-		//TODO: add device save configuration on new value listners
+		//TODO: add device save configuration on new value listeners
+
+		// comboboxes run on new value
+		boundChannel.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			updateIcons();
+		});
+		physicalSensor.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			updateIcons();
+		});
+		physicalBaseUnit.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			updateIcons();
+		});
+		physicalRate.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			updateIcons();
+		});
+		physicalAux.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			updateIcons();
+		});
+		rel.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			updateIcons();
+		});
+		physicalAuxRate.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			updateIcons();
+		});
+
+		//textboxes run on new value
+
+		inputGearingRatio.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				data.inputGearingRatio = inputGearingRatio.getText();
+				if(data.inputGearingRatio.equals("")){
+					data.inputGearingRatio=null;
+				}
+				updateIcons();
+			}
+		});
+		physicalUnitModifier.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				data.unitModifier = physicalUnitModifier.getText();
+				if(data.unitModifier.equals("")){
+					data.unitModifier=null;
+				}
+				updateIcons();
+			}
+		});
+		physicalAuxUnitModifier.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				data.auxModifier = physicalAuxUnitModifier.getText();
+				if(data.auxModifier.equals("")){
+					data.auxModifier=null;
+				}
+				updateIcons();
+			}
+		});
 	}
 
 	public void update(Device device, TreeItem<MainScreenController.TreeData> selectedNode){
