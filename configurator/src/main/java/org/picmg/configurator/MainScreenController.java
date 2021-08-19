@@ -595,6 +595,7 @@ public class MainScreenController implements Initializable {
 		}
 	}
 
+	// TODO: walk the tree, checking data rather than selecting each node.  This will improve performance and stability
 	// Checks for errors in all logical entites. displays error icon if found.
 	public void errorCheck(TreeItem<TreeData> treeNode) {
 

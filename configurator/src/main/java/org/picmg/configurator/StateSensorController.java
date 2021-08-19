@@ -318,7 +318,7 @@ public class StateSensorController implements Initializable {
 			boundChannelCBox.setValue("virtual");
 			boundChannelCBox.setDisable(true);
 		}else {
-			ArrayList<String> arr = device.getPossibleChannelsForBinding(device.getBindingFromName(selectedNode.getValue().name));
+			ArrayList<String> arr = device.getPossibleChannelsForBinding(device.getConfiguredBindingFromName(selectedNode.getValue().name));
 			boundChannelCBox.getItems().clear();
 			boundChannelCBox.setValue(null);
 			boundChannelCBox.setDisable(false);

@@ -29,13 +29,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -45,7 +42,6 @@ import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
@@ -58,8 +54,6 @@ import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonResultFactory;
 
 public class NumericSensorController implements Initializable {
-	@FXML private AnchorPane numericSensorPane;
-	@FXML private VBox numericSensorVBox;
 	@FXML private Label nameText;
 	@FXML private Label descriptionText;
 	@FXML private ImageView boundChannelIcon;
@@ -79,13 +73,14 @@ public class NumericSensorController implements Initializable {
 	@FXML private ImageView physicalRateIcon;
 	@FXML private ComboBox<String> physicalRate;
 	@FXML private ImageView relIcon;
-	@FXML private ComboBox rel;
+	@FXML private ComboBox<String> rel;
 	@FXML private ImageView physicalAuxIcon;
 	@FXML private ComboBox<String> physicalAux;
 	@FXML private ImageView physicalAuxRateIcon;
 	@FXML private ComboBox<String> physicalAuxRate;
 	@FXML private ImageView physicalAuxRateModifierIcon;
 	@FXML private TextField physicalAuxUnitModifier;
+	@FXML private Button restoreButton;
 
 	private Device device;
 	private TreeItem<MainScreenController.TreeData> selectedNode;
@@ -106,6 +101,8 @@ public class NumericSensorController implements Initializable {
 		ArrayList<String> sensorNames = new ArrayList<String>();
 		ArrayList<Point2D> inputCurvePoints = new ArrayList<>();
 	}
+
+	private NumericSensorData data = new NumericSensorData();
 
 	// choice box choices
 	final String[] unitsChoices = {
@@ -167,9 +164,6 @@ public class NumericSensorController implements Initializable {
 		if (data.inputCurvePoints.size()<2) return false;
 		return true;
 	}
-
-
-	private NumericSensorData data = new NumericSensorData();
 
 	private void updateIcons(){
 		//TODO: add call to mainScreenController to update error icons in tree
@@ -280,6 +274,11 @@ public class NumericSensorController implements Initializable {
 
 
 	@Override
+	/**
+	 * Initialize the pane.  This is called only once when the pane is created.  This function configures the static
+	 * control choices, sets up listeners.  Since nothing is selected on the device tree, there is no need to
+	 * configure the values of the individual controls on the pane.
+	 */
 	public void initialize(URL location, ResourceBundle resources) {
 		//TODO: add logic for ALL listeners to use configured value if one exists rather than capabilities
 
@@ -339,24 +338,41 @@ public class NumericSensorController implements Initializable {
 
 		// comboboxes run on new value
 		boundChannel.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if (boundChannel.getValue()!=null)
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"boundChannel",boundChannel.getValue());
+			setControlEnables();
+			setSensorChoices();
 			updateIcons();
 		});
 		physicalSensor.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if (physicalSensor.getValue()!=null)
+				device.setSensorFromFile(selectedNode.getValue().name, physicalSensor.getValue());
+			setControlEnables();
 			updateIcons();
 		});
 		physicalBaseUnit.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if (physicalBaseUnit.getValue()!=null)
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalBaseUnit",physicalBaseUnit.getValue());
 			updateIcons();
 		});
 		physicalRate.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if (physicalRate.getValue()!=null)
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalRateUnit",physicalRate.getValue());
 			updateIcons();
 		});
 		physicalAux.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if (physicalAux.getValue()!=null)
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnit",physicalAux.getValue());
 			updateIcons();
 		});
 		rel.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if (rel.getValue()!=null)
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"rel",rel.getValue());
 			updateIcons();
 		});
 		physicalAuxRate.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if (physicalAuxRate.getValue()!=null)
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxRateUnit",physicalAuxRate.getValue());
 			updateIcons();
 		});
 
@@ -390,8 +406,258 @@ public class NumericSensorController implements Initializable {
 				updateIcons();
 			}
 		});
+		restoreButton.setOnAction( e-> {
+			// event handler for button press
+			// Restore the values for the configuration section back to
+			// the capabilities values from the device
+			boundChannel.setValue(null);
+			physicalSensor.setValue(null);
+			device.restoreBindingToDefaults(selectedNode.getValue().name);
+			setPaneValues();
+			setControlEnables();
+		});
 	}
 
+	/*******************************************************************************************************************
+	 * populate the choices with sensor names found in the library - present only sensor names that match the bound
+	 * channel.  This function should be called on update and any time the channel binding is changed.
+	 */
+	private void setSensorChoices() {
+		JsonResultFactory factory = new JsonResultFactory();
+		String val = physicalSensor.getValue();
+		physicalSensor.getItems().clear();
+		if (val!=null) physicalSensor.setValue(val);
+		data.sensorNames.clear();
+
+		if (boundChannel.getValue() != null) {
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir") + "/lib/sensors"))) {
+				for (Path path : stream) {
+					if (!Files.isDirectory(path)) {
+						JsonAbstractValue json = factory.buildFromFile(path);
+						String name = json.getValue("name");
+						data.sensorNames.add(name);
+
+						// check to see if one of the supported interfaces for this sensor matches
+						// the interface of the bound channel.
+						String channelType = device.getInterfaceTypeFromName(boundChannel.getValue());
+						JsonArray channelTypesSupported = (JsonArray) ((JsonObject) json).get("supportedInterfaces");
+
+						physicalSensor.getItems().add(name);
+					}
+				}
+			} catch (IOException e) {
+				// unable to find the directory
+			}
+		}
+	}
+
+	/*******************************************************************************************************************
+	 * update the pane contents to the default values from the configuration section of the device object - at this
+	 * point, any default values from the capabilities section have already been copied to the configuration section.
+	 * This function is called from update().
+	 **/
+	private void setPaneValues() {
+		String bindingName = selectedNode.getValue().name;
+		JsonResultFactory factory = new JsonResultFactory();
+
+		// set name and description text at the top of the pane
+		nameText.setText("  Name: "+this.device.getConfiguredBindingValueFromKey(bindingName,"name"));
+		descriptionText.setText("  Description: "+this.device.getConfiguredBindingValueFromKey(bindingName,"description"));
+
+		//if the binding is virtual, set channel to virtual and gray out the cbox. Else, display available channels.
+		if(device.getConfiguredBindingValueFromKey(bindingName,"isVirtual").equals("true")) {
+			boundChannel.getItems().clear();
+			boundChannel.setValue("virtual");
+		}else {
+			// here if the channel is not virtual - if the binding has not set by default, allow it to be set
+			ArrayList<String> channelChoices = device.getPossibleChannelsForBinding(device.getConfiguredBindingFromName(bindingName));
+			boundChannel.getItems().clear();
+			boundChannel.setValue(null);
+
+			// if bound channel is non-null, set value according to json.
+			if(device.getConfiguredBindingValueFromKey(bindingName,"boundChannel") != null){
+				boundChannel.setValue(device.getConfiguredBindingValueFromKey(bindingName,"boundChannel"));
+			}else{
+				for(int i=0; i<channelChoices.size(); i++) {
+					boundChannel.getItems().add(channelChoices.get(i));
+				}
+				boundChannel.setValue(null);
+			}
+		}
+
+		// if sensor is non-null, set value according to json. Else, allow for population.
+		if(device.getConfiguredBindingValueFromKey(bindingName,"sensor") != null){
+			// here if a value has been set in the configuration - set it in the pane
+			String value = device.getConfiguredBindingValueFromKey(bindingName,"sensor.name");
+			physicalSensor.setValue(device.getConfiguredBindingValueFromKey(bindingName,"sensor.name"));
+		} {
+			physicalSensor.setValue(null);
+		}
+		setSensorChoices();
+
+		// if input curve is non-null, set value according to json. Else, allow for population.
+		if(device.getBindingValueFromKey(bindingName,"inputCurve") != null){
+			selectCurve.setDisable(true);
+			inputCurveEnabled.setSelected(true);
+		}else{
+			inputCurveEnabled.setSelected(false);
+		}
+
+		// if gearing ratio is non-null, set value according to json. Else, allow for population.
+		inputGearingRatio.setText("");
+		if(device.getBindingValueFromKey(bindingName,"inputGearingRatio") != null){
+			inputGearingRatio.setText(device.getBindingValueFromKey(bindingName,"inputGearingRatio"));
+		} else {
+			inputGearingRatio.setText(null);
+		}
+
+		// if physical base unit is non-null, set value according to json. Else, allow for population.
+		if(device.getBindingValueFromKey(bindingName,"physicalBaseUnit") != null){
+			physicalBaseUnit.setValue(device.getBindingValueFromKey(bindingName,"physicalBaseUnit"));
+		}else{
+			physicalBaseUnit.getItems().clear();
+			for (String choice:unitsChoices) physicalBaseUnit.getItems().add(choice);
+		}
+
+		// if physical unit modifier is non-null, set value according to json. Else, allow for population.
+		physicalUnitModifier.setText("");
+		if(device.getBindingValueFromKey(bindingName,"phsicalUnitModifier") != null){
+			physicalUnitModifier.setText(device.getBindingValueFromKey(bindingName,"phsicalUnitModifier"));
+		}
+
+		// if physical rate is non-null, set value according to json. Else, allow for population.
+		if(device.getBindingValueFromKey(bindingName,"physicalRateUnit") != null){
+			physicalRate.setValue(device.getBindingValueFromKey(bindingName,"physicalRateUnit"));
+		}else{
+			physicalRate.getItems().clear();
+			for (String choice:rateChoices) physicalRate.getItems().add(choice);
+		}
+
+		// if physical aux is non-null, set value according to json. Else, allow for population.
+		if(device.getBindingValueFromKey(bindingName,"physicalAuxUnit") != null){
+			physicalAux.setValue(device.getBindingValueFromKey(bindingName,"physicalAuxUnit"));
+		}else{
+			physicalAux.getItems().clear();
+			for (String choice:unitsChoices) physicalAux.getItems().add(choice);
+		}
+
+		// if rel is non-null, set value according to json. Else, allow for population.
+		if(device.getBindingValueFromKey(bindingName,"physicalAuxUnit") != null){
+			rel.setValue(device.getBindingValueFromKey(bindingName,"physicalAuxUnit"));
+		}else{
+			rel.getItems().clear();
+			for (String choice:relChoices) rel.getItems().add(choice);
+		}
+
+		// if physical aux unit modifier is non-null, set value according to json. Else, allow for population.
+		physicalAuxUnitModifier.setText("");
+		if(device.getBindingValueFromKey(bindingName,"physicalAuxUnitModifier") != null){
+			physicalAuxUnitModifier.setText(device.getBindingValueFromKey(bindingName,"physicalAuxUnitModifier"));
+		}
+
+		// if physical Aux Rate is non-null, set value according to json. Else, allow for population.
+		if(device.getBindingValueFromKey(bindingName,"physicalAuxRate") != null){
+			physicalAuxRate.setValue(device.getBindingValueFromKey(bindingName,"physicalAuxRate"));
+		}else{
+			physicalAuxRate.getItems().clear();
+			for (String choice:rateChoices) physicalAuxRate.getItems().add(choice);
+		}
+
+		updated = true;
+	}
+
+	/*******************************************************************************************************************
+	 * This function is called on update of the pane and when the binding or sensor selection values are changed.
+	 * The function sets the control enables based on the state of the controls.  This pane has 4 distinct states:
+	 * 1. The binding has not been set.  The binding control will be enabled and all others will be disabled.
+	 * 2. The binding has been set but the sensor has not yet been selected.  The binding control and the
+	 *    sensor control will both be enabled. All other controls will be disabled.
+	 * 3. The binding and the sensor have both been set but no other controls have been set - in this case, the
+	 *    binding control will be disabled.  All other controls will be enabled.
+	 * 4. The binding control and the sensor control have been set and at least one other control value is also
+	 *    set.  The binding and sensor controls will be disabled and
+	 *    all other controls will be enabled.
+	 *
+	 * A special case exists if the sensor is virtual - in this case the pane will automatically be in state 4.
+	 **/
+	private void setControlEnables() {
+		//TODO; add logic for update such that if there exists a configured value, use it on creation, rather
+		// than defaulting to the capabilites
+
+		String bindingName = selectedNode.getValue().name;
+		JsonResultFactory factory = new JsonResultFactory();
+
+		boolean disableBinding;
+		boolean disableSensor;
+		boolean disableOthers;
+
+		//if the binding is virtual, set channel to virtual and gray out the cbox. Else, display available channels.
+		if (device.getConfiguredBindingValueFromKey(bindingName,"isVirtual").equals("true")) {
+			disableBinding = true;
+			disableSensor = true;
+			disableOthers = false;
+		} else {
+			if (device.getConfiguredBindingValueFromKey(bindingName, "boundChannel") != null) {
+				// here if the binding has been set - check to see if the sensor has been set
+				if (device.getConfiguredBindingValueFromKey(bindingName, "sensor") != null) {
+					// sensor has been set
+					if ((device.getBindingValueFromKey(bindingName, "inputCurve") != null) ||
+							(device.getBindingValueFromKey(bindingName, "inputGearingRatio") != null) ||
+							(device.getBindingValueFromKey(bindingName, "physicalBaseUnit") != null) ||
+							(device.getBindingValueFromKey(bindingName, "phsicalUnitModifier") != null) ||
+							(device.getBindingValueFromKey(bindingName, "physicalRateUnit") != null) ||
+							(device.getBindingValueFromKey(bindingName, "rel") != null) ||
+							(device.getBindingValueFromKey(bindingName, "physicalAuxUnit") != null) ||
+							(device.getBindingValueFromKey(bindingName, "physicalAuxUnitModifier") != null) ||
+							(device.getBindingValueFromKey(bindingName, "physicalAuxRateUnit") != null)) {
+						// the binding, sensor, and at least one other field are set - state 4
+						disableBinding = true;
+						disableSensor = true;
+						disableOthers = false;
+					} else {
+						// the binding and the sensor are set but no other values have been set - state 3
+						disableBinding = true;
+						disableSensor = false;
+						disableOthers = false;
+					}
+				} else {
+					// binding set, sensor not set - (state 2)
+					disableBinding = false;
+					disableSensor = false;
+					disableOthers = true;
+				}
+			} else {
+				// here if the binding has not been set - (state 1)
+				disableBinding = false;
+				disableSensor = true;
+				disableOthers = true;
+			}
+		}
+
+		// enable / disable the controls
+		boundChannel.setDisable(disableBinding&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"boundChannel"));
+		physicalSensor.setDisable(disableSensor&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"sensor"));
+		selectCurve.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"inputCurve"));
+		inputCurveEnabled.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"inputCurve"));
+		selectCurve.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"inputCurve"));
+		view.setDisable(disableOthers&&(device.getConfiguredBindingFromName("inputCurve")!=null));
+		inputGearingRatio.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"inputGearingRatio"));
+		physicalBaseUnit.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"physicalBaseUnit"));
+		physicalUnitModifier.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"physicalUnitModifier"));
+		physicalRate.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"physicalRate"));
+		rel.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"rel"));
+		physicalAux.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"physicalAux"));
+		physicalAuxUnitModifier.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"physicalAuxUnitModifier"));
+		physicalAuxRate.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"physicalAuxRate"));
+	}
+
+	/*******************************************************************************************************************
+	 * This function is called by the main controller any time a new numeric sensor is selected from the tree view.
+	 * The purpose of this function is to update the controls from data stored in the device.
+	 *
+	 * @param device - the device configuration json object that is currently being modified by the user.
+	 * @param selectedNode - the tree node that was selected by the user
+	 */
 	public void update(Device device, TreeItem<MainScreenController.TreeData> selectedNode){
 		//TODO; add logic for update such that if there exists a configured value, use it on creation, rather
 		// than defaulting to the capabilites
@@ -399,153 +665,10 @@ public class NumericSensorController implements Initializable {
 		// do any configuration required prior to making the pane visible
 
 		this.device = device;
-
-		// set name and description text at the top of the pane
-		nameText.setText("  Name: "+this.device.getBindingValueFromKey(selectedNode.getValue().name,"name"));
-		descriptionText.setText("  Description: "+this.device.getBindingValueFromKey(selectedNode.getValue().name,"description"));
-
-		//if the binding is virtual, set channel to virtual and gray out the cbox. Else, display available channels.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"isVirtual").equals("true")) {
-			boundChannel.getItems().clear();
-			boundChannel.setValue("virtual");
-			boundChannel.setDisable(true);
-		}else {
-			ArrayList<String> arr = device.getPossibleChannelsForBinding(device.getBindingFromName(selectedNode.getValue().name));
-			boundChannel.getItems().clear();
-			boundChannel.setValue(null);
-			boundChannel.setDisable(false);
-
-			// if bound channel is non-null, set value according to json. Else, allow for population.
-			if(device.getBindingValueFromKey(selectedNode.getValue().name,"boundChannel") != null){
-				boundChannel.setValue(device.getBindingValueFromKey(selectedNode.getValue().name,"boundChannel"));
-				boundChannel.setDisable(true);
-			}else{
-				boundChannel.setDisable(false);
-				for(int i=0; i<arr.size(); i++) {
-					boundChannel.getItems().add(arr.get(i));
-				}
-			}
-		}
-
-		// if sensor is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"sensor") != null){
-			physicalSensor.getItems().clear();
-			physicalSensor.setValue(device.getBindingValueFromKey(selectedNode.getValue().name,"sensor"));
-			physicalSensor.setDisable(true);
-		}else{
-			physicalSensor.setDisable(false);
-			physicalSensor.getItems().clear();
-			data.sensorNames.clear();
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/sensors"))) {
-				for (Path path : stream) {
-					if (!Files.isDirectory(path)) {
-						JsonResultFactory factory = new JsonResultFactory();
-						JsonAbstractValue json = factory.buildFromFile(path);
-						String name = json.getValue("name");
-						data.sensorNames.add(name);
-						physicalSensor.getItems().add(name);
-						//TODO: handle for physical sensor json is held here
-					}
-				}
-			} catch (IOException e) {
-				// unable to find the directory
-			}
-
-		}
-
-		// if input curve is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"inputCurve") != null){
-			selectCurve.setDisable(true);
-			inputCurveEnabled.setSelected(true);
-			inputCurveEnabled.setDisable(true);
-			selectCurve.setDisable(true);
-			view.setDisable(true);
-		}else{
-			inputCurveEnabled.setSelected(false);
-			inputCurveEnabled.setDisable(false);
-			selectCurve.setDisable(true);
-			view.setDisable(true);
-		}
-
-		// if gearing ratio is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"inputGearingRatio") != null){
-			inputGearingRatio.setText(device.getBindingValueFromKey(selectedNode.getValue().name,"inputGearingRatio"));
-			inputGearingRatio.setDisable(true);
-		}else{
-			inputGearingRatio.setDisable(false);
-		}
-
-		// if physical base unit is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalBaseUnit") != null){
-			physicalBaseUnit.setValue(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalBaseUnit"));
-			physicalBaseUnit.setDisable(true);
-		}else{
-			physicalBaseUnit.setDisable(false);
-			physicalBaseUnit.getItems().clear();
-			for (String choice:unitsChoices) physicalBaseUnit.getItems().add(choice);
-		}
-
-		// if physical unit modifier is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"phsicalUnitModifier") != null){
-			physicalUnitModifier.setText(device.getBindingValueFromKey(selectedNode.getValue().name,"phsicalUnitModifier"));
-			physicalUnitModifier.setDisable(true);
-		}else{
-			physicalUnitModifier.setDisable(false);
-		}
-
-		// if physical rate is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalRateUnit") != null){
-			physicalRate.setValue(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalRateUnit"));
-			physicalRate.setDisable(true);
-		}else{
-			physicalRate.setDisable(false);
-			physicalRate.getItems().clear();
-			for (String choice:rateChoices) physicalRate.getItems().add(choice);
-		}
-
-		// if physical aux is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnit") != null){
-			physicalAux.setValue(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnit"));
-			physicalAux.setDisable(true);
-		}else{
-			physicalAux.setDisable(false);
-			physicalAux.getItems().clear();
-			for (String choice:unitsChoices) physicalAux.getItems().add(choice);
-		}
-
-		// if rel is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnit") != null){
-			rel.setValue(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnit"));
-			rel.setDisable(true);
-		}else{
-			rel.setDisable(false);
-			rel.getItems().clear();
-			for (String choice:relChoices) rel.getItems().add(choice);
-		}
-
-		// if physical aux unit modifier is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnitModifier") != null){
-			physicalAuxUnitModifier.setText(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnitModifier"));
-			physicalAuxUnitModifier.setDisable(true);
-		}else{
-			physicalAuxUnitModifier.setDisable(false);
-		}
-
-		// if physical Aux Rate is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalAuxRate") != null){
-			physicalAuxRate.setValue(device.getBindingValueFromKey(selectedNode.getValue().name,"physicalAuxRate"));
-			physicalAuxRate.setDisable(true);
-		}else{
-			physicalAuxRate.setDisable(false);
-			physicalAuxRate.getItems().clear();
-			for (String choice:rateChoices) physicalAuxRate.getItems().add(choice);
-		}
-
 		this.selectedNode = selectedNode;
-		updated = true;
-
+System.out.println("update");
+		setPaneValues();
+		setControlEnables();
 		updateIcons();
 	}
-
-
 }

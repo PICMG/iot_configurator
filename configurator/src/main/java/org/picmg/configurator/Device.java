@@ -24,13 +24,13 @@ package org.picmg.configurator;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import org.picmg.jsonreader.*;
-import org.picmg.jsonreader.JsonAbstractValue;
-import org.picmg.jsonreader.JsonArray;
-import org.picmg.jsonreader.JsonObject;
-import org.picmg.jsonreader.JsonValue;
 
 public class Device {
 	// json representation of the device
@@ -259,11 +259,11 @@ public class Device {
 	}
 
 	/*
-	 * return the channel type for a specific channel name.  If the type is
+	 * return the interface type for a specific channel name.  If the type is
 	 * not found, null is returned
 	 */
-	public String getChannelTypeFromName(String channelName) {
-		JsonObject cfg = (JsonObject)jdev.get("configuration");
+	public String getInterfaceTypeFromName(String channelName) {
+		JsonObject cfg = (JsonObject)jdev.get("capabilities");
 		JsonArray channelDefs = (JsonArray)cfg.get("channels");
 		Iterator<JsonAbstractValue> it = channelDefs.iterator();
 		while (it.hasNext()) {
@@ -318,7 +318,7 @@ public class Device {
 	/*
 	 * set the binding value for a specific key.
 	 */
-	public void setBindingValueFromKey(String bindingName, String bindingKey, String newValue) {
+	public void setConfiguredBindingValueFromKey(String bindingName, String bindingKey, String newValue) {
 		JsonObject cfg = (JsonObject)jdev.get("configuration");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
 		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
@@ -340,7 +340,7 @@ public class Device {
 	 * return the binding for a specific name.  If the name of the binding
 	 * is not found, null is returned
 	 */
-	public JsonObject getBindingFromName(String bindingName) {
+	public JsonObject getConfiguredBindingFromName(String bindingName) {
 		JsonObject cfg = (JsonObject)jdev.get("configuration");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
 		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
@@ -357,7 +357,89 @@ public class Device {
 		}
 		return null;
 	}
-	
+
+	/**
+	 * return the capabilities section binding for a specific name.  If the name of the binding
+	 * is not found, null is returned
+	 **/
+	public JsonObject getCapabilitiesBindingFromName(String entityName, String bindingName) {
+		JsonObject cfg = (JsonObject)jdev.get("capabilities");
+		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
+		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
+		while (it.hasNext()) {
+			JsonObject edef = (JsonObject)it.next();
+			if (!edef.getValue("name").equals(entityName)) continue;
+
+			// here if the entity name matches - find the matching binding name
+			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator();
+			while (it2.hasNext()) {
+				JsonObject binding = (JsonObject)it2.next();
+				String name = binding.getValue("name");
+				if(name.equals(bindingName)) {
+					return binding;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * find the named binding and restore all its field values to those found
+	 * in the capabilities section of the device structure.
+	 **/
+	public JsonObject restoreBindingToDefaults(String bindingName) {
+		JsonObject cfg = (JsonObject)jdev.get("configuration");
+		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
+		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
+		while (it.hasNext()) {
+			JsonObject edef = (JsonObject)it.next();
+			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator();
+			while (it2.hasNext()) {
+				JsonObject binding = (JsonObject)it2.next();
+				String name = binding.getValue("name");
+				if(name.equals(bindingName)) {
+					// attempt to find the matching capabilities entity and binding that
+					// matches this one
+					JsonObject capBinding = getCapabilitiesBindingFromName(edef.getValue("name"),bindingName);
+					if (capBinding!=null) {
+						// deep copy the capabilities binding to the configuration binding
+						binding.copy(capBinding);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	/*******************************************************************************************************************
+	 * this function returns true if the named binding field is editable.  Editable fields will have a null value in
+	 * for the corresponding field in the capabilities section.
+	 *
+	 * @param bindingName - the name of the binding
+	 * @param fieldName - the name of the field
+	 * @return
+	 */
+	public boolean isConfigurationBindingFieldEditable(String bindingName, String fieldName) {
+		JsonObject cfg = (JsonObject)jdev.get("configuration");
+		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
+		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
+		while (it.hasNext()) {
+			JsonObject edef = (JsonObject)it.next();
+			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator();
+			while (it2.hasNext()) {
+				JsonObject binding = (JsonObject)it2.next();
+				String name = binding.getValue("name");
+				if(name.equals(bindingName)) {
+					// attempt to find the matching capabilities entity and binding that matches this one
+					JsonObject capBinding = getCapabilitiesBindingFromName(edef.getValue("name"),bindingName);
+					return (capBinding.getValue(fieldName) == null);
+				}
+			}
+		}
+		// here if the field and/or binding could not be found - return false.
+		return false;
+	}
+
 	/* 
 	 * get a list of possible channel types that support a specific binding
 	 * constrained by the remaining pins on the device
@@ -370,7 +452,7 @@ public class Device {
         
         // now find the types for each channel
         allowedChannels.forEach(channelName -> {
-        	result.add(getChannelTypeFromName(channelName));
+        	result.add(getInterfaceTypeFromName(channelName));
         });
 		return result;
 	}
@@ -474,7 +556,24 @@ public class Device {
 		allUsedChannels.add(channelName);
 		return true;
 	}
-	
+
+	/*
+	 * set the sensor configuration for the specified binding from the given file
+	 */
+	public void setSensorFromFile(String bindingName, String filename) {
+		JsonResultFactory factory = new JsonResultFactory();
+
+		String fullFilename = System.getProperty("user.dir") + "/lib/sensors/" + filename + ".json";
+
+		JsonAbstractValue sensor = factory.buildFromFile(Path.of(fullFilename));
+		if (sensor == null) return;
+
+		JsonObject binding = getConfiguredBindingFromName(bindingName);
+		if (binding == null) return;
+
+		binding.put("sensor",sensor);
+	}
+
 	/*
 	 * recurse the possible binding configurations to see if a valid solution
 	 * exists.

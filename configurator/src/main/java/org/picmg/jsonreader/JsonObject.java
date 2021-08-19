@@ -40,7 +40,25 @@ public class JsonObject extends TreeMap<String, JsonAbstractValue> implements Js
 			  } 
 		}
 	}
-	
+
+	/*
+	 * set the current object's values to match those found in the parameter object
+	 */
+	public void copy(JsonObject obj) {
+        clear();
+        for(Map.Entry<String,JsonAbstractValue> entry : obj.entrySet()) {
+            String key = entry.getKey();
+            JsonAbstractValue value = entry.getValue();
+            if (value.getClass().isAssignableFrom(JsonArray.class)) {
+                this.put(key, new JsonArray((JsonArray) value));
+            } else if (value.getClass().isAssignableFrom(JsonObject.class)) {
+                this.put(key, new JsonObject((JsonObject) value));
+            } else {
+                this.put(key, new JsonValue((JsonValue) value));
+            }
+        }
+    }
+
 	@Override
 	/* 
 	 * diagnostic function - dumps the contents of the json object to the system output device
