@@ -59,7 +59,6 @@ public class NumericSensorController implements Initializable {
 	@FXML private ImageView physicalSensorIcon;
 	@FXML private ComboBox<String> physicalSensor;
 	@FXML private ImageView inputCurveIcon;
-	@FXML private CheckBox inputCurveEnabled;
 	@FXML private Button selectCurve;
 	@FXML private Button view;
 	@FXML private ImageView inputGearingRatioIcon;
@@ -232,18 +231,6 @@ public class NumericSensorController implements Initializable {
 	public void initialize(URL location, ResourceBundle resources) {
 		//TODO: add logic for ALL listeners to use configured value if one exists rather than capabilities
 
-		// input curve enabled listener. This changes the error icon, and the enabled property of the buttons, nothing else.
-		inputCurveEnabled.selectedProperty().addListener((options, oldValue, newValue) -> {
-			if(inputCurveEnabled.isSelected()){
-				selectCurve.setDisable(false);
-				view.setDisable(false);
-			}else{
-				selectCurve.setDisable(true);
-				view.setDisable(true);
-			}
-			updateIcons();
-		});
-
 		// select curve button on click listener
 		selectCurve.setOnAction(new EventHandler<ActionEvent>(){
 			@Override public void handle(ActionEvent e) {
@@ -285,9 +272,6 @@ public class NumericSensorController implements Initializable {
 				stage.showAndWait();
 			}
 		});
-
-
-		//TODO: add device save configuration on ALL new value listeners
 
 		// comboboxes run on new value
 		boundChannel.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
@@ -390,8 +374,11 @@ public class NumericSensorController implements Initializable {
 						// the interface of the bound channel.
 						String channelType = device.getInterfaceTypeFromName(boundChannel.getValue());
 						JsonArray channelTypesSupported = (JsonArray) ((JsonObject) json).get("supportedInterfaces");
-
-						physicalSensor.getItems().add(name);
+						for (JsonAbstractValue val:channelTypesSupported) {
+							if (channelType.equals(val.getValue(""))) {
+								physicalSensor.getItems().add(name);
+							}
+						}
 					}
 				}
 			} catch (IOException e) {
@@ -447,9 +434,6 @@ public class NumericSensorController implements Initializable {
 		// if input curve is non-null, set value according to json. Else, allow for population.
 		if(device.getBindingValueFromKey(bindingName,"inputCurve") != null){
 			selectCurve.setDisable(true);
-			inputCurveEnabled.setSelected(true);
-		}else{
-			inputCurveEnabled.setSelected(false);
 		}
 
 		// if gearing ratio is non-null, set value according to json. Else, allow for population.
@@ -547,7 +531,8 @@ public class NumericSensorController implements Initializable {
 		} else {
 			if (device.getConfiguredBindingValueFromKey(bindingName, "boundChannel") != null) {
 				// here if the binding has been set - check to see if the sensor has been set
-				if (device.getConfiguredBindingValueFromKey(bindingName, "sensor.name") != null) {
+				String val =device.getConfiguredBindingValueFromKey(bindingName, "sensor.name");
+				if ((val != null) && (!val.isEmpty())) {
 					// sensor has been set
 					if ((device.getConfiguredBindingValueFromKey(bindingName, "inputGearingRatio") != null) ||
 							(device.getConfiguredBindingValueFromKey(bindingName, "physicalBaseUnit") != null) ||
@@ -585,7 +570,6 @@ public class NumericSensorController implements Initializable {
 		boundChannel.setDisable(disableBinding&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"boundChannel"));
 		physicalSensor.setDisable(disableSensor&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"sensor"));
 		selectCurve.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"inputCurve"));
-		inputCurveEnabled.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"inputCurve"));
 		selectCurve.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"inputCurve"));
 		view.setDisable(disableOthers&&(device.getConfiguredBindingFromName("inputCurve")!=null));
 		inputGearingRatio.setDisable(disableOthers&&device.isConfigurationBindingFieldEditable(selectedNode.getValue().name,"inputGearingRatio"));

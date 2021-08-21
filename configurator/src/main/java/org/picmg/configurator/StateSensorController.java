@@ -60,6 +60,7 @@ public class StateSensorController implements Initializable {
 	private TreeItem<MainScreenController.TreeData> selectedNode;
 	private JsonArray stateSets;
 	private boolean updated = false;
+
 	private void lowStatePopulate(){
 		// if stateWhenLow is-non null, set value according to json. Else, allow for population.
 		String jsonStr = device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenLow");
@@ -110,6 +111,7 @@ public class StateSensorController implements Initializable {
 			}
 		}
 	}
+
 	private void highStatePopulate(){
 		// if stateWhenHigh is-non null, set value according to json. Else, allow for population.
 		String jsonStr = device.getBindingValueFromKey(selectedNode.getValue().name,"stateWhenHigh");
@@ -186,23 +188,26 @@ public class StateSensorController implements Initializable {
 	}
 
 	public boolean isError(){
-		if(updated){
-			boolean isError = false;
-			if(boundChannelCBox.getValue()==null){
-				isError=true;
-			}
-			if(stateSet==null){
-				isError=true;
-			}
-			if(lowInputCBox.getValue()==null){
-				isError=true;
-			}
-			if(highInputCBox.getValue()==null){
-				isError=true;
-			}
-			return isError;
-		}
-		return true;
+		// TODO: update to match method used in Numeric Sensor controller
+		// for now, just return false;
+		return false;
+//		if(updated){
+//			boolean isError = false;
+//			if(boundChannelCBox.getValue()==null){
+//				isError=true;
+//			}
+//			if(stateSet==null){
+//				isError=true;
+//			}
+//			if(lowInputCBox.getValue()==null){
+//				isError=true;
+//			}
+//			if(highInputCBox.getValue()==null){
+//				isError=true;
+//			}
+//			return isError;
+//		}
+//		return true;
 	}
 
 	@Override
