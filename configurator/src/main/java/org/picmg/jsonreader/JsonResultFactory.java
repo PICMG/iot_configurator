@@ -64,7 +64,7 @@ public class JsonResultFactory {
         while (strpos<str.length()) {
             if ((str.charAt(strpos) == ',') || (str.charAt(strpos) == '}') ||
                     (str.charAt(strpos) == ']')) {
-                String result = str.substring(start,strpos);
+                String result = str.substring(start,strpos).trim();
                 return result;
             } 
             strpos++;
@@ -168,7 +168,7 @@ public class JsonResultFactory {
 
         if (str.charAt(strpos)=='{') {
             strpos++;
-            // here if we need to create a canvas object
+            // here if we need to create a json object
             JsonObject co = new JsonObject();
             
             skipWhitespace();
@@ -219,6 +219,7 @@ public class JsonResultFactory {
         // here if the line is a value primitive
         if (str.charAt(strpos)=='"') {
             String s = getString();
+            s.trim();
             if (s==null) {
                 System.err.println("Null string returned");
                 return null;

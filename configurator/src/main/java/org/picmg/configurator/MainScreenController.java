@@ -596,88 +596,67 @@ public class MainScreenController implements Initializable {
 	}
 
 	// TODO: walk the tree, checking data rather than selecting each node.  This will improve performance and stability
-	// Checks for errors in all logical entites. displays error icon if found.
+	// Checks for errors in all logical entities. displays error icon if found.
 	public void errorCheck(TreeItem<TreeData> treeNode) {
 
 		if (treeNode.getChildren().isEmpty()) {
 			// Do nothing if the node is empty.
 		} else {
-
 			// Otherwise, loop through every child
 			for (TreeItem<TreeData> node : treeNode.getChildren()) {
-				if (node.getValue().nodeType=="ioBinding") {
-					node.setExpanded(true);
-					treeView.getSelectionModel().select(node);
-					TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
-					try {
-						String name = selectedNode.getValue().leaf.getValue("name");
-						String bindingType = device.getBindingValueFromKey(selectedNode.getValue().name, "bindingType");
-						switch (bindingType) {
-							case "stateEffecter":
-								//clearPanes();
-								break;
-							case "stateSensor":
-								//clearPanes();
-								stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray) stateLib.get("stateSets"));
-								if (stateSensorController.isError()) {
-									selectedNode.getValue().error.setValue(true);
-									ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-									InputStream is = classLoader.getResourceAsStream("red_dot.png");
-									ImageView iv = new ImageView(new Image(is));
-									iv.setFitWidth(12);
-									iv.setFitHeight(12);
-									iv.setVisible(true);
-									selectedNode.setGraphic(iv);
-
-								} else {
-									selectedNode.getValue().error.setValue(false);
-									selectedNode.setGraphic(null);
-								}
-								break;
-							case "numericEffecter":
-								//clearPanes();
-								break;
-							case "numericSensor":
-								//clearPanes();
-								numericSensorController.update(device, treeView.getSelectionModel().getSelectedItem());
-								if (numericSensorController.isError()) {
-									selectedNode.getValue().error.setValue(true);
-									ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-									InputStream is = classLoader.getResourceAsStream("red_dot.png");
-									ImageView iv = new ImageView(new Image(is));
-									iv.setFitWidth(12);
-									iv.setFitHeight(12);
-									iv.setVisible(true);
-									selectedNode.setGraphic(iv);
-
-								} else {
-									selectedNode.getValue().error.setValue(false);
-									selectedNode.setGraphic(null);
-								}
-								break;
-
-							default:
-								clearPanes();
-						}
-
-					}catch(NullPointerException ex){
-						//catch block
-					}
-				} else {
-					node.setExpanded(true);
-				}
-
-
-
-				// If the current node has children then check
-				if (!treeNode.getChildren().isEmpty()) {
-					errorCheck(node);
-				}
-
+				errorCheck(node);
 			}
-
 		}
+		try {
+			String type = treeNode.getValue().nodeType;
+			if (treeNode.getValue().nodeType.equals("ioBinding")) {
+				String name = treeNode.getValue().leaf.getValue("name");
+				String bindingType = device.getBindingValueFromKey(treeNode.getValue().name, "bindingType");
+				switch (bindingType) {
+					case "stateEffecter":
+						break;
+					case "stateSensor":
+						if (stateSensorController.isError()) {
+							treeNode.getValue().error.setValue(true);
+							ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+							InputStream is = classLoader.getResourceAsStream("red_dot.png");
+							ImageView iv = new ImageView(new Image(is));
+							iv.setFitWidth(12);
+							iv.setFitHeight(12);
+							iv.setVisible(true);
+							treeNode.setGraphic(iv);
 
+						} else {
+							treeNode.getValue().error.setValue(false);
+							treeNode.setGraphic(null);
+						}
+						break;
+					case "numericEffecter":
+						//clearPanes();
+						break;
+					case "numericSensor":
+						if (!Device.isBindingValid((JsonObject)treeNode.getValue().leaf)) {
+							treeNode.getValue().error.setValue(true);
+							ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+							InputStream is = classLoader.getResourceAsStream("red_dot.png");
+							ImageView iv = new ImageView(new Image(is));
+							iv.setFitWidth(12);
+							iv.setFitHeight(12);
+							iv.setVisible(true);
+							treeNode.setGraphic(iv);
+						} else {
+							treeNode.getValue().error.setValue(false);
+							treeNode.setGraphic(null);
+						}
+						break;
+
+					default:
+						clearPanes();
+				}
+			}
+		}catch(NullPointerException ex){
+			//catch block
+		}
 	}
 
 	// Clears error value in all treeItems by setting the error value to false.

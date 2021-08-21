@@ -24,15 +24,35 @@ package org.picmg.configurator;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.*;
 
 import org.picmg.jsonreader.*;
 
 public class Device {
+	// field values
+	public final static String[] unitsChoices = {
+			"None","Unspecified","Degrees_C", "Degrees_F", "Kelvins", "Volts", "Amps", "Watts", "Joules", "Coulombs",
+			"VA", "Nits", "Lumens", "Lux", "Candelas", "kPa", "PSI", "Newtons", "CFM", "RPM", "Hertz",
+			"Seconds", "Minutes", "Hours", "Days", "Weeks", "Mils", "Inches", "Feet", "Cubic_Inches",
+			"Cubic_Feet", "Meters", "Cubic_Centimeters", "Cubic_Meters", "Liters", "Fluid_Ounces",
+			"Radians", "Steradians", "Revolutions", "Cycles", "Gravities", "Ounces", "Pounds",
+			"Foot-Pounds", "Ounce-Inches", "Gauss", "Gilberts", "Henries", "Farads", "Ohms", "Siemens",
+			"Moles", "Becquerels", "PPM+(parts/million)", "Decibels", "DbA", "DbC", "Grays", "Sieverts",
+			"Color_Temperature_Degrees_K", "Bits", "Bytes", "Words_(data)", "DoubleWords", "QuadWords",
+			"Percentage", "Pascals", "Counts", "Grams", "Newton-meters", "Hits", "Misses", "Retries",
+			"Overruns/Overflows", "Underruns", "Collisions", "Packets", "Messages", "Characters",
+			"Errors", "Corrected_Errors", "Uncorrectable_Errors", "Square_Mils", "Square_Inches",
+			"Square_Feet", "Square_Centimeters", "Square_Meters"
+	};
+	public final static String[] rateChoices = {
+			"None","Per_MicroSecond","Per_MilliSecond","Per_Second","Per_Minute","Per_Hour",
+			"Per_Day","Per_Week","Per_Month","Per_Year"
+	};
+	public final static String[] relChoices = {
+			"dividedBy","multipliedBy"
+	};
+
 	// json representation of the device
 	JsonObject jdev;
 	ArrayList<String> allUsedPins;
@@ -55,8 +75,8 @@ public class Device {
         // add all required entities to the configuration
         JsonArray entities = (JsonArray)((JsonObject)jdev.get("capabilities")).get("logicalEntities");
         entities.forEach(entity-> {
-        	String name = ((JsonObject)entity).getValue("name");
-        	boolean required = ((JsonObject)entity).getBoolean("required");
+        	String name = entity.getValue("name");
+        	boolean required = entity.getBoolean("required");
         	if (required) {
         		addLogicalEntityConfigurationByName(name);
         	}
@@ -65,8 +85,8 @@ public class Device {
         // add all required fru records to the configuration
         JsonArray fruRecords = (JsonArray)((JsonObject)jdev.get("capabilities")).get("fruRecords");
         fruRecords.forEach(record-> {
-        	String name = ((JsonObject)record).getValue("name");
-        	boolean required = ((JsonObject)record).getBoolean("required");
+        	String name = record.getValue("name");
+        	boolean required = record.getBoolean("required");
         	if (required) {
         		addFruRecordConfigurationByName(name);
         	}
@@ -82,13 +102,11 @@ public class Device {
 	 */
 	private ArrayList<String> getAllBoundChannels() {
 		// create the list of channels - initially empty
-        ArrayList<String> usedChannels = new ArrayList<String>();
+        ArrayList<String> usedChannels = new ArrayList<>();
         JsonObject cfg = (JsonObject)jdev.get("configuration");
         ((JsonArray)cfg.get("logicalEntities")).forEach( 
         	entity -> ((JsonArray)jdev.get("ioBindings")).forEach(
-        		binding ->  {
-        			usedChannels.add(((JsonObject)binding).getValue("boundChannel"));
-        		} 
+        		binding -> usedChannels.add(binding.getValue("boundChannel"))
         	) 
         );
         return usedChannels;
@@ -99,7 +117,7 @@ public class Device {
 	 */
 	private ArrayList<String> getAllUsedPins() {
 		// create the list of pins - initially empty
-        ArrayList<String> usedPins = new ArrayList<String>();
+        ArrayList<String> usedPins = new ArrayList<>();
         JsonObject capabilities = (JsonObject)jdev.get("capabilities"); 
         JsonObject cfg          = (JsonObject)jdev.get("configuration");
         ((JsonArray)cfg.get("logicalEntities")).forEach( 
@@ -107,7 +125,7 @@ public class Device {
         		binding -> (
         			(JsonArray)capabilities.get("channels")).forEach(
                     channel -> { 
-                    	if (((JsonObject)channel).getValue("name").equals(((JsonObject)binding).getValue("boundChannel"))) {
+                    	if (channel.getValue("name").equals(binding.getValue("boundChannel"))) {
                     		((JsonArray)((JsonObject)channel).get("pins")).forEach( pin -> usedPins.add(pin.getValue("name"))); 
                     	} 
                     } 
@@ -121,11 +139,11 @@ public class Device {
 	 * return a list of pin names used by a specific named channel
 	 */
 	public ArrayList<String> getPinsUsedByChannel(String channelName) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
         JsonObject capabilities = (JsonObject)jdev.get("capabilities"); 
 		((JsonArray)capabilities.get("channels")).forEach(
 			channel -> { 
-                if (((JsonObject)channel).getValue("name").equals(channelName)) {
+                if (channel.getValue("name").equals(channelName)) {
                 	((JsonArray)((JsonObject)channel).get("pins")).forEach( pin -> result.add(pin.getValue("name"))); 
                 } 
 			} 
@@ -140,9 +158,8 @@ public class Device {
 	public JsonObject getLogicalEntityCapabilityByName(String name) {
 		JsonObject cap = (JsonObject)jdev.get("capabilities");
 		JsonArray logicalEntities = (JsonArray)cap.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
 			if (edef.getValue("name").equals(name)) {
 				return edef;
 			}
@@ -156,9 +173,8 @@ public class Device {
 	public JsonObject getCapabilitiesFruRecordByName(String name) {
 		JsonObject cap = (JsonObject)jdev.get("capabilities");
 		JsonArray fruRecords = (JsonArray)cap.get("fruRecords");
-		Iterator<JsonAbstractValue> it = fruRecords.iterator();
-		while (it.hasNext()) {
-			JsonObject fruRecord = (JsonObject)it.next();
+		for (JsonAbstractValue record : fruRecords) {
+			JsonObject fruRecord = (JsonObject) record;
 			if (fruRecord.getValue("name").equals(name)) {
 				return fruRecord;
 			}
@@ -172,16 +188,15 @@ public class Device {
 	public JsonAbstractValue addFruRecordConfigurationByName(String name) {
 		JsonObject cap = (JsonObject)jdev.get("capabilities");
 		JsonArray fruRecords = (JsonArray)cap.get("fruRecords");
-		Iterator<JsonAbstractValue> it = fruRecords.iterator();
-		while (it.hasNext()) {
-			JsonObject frec = (JsonObject)it.next();
+		for (JsonAbstractValue fruRecord : fruRecords) {
+			JsonObject frec = (JsonObject) fruRecord;
 			if (frec.getValue("name").equals(name)) {
 				// here if the entity has been found - copy it and add it to the 
 				// configurations 
-				JsonObject cfg = (JsonObject)jdev.get("configuration");
-				JsonArray cfgFruRecords = (JsonArray)cfg.get("fruRecords");
-				JsonObject newrecord = new JsonObject(frec); 
-				cfgFruRecords.add(frec);				
+				JsonObject cfg = (JsonObject) jdev.get("configuration");
+				JsonArray cfgFruRecords = (JsonArray) cfg.get("fruRecords");
+				JsonObject newrecord = new JsonObject(frec);
+				cfgFruRecords.add(frec);
 				return frec;
 			}
 		}
@@ -195,32 +210,48 @@ public class Device {
 	public JsonAbstractValue addLogicalEntityConfigurationByName(String name) {
 		JsonObject cap = (JsonObject)jdev.get("capabilities");
 		JsonArray logicalEntities = (JsonArray)cap.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
 			if (edef.getValue("name").equals(name)) {
 				// here if the entity has been found - copy it and add it to the 
 				// configurations 
-				JsonObject cfg = (JsonObject)jdev.get("configuration");
-				JsonArray cfgEntities = (JsonArray)cfg.get("logicalEntities");
-				JsonObject newEntity = new JsonObject(edef); 
+				JsonObject cfg = (JsonObject) jdev.get("configuration");
+				JsonArray cfgEntities = (JsonArray) cfg.get("logicalEntities");
+				JsonObject newEntity = new JsonObject(edef);
 				cfgEntities.add(newEntity);
-				
-		        // if channel or pins required for already bound iobindings within the 
-		        // logical entity are already used, add them to the list
-		        Iterator<JsonAbstractValue>it2 = ((JsonArray)newEntity.get("ioBindings")).iterator(); 
-		        while (it2.hasNext()) {
-		    		JsonObject binding = (JsonObject)it2.next();
-		    		String channelName = binding.getValue("boundChannel");
-		    		if (channelName!=null) {
-		    			allUsedChannels.add(channelName);
-		    		
-		    			// see if any of the pins used by the channel are already used
-		    			ArrayList<String> channelPins = getPinsUsedByChannel(channelName);
-		    			allUsedPins.addAll(channelPins);
-		    		}
-		        }
-				
+
+				// if channel or pins required for already bound iobindings within the
+				// logical entity are already used, add them to the list
+				for (JsonAbstractValue jsonAbstractValue : (JsonArray) newEntity.get("ioBindings")) {
+					JsonObject binding = (JsonObject) jsonAbstractValue;
+					String channelName = binding.getValue("boundChannel");
+					if (channelName != null) {
+						allUsedChannels.add(channelName);
+
+						// see if any of the pins used by the channel are already used
+						ArrayList<String> channelPins = getPinsUsedByChannel(channelName);
+						allUsedPins.addAll(channelPins);
+					}
+				}
+
+				// configure any ioBinding default values
+				JsonArray bindings = (JsonArray)newEntity.get("ioBindings");
+				for (JsonAbstractValue val:bindings) {
+					JsonObject binding = (JsonObject)val;
+					// if the binding has an input curve that is null, set it to a default
+					// linear response.
+					if ((binding.containsKey("inputCurve"))) {
+						if (!binding.get("inputCurve").getClass().isAssignableFrom(JsonArray.class))
+							binding.put("inputCurve", createLinearResponseCurve());
+					}
+
+					// if the binding has an output curve that is null, set it to a default
+					// linear response.
+					if ((binding.containsKey("outputCurve"))) {
+						if (!binding.get("outputCurve").getClass().isAssignableFrom(JsonArray.class))
+							binding.put("outputCurve", createLinearResponseCurve());
+					}
+				}
 				return newEntity;
 			}
 		}
@@ -232,30 +263,27 @@ public class Device {
 	public void removeLogicalEntityConfigurationByName(String name) {
 		JsonObject cfg = (JsonObject)jdev.get("configuration");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
 			if (edef.getValue("name").equals(name)) {
 				// here if the entity has been found 
-				
-		        // if channel or pins required for already bound iobindings within the 
-		        // logical entity are already used, remove them to the list
-		        Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator(); 
-		        while (it2.hasNext()) {
-		    		JsonObject binding = (JsonObject)it2.next();
-		    		String channelName = binding.getValue("boundChannel");
-		    		if (channelName!=null) {
-		    			// see if any of the pins used by the channel are already used
-		    			ArrayList<String> channelPins = getPinsUsedByChannel(channelName);
-		    			allUsedPins.removeAll(channelPins);
-		    			allUsedChannels.remove(channelName);
-		    		}
-		        }
-		        logicalEntities.remove(edef);		        
+
+				// if channel or pins required for already bound iobindings within the
+				// logical entity are already used, remove them to the list
+				for (JsonAbstractValue jsonAbstractValue : (JsonArray) edef.get("ioBindings")) {
+					JsonObject binding = (JsonObject) jsonAbstractValue;
+					String channelName = binding.getValue("boundChannel");
+					if (channelName != null) {
+						// see if any of the pins used by the channel are already used
+						ArrayList<String> channelPins = getPinsUsedByChannel(channelName);
+						allUsedPins.removeAll(channelPins);
+						allUsedChannels.remove(channelName);
+					}
+				}
+				logicalEntities.remove(edef);
 				return;
 			}
 		}
-		return;
 	}
 
 	/*
@@ -265,9 +293,8 @@ public class Device {
 	public String getInterfaceTypeFromName(String channelName) {
 		JsonObject cfg = (JsonObject)jdev.get("capabilities");
 		JsonArray channelDefs = (JsonArray)cfg.get("channels");
-		Iterator<JsonAbstractValue> it = channelDefs.iterator();
-		while (it.hasNext()) {
-			JsonObject cdef = (JsonObject)it.next();
+		for (JsonAbstractValue channelDef : channelDefs) {
+			JsonObject cdef = (JsonObject) channelDef;
 			if (cdef.getValue("name").equals(channelName)) {
 				return cdef.getValue("type");
 			}
@@ -282,17 +309,15 @@ public class Device {
 	public String getBindingValueFromKey(String bindingName, String bindingKey) {
 		JsonObject cfg = (JsonObject)jdev.get("capabilities");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
-			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator(); 
-	        while (it2.hasNext()) {
-	    		JsonObject binding = (JsonObject)it2.next();
-	    		String name = binding.getValue("name");
-	    		if(name.equals(bindingName)) {
-	    			return binding.getValue(bindingKey);
-	    		}
-	        }
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
+			for (JsonAbstractValue jsonAbstractValue : (JsonArray) edef.get("ioBindings")) {
+				JsonObject binding = (JsonObject) jsonAbstractValue;
+				String name = binding.getValue("name");
+				if (name.equals(bindingName)) {
+					return binding.getValue(bindingKey);
+				}
+			}
 		}
 		return null;
 	}
@@ -300,14 +325,12 @@ public class Device {
 	public String getConfiguredBindingValueFromKey(String bindingName, String bindingKey) {
 		JsonObject cfg = (JsonObject)jdev.get("configuration");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
-			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator();
-			while (it2.hasNext()) {
-				JsonObject binding = (JsonObject)it2.next();
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
+			for (JsonAbstractValue jsonAbstractValue : (JsonArray) edef.get("ioBindings")) {
+				JsonObject binding = (JsonObject) jsonAbstractValue;
 				String name = binding.getValue("name");
-				if(name.equals(bindingName)) {
+				if (name.equals(bindingName)) {
 					return binding.getValue(bindingKey);
 				}
 			}
@@ -321,18 +344,16 @@ public class Device {
 	public void setConfiguredBindingValueFromKey(String bindingName, String bindingKey, String newValue) {
 		JsonObject cfg = (JsonObject)jdev.get("configuration");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
-			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator(); 
-	        while (it2.hasNext()) {
-	    		JsonObject binding = (JsonObject)it2.next();
-	    		String name = binding.getValue("name");
-	    		if(name.equals(bindingName)) {
-	    			binding.replace(bindingKey, new JsonValue(newValue));
-	    		}
-	    		
-	        }
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
+			for (JsonAbstractValue jsonAbstractValue : (JsonArray) edef.get("ioBindings")) {
+				JsonObject binding = (JsonObject) jsonAbstractValue;
+				String name = binding.getValue("name");
+				if (name.equals(bindingName)) {
+					binding.replace(bindingKey, new JsonValue(newValue));
+				}
+
+			}
 		}
 	}
 	
@@ -343,17 +364,15 @@ public class Device {
 	public JsonObject getConfiguredBindingFromName(String bindingName) {
 		JsonObject cfg = (JsonObject)jdev.get("configuration");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
-			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator(); 
-	        while (it2.hasNext()) {
-	    		JsonObject binding = (JsonObject)it2.next();
-	    		String name = binding.getValue("name");
-	    		if(name.equals(bindingName)) {
-	    			return binding;
-	    		}
-	        }
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
+			for (JsonAbstractValue jsonAbstractValue : (JsonArray) edef.get("ioBindings")) {
+				JsonObject binding = (JsonObject) jsonAbstractValue;
+				String name = binding.getValue("name");
+				if (name.equals(bindingName)) {
+					return binding;
+				}
+			}
 		}
 		return null;
 	}
@@ -365,22 +384,39 @@ public class Device {
 	public JsonObject getCapabilitiesBindingFromName(String entityName, String bindingName) {
 		JsonObject cfg = (JsonObject)jdev.get("capabilities");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
 			if (!edef.getValue("name").equals(entityName)) continue;
 
 			// here if the entity name matches - find the matching binding name
-			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator();
-			while (it2.hasNext()) {
-				JsonObject binding = (JsonObject)it2.next();
+			for (JsonAbstractValue jsonAbstractValue : (JsonArray) edef.get("ioBindings")) {
+				JsonObject binding = (JsonObject) jsonAbstractValue;
 				String name = binding.getValue("name");
-				if(name.equals(bindingName)) {
+				if (name.equals(bindingName)) {
 					return binding;
 				}
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * this helper function creates a linear response curve.  This can be used
+	 * as a default for io bindings that dont have response curves specified.
+	 *
+	 * @return result - a two-point linear response curve.
+	 */
+	private JsonArray createLinearResponseCurve() {
+		JsonArray result = new JsonArray();
+		JsonObject point1 = new JsonObject();
+		JsonObject point2 = new JsonObject();
+		point1.put("in",new JsonValue("0"));
+		point1.put("out",new JsonValue("0"));
+		point2.put("in",new JsonValue("1000"));
+		point2.put("out",new JsonValue("1000"));
+		result.add(0,point1);
+		result.add(1,point2);
+		return result;
 	}
 
 	/**
@@ -390,20 +426,32 @@ public class Device {
 	public JsonObject restoreBindingToDefaults(String bindingName) {
 		JsonObject cfg = (JsonObject)jdev.get("configuration");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
-			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator();
-			while (it2.hasNext()) {
-				JsonObject binding = (JsonObject)it2.next();
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
+			for (JsonAbstractValue jsonAbstractValue : (JsonArray) edef.get("ioBindings")) {
+				JsonObject binding = (JsonObject) jsonAbstractValue;
 				String name = binding.getValue("name");
-				if(name.equals(bindingName)) {
+				if (name.equals(bindingName)) {
 					// attempt to find the matching capabilities entity and binding that
 					// matches this one
-					JsonObject capBinding = getCapabilitiesBindingFromName(edef.getValue("name"),bindingName);
-					if (capBinding!=null) {
+					JsonObject capBinding = getCapabilitiesBindingFromName(edef.getValue("name"), bindingName);
+					if (capBinding != null) {
 						// deep copy the capabilities binding to the configuration binding
 						binding.copy(capBinding);
+
+						// if the binding has an input curve that is null, set it to a default
+						// linear response.
+						if ((binding.containsKey("inputCurve"))) {
+							if (!binding.get("inputCurve").getClass().isAssignableFrom(JsonArray.class))
+								binding.put("inputCurve", createLinearResponseCurve());
+						}
+
+						// if the binding has an output curve that is null, set it to a default
+						// linear response.
+						if ((binding.containsKey("outputCurve"))) {
+							if (!binding.get("outputCurve").getClass().isAssignableFrom(JsonArray.class))
+								binding.put("outputCurve", createLinearResponseCurve());
+						}
 					}
 				}
 			}
@@ -417,21 +465,18 @@ public class Device {
 	 *
 	 * @param bindingName - the name of the binding
 	 * @param fieldName - the name of the field
-	 * @return
 	 */
 	public boolean isConfigurationBindingFieldEditable(String bindingName, String fieldName) {
 		JsonObject cfg = (JsonObject)jdev.get("configuration");
 		JsonArray logicalEntities = (JsonArray)cfg.get("logicalEntities");
-		Iterator<JsonAbstractValue> it = logicalEntities.iterator();
-		while (it.hasNext()) {
-			JsonObject edef = (JsonObject)it.next();
-			Iterator<JsonAbstractValue>it2 = ((JsonArray)edef.get("ioBindings")).iterator();
-			while (it2.hasNext()) {
-				JsonObject binding = (JsonObject)it2.next();
+		for (JsonAbstractValue logicalEntity : logicalEntities) {
+			JsonObject edef = (JsonObject) logicalEntity;
+			for (JsonAbstractValue jsonAbstractValue : (JsonArray) edef.get("ioBindings")) {
+				JsonObject binding = (JsonObject) jsonAbstractValue;
 				String name = binding.getValue("name");
-				if(name.equals(bindingName)) {
+				if (name.equals(bindingName)) {
 					// attempt to find the matching capabilities entity and binding that matches this one
-					JsonObject capBinding = getCapabilitiesBindingFromName(edef.getValue("name"),bindingName);
+					JsonObject capBinding = getCapabilitiesBindingFromName(edef.getValue("name"), bindingName);
 					return (capBinding.getValue(fieldName) == null);
 				}
 			}
@@ -445,15 +490,13 @@ public class Device {
 	 * constrained by the remaining pins on the device
 	 */
 	public ArrayList<String> getPossibleChannelsTypesForBinding(JsonObject binding, ArrayList<String> usedPins) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
 
         // get the channels
         ArrayList<String> allowedChannels = getPossibleChannelsForBinding(binding);
         
         // now find the types for each channel
-        allowedChannels.forEach(channelName -> {
-        	result.add(getInterfaceTypeFromName(channelName));
-        });
+        allowedChannels.forEach(channelName -> result.add(getInterfaceTypeFromName(channelName)));
 		return result;
 	}
 
@@ -462,7 +505,7 @@ public class Device {
 	 * constrained by the remaining pins on the device
 	 */
 	public ArrayList<String> getPossibleChannelsForBinding(JsonObject binding) {
-        ArrayList<String> result = new ArrayList<String>();
+        ArrayList<String> result = new ArrayList<>();
 
         // if the channel is already bound - add the bound channel to the list
 		if (binding.getValue("boundChannel")!=null) {
@@ -470,12 +513,10 @@ public class Device {
 		}
 
 		// now find any other options that don't already have pins used
-		ArrayList<String> possibleChannelTypes = new ArrayList<String>();
-		((JsonArray)binding.get("allowedInterfaceTypes")).forEach(channel -> {
-			possibleChannelTypes.add(channel.getValue(""));
-		});
+		ArrayList<String> possibleChannelTypes = new ArrayList<>();
+		((JsonArray)binding.get("allowedInterfaceTypes")).forEach(channel -> possibleChannelTypes.add(channel.getValue("")));
 		// expand the channel types to channels (without adding used channels)
-		ArrayList<String> possibleChannels = new ArrayList<String>();
+		ArrayList<String> possibleChannels = new ArrayList<>();
 		JsonObject capabilities = (JsonObject)jdev.get("capabilities");
 		JsonArray capChannels = (JsonArray)capabilities.get("channels");
 		capChannels.forEach(capChannel -> {
@@ -494,12 +535,12 @@ public class Device {
         		
         		// if any of this channels pins are already used, the channel cannot be bound
         		boolean sharesPins = false;
-        		for (int i=0;i<allUsedPins.size(); i++) {
-        			if (channelPinsNeeded.contains(allUsedPins.get(i))) {
-        				sharesPins = true;
-        				break;
-        			}
-        		};
+				for (String allUsedPin : allUsedPins) {
+					if (channelPinsNeeded.contains(allUsedPin)) {
+						sharesPins = true;
+						break;
+					}
+				}
         		if (!sharesPins) result.add(channel);
         	}
         );
@@ -521,7 +562,7 @@ public class Device {
 		
 		// remove the pins used by the channel from the used pins list
 		ArrayList<String> pinsNeeded = getPinsUsedByChannel(boundChannel);
-		pinsNeeded.forEach(pin -> {allUsedPins.remove(pin);});
+		pinsNeeded.forEach(pin -> allUsedPins.remove(pin));
 		
 		// remove the channel from the used channels list
 		allUsedChannels.remove(boundChannel);
@@ -546,10 +587,10 @@ public class Device {
 		
 		// next, see if the pins required by the channel have already been used
 		ArrayList<String> pinsNeeded = getPinsUsedByChannel(channelName);
-		for (int i=0;i<pinsNeeded.size(); i++) {
-			if (allUsedPins.contains(pinsNeeded.get(i))) return false;
-		};
-		
+		for (String s : pinsNeeded) {
+			if (allUsedPins.contains(s)) return false;
+		}
+
 		// no problems - bind the channel and update the used pins and used channels lists
 		iobinding.put("boundChannel",new JsonValue(channelName));
 		allUsedPins.addAll(pinsNeeded);
@@ -580,19 +621,18 @@ public class Device {
 	 * returns true if at least one solution is possible.
 	 */
 	 private boolean recurseForValidConfiguration(Iterator<JsonAbstractValue> entityIterator, Iterator<JsonAbstractValue> bindingIterator, ArrayList<String> usedChannels, ArrayList<String> usedPins) {
-		Iterator<JsonAbstractValue> ei = entityIterator;
-		Iterator<JsonAbstractValue> bi = bindingIterator;
+		 Iterator<JsonAbstractValue> bi = bindingIterator;
 		if ((bi==null)||(!bi.hasNext())) {
 			// here if there is no additional binding in the current entity - recurse for the
 			// next entity
-			if (!ei.hasNext()) {
+			if (!entityIterator.hasNext()) {
 				// here if recursion has traversed all entities and bindings
 				// if code has reached this point, a valid combination has been found
 				return true;
 			}
 			
 			// step to the next entity 
-			JsonObject entity = (JsonObject)ei.next();
+			JsonObject entity = (JsonObject) entityIterator.next();
 			bi = null;
 			
 			// get the list of bindings for the next entity
@@ -600,7 +640,7 @@ public class Device {
 			if (bindings!=null) {
 				bi = bindings.iterator();
 			}
-			return recurseForValidConfiguration(ei, bi, usedChannels, usedPins);
+			return recurseForValidConfiguration(entityIterator, bi, usedChannels, usedPins);
 		}
 		
 		// here if there are additional channels for this entity - try binding the next
@@ -612,17 +652,15 @@ public class Device {
 		// instead, just recurse and return the result.
 		if ((binding.getBoolean("isVirtual"))||(!binding.getBoolean("required"))||
 			(binding.getValue("boundChannel")!=null)) {
-			return recurseForValidConfiguration(ei,bi,usedChannels,usedPins);
+			return recurseForValidConfiguration(entityIterator,bi,usedChannels,usedPins);
 		}
 		
 		// Otherwise, check each channel binding to see if there is a solution that exists
 		// with that binding.  If a solution is found, return true.
-		ArrayList<String> possibleChannelTypes = new ArrayList<String>();
-		((JsonArray)binding.get("allowedInterfaceTypes")).forEach(channel -> {
-			possibleChannelTypes.add(channel.getValue(""));
-		});
+		ArrayList<String> possibleChannelTypes = new ArrayList<>();
+		((JsonArray)binding.get("allowedInterfaceTypes")).forEach(channel -> possibleChannelTypes.add(channel.getValue("")));
 		// expand the channel types to channels (without adding used channels)
-		ArrayList<String> possibleChannels = new ArrayList<String>();
+		ArrayList<String> possibleChannels = new ArrayList<>();
 		JsonObject capabilities = (JsonObject)jdev.get("capabilities");
 		JsonArray capChannels = (JsonArray)capabilities.get("channels");
 		capChannels.forEach(capChannel -> {
@@ -633,22 +671,21 @@ public class Device {
 				possibleChannels.add(channelName);
 			}
 		});
-		for (int i=0; i<possibleChannels.size(); i++) {
-			String channelName = possibleChannels.get(i);
-			if (setChannelBinding(binding, channelName)) {
-				// here if the channel could be bound - recurse
-				boolean result = recurseForValidConfiguration(ei, bi, usedChannels, usedPins);
-				
-				// unbind the channel
-				removeChannelBinding(binding);
-				
-				if (result) {
-					return true;
-				}
-			}
-			// here if the channel could not be bound or there were no viable solutions
-			// with the channel bound.  Loop to try another possible channel (if it exists)
-		}
+		 for (String channelName : possibleChannels) {
+			 if (setChannelBinding(binding, channelName)) {
+				 // here if the channel could be bound - recurse
+				 boolean result = recurseForValidConfiguration(entityIterator, bi, usedChannels, usedPins);
+
+				 // unbind the channel
+				 removeChannelBinding(binding);
+
+				 if (result) {
+					 return true;
+				 }
+			 }
+			 // here if the channel could not be bound or there were no viable solutions
+			 // with the channel bound.  Loop to try another possible channel (if it exists)
+		 }
 		
 		// here if no viable binding has been found - return false
 		return false;
@@ -689,8 +726,8 @@ public class Device {
         // if channel or pins required for already bound iobindings within the 
         // logical entity are already used, this entity cannot be used.
         it = ((JsonArray)capEntity.get("ioBindings")).iterator(); 
-        ArrayList<String> newEntityBoundChannels = new ArrayList<String>();
-        ArrayList<String> newEntityUsedPins = new ArrayList<String>();
+        ArrayList<String> newEntityBoundChannels = new ArrayList<>();
+        ArrayList<String> newEntityUsedPins = new ArrayList<>();
         while (it.hasNext()) {
     		JsonObject binding = (JsonObject)it.next();
     		String channelName = binding.getValue("boundChannel");
@@ -700,12 +737,10 @@ public class Device {
     		
     			// see if any of the pins used by the channel are already used
     			ArrayList<String> channelPins = getPinsUsedByChannel(channelName);
-    			
-    			Iterator<String> itpin = channelPins.iterator();
-    			while (itpin.hasNext()) {
-    				String pin = itpin.next();
-    				if (usedPins.contains(pin)) return false;
-    			}
+
+				for (String pin : channelPins) {
+					if (usedPins.contains(pin)) return false;
+				}
     			newEntityBoundChannels.add(channelName);
     			newEntityUsedPins.addAll(channelPins);
     		}
@@ -736,7 +771,7 @@ public class Device {
 	// return a list of all entities that can still be added to the
 	// configuration and meet the pin/channel constraints
 	ArrayList<String> getListOfPossibleEntities() {
-		ArrayList<String> result = new ArrayList<String>();
+		ArrayList<String> result = new ArrayList<>();
 		JsonObject cap = (JsonObject)jdev.get("capabilities");
 		JsonArray entities = (JsonArray)cap.get("logicalEntities");
 		entities.forEach(entity -> {
@@ -760,5 +795,458 @@ public class Device {
 			System.out.println("wrote to file");
 	      } catch (IOException e) {
 	      }
+	}
+
+	/**
+	 * Check the response curve to make sure it has a valid internal structure
+	 * @param curve - the curve json array to check
+	 * @return true if valid, otherwise false
+	 */
+	static boolean isResponseCurveValid(JsonArray curve) {
+		if (curve==null) return false;
+		// TODO: check the array to make sure it is valid
+		return true;
+	}
+
+	/**
+	 * Check the sensor to make sure it has a valid internal structure
+	 * @param sensor - the sensor json object to check
+	 * @return true if valid, otherwise false
+	 */
+	static boolean isSensorValid(JsonObject sensor) {
+		if (sensor==null) return false;
+		// TODO: check the sensor fields to make sure they are valid
+		return true;
+	}
+
+	/**
+	 * Check the effecter to make sure it has a valid internal structure
+	 * @param effecter - the sensor json object to check
+	 * @return true if valid, otherwise false
+	 */
+	static boolean isEffecterValid(JsonObject effecter) {
+		if (effecter==null) return false;
+		// TODO: check the sensor fields to make sure they are valid
+		return true;
+	}
+
+	/**
+	 * Check to see if the specified field within an IoBinding is valid.  This function checks to make sure the
+	 * field is non null (if required) and of the proper data type.  If there are interdependencies with other fields,
+	 * these are checked also.
+	 *
+	 * @param binding - the binding to check
+	 * @param fieldname - the name of the field to check
+	 */
+	static boolean isIoBindingFieldValid(JsonObject binding, String fieldname) {
+		// if the binding doesnt contain the key, the field is not valid
+		if (!binding.containsKey(fieldname)) return false;
+
+		// get a string representation of the field and whether the field is virtual or not
+		boolean virtual = binding.getBoolean("isVirtual");
+		boolean inPdr  = binding.getBoolean("includeInPdr");
+		String value = binding.getValue(fieldname);
+
+		// perform checks based on the type of field
+		switch (fieldname) {
+			case "boundChannel":
+				// TODO: add code to check if the channel is valid
+				if (virtual) {
+					// value must be null
+					return (value == null);
+				}
+				// otherwise, value must be non-null
+				return (value!=null);
+			case "sensor":
+				if (virtual) {
+					// value must be null
+					return (value == null);
+				}
+				JsonAbstractValue sensor = binding.get("sensor");
+				if (sensor==null) return false;
+				if (!sensor.getClass().isAssignableFrom(JsonObject.class)) return false;
+				return isSensorValid((JsonObject)sensor);
+			case "effecter":
+				if (virtual) {
+					// value must be null
+					return (value == null);
+				}
+				return isEffecterValid((JsonObject)binding.get("effecter"));
+			case "inputCurve":
+			case "outputCurve":
+				JsonAbstractValue curve = binding.get(fieldname);
+				if (curve==null) return false;
+				if (!curve.getClass().isAssignableFrom(JsonArray.class)) return false;
+				return isResponseCurveValid((JsonArray)curve);
+			case "inputGearingRatio":
+			case "outputGearingRatio":
+			case "physicalDefaultValue":
+				if (virtual) {
+					// value must be null
+					return (value == null);
+				}
+				// the value should be a real
+				try {
+					Double.parseDouble(value);
+					return true;
+				}catch (Exception e) {
+					return false;
+				}
+			case "physicalUnitModifier":
+			case "physicalAuxUnitModifier":
+				if (virtual) {
+					// value must be null
+					return (value == null);
+				}
+				// the value should be an integer
+				try {
+					Integer.parseInt(value);
+					return true;
+				}catch (Exception ex) {
+					return false;
+				}
+			case "physicalBaseUnit":
+			case "physicalAuxUnit":
+				if (virtual) {
+					// value must be null
+					return (value == null);
+				}
+				// otherwise,the value should be one of the units choices
+				if (value == null) return false;
+				for (String choice : unitsChoices)
+					if (value.equals(choice)) return true;
+				return false;
+			case "physicalRateUnit":
+			case "physicalAuxRateUnit":
+				if (virtual) {
+					// value must be null
+					return (value == null);
+				}
+				// otherwise,the value should be one of the units choices
+				if (value == null) return false;
+				for (String choice : rateChoices)
+					if (value.equals(choice)) return true;
+				return false;
+			case "rel":
+				if (virtual) {
+					// value must be null
+					return (value == null);
+				}
+				// otherwise,the value should be one of the units choices
+				if (value == null) return false;
+				for (String choice : relChoices)
+					if (value.equals(choice)) return true;
+				return false;
+			case "normalMax":
+				if (inPdr) {
+					// value must be null
+					return (value == null);
+				}
+				// the value should be a real
+				try {
+					double d = Double.parseDouble(value);
+
+					// if normalMin is set, normal max must be greater than normal min
+					if (binding.get("normalMin")!=null) {
+						return d > binding.getDouble("normalMin");
+					}
+				}catch (Exception ex) {
+					// numeric conversion error
+					return false;
+				}
+				break;
+			case "normalMin":
+				if (inPdr) {
+					// value must be null
+					return (value == null);
+				}
+				// the value should be a real
+				try {
+					double d = Double.parseDouble(value);
+
+					// if normalMax is set, normal min must be less than normal max
+					if (binding.get("normalMax")!=null) {
+						return d < binding.getDouble("normalMax");
+					}
+				}catch (Exception ex) {
+					// numeric conversion error
+					return false;
+				}
+				break;
+			case "upperThresholdWarning":
+				// the value should be a real
+				try {
+					double d = Double.parseDouble(value);
+
+					// This value must be less than any thresholds above it
+					if (binding.get("upperThresholdCritical")!=null) {
+						if (d >= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					if (binding.get("upperThresholdFatal")!=null) {
+						if (d >= binding.getDouble("upperThresholdFatal")) return false;
+					}
+					// This value must be greater than any thresholds below it
+					if (binding.get("normalMax")!=null) {
+						if (d <= binding.getDouble("normalMax")) return false;
+					}
+					if (binding.get("normalMin")!=null) {
+						if (d <= binding.getDouble("normalMin")) return false;
+					}
+					if (binding.get("lowerThresholdWarning")!=null) {
+						if (d <= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("lowerThresholdCritical")!=null) {
+						if (d <= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					if (binding.get("lowerThresholdFatal")!=null) {
+						if (d <= binding.getDouble("upperThresholdFatal")) return false;
+					}
+					return true;
+				} catch (Exception ex) {
+					// numeric conversion error
+					return false;
+				}
+			case "upperThresholdCritical":
+				// the value should be a real
+				try {
+					double d = Double.parseDouble(value);
+
+					// This value must be less than any thresholds above it
+					if (binding.get("upperThresholdFatal")!=null) {
+						if (d >= binding.getDouble("upperThresholdFatal")) return false;
+					}
+
+					// This value must be greater than any thresholds below it
+					if (binding.get("upperThresholdWarning")!=null) {
+						if (d <= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("normalMax")!=null) {
+						if (d <= binding.getDouble("normalMax")) return false;
+					}
+					if (binding.get("normalMin")!=null) {
+						if (d <= binding.getDouble("normalMin")) return false;
+					}
+					if (binding.get("lowerThresholdWarning")!=null) {
+						if (d <= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("lowerThresholdCritical")!=null) {
+						if (d <= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					if (binding.get("lowerThresholdFatal")!=null) {
+						if (d <= binding.getDouble("upperThresholdFatal")) return false;
+					}
+					return true;
+				} catch (Exception ex) {
+					// numeric conversion error
+					return false;
+				}
+			case "upperThresholdFatal":
+				// the value should be a real
+				try {
+					double d = Double.parseDouble(value);
+
+					// This value must be greater than any thresholds below it
+					if (binding.get("upperThresholdCritical")!=null) {
+						if (d <= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					if (binding.get("upperThresholdWarning")!=null) {
+						if (d <= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("normalMax")!=null) {
+						if (d <= binding.getDouble("normalMax")) return false;
+					}
+					if (binding.get("normalMin")!=null) {
+						if (d <= binding.getDouble("normalMin")) return false;
+					}
+					if (binding.get("lowerThresholdWarning")!=null) {
+						if (d <= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("lowerThresholdCritical")!=null) {
+						if (d <= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					if (binding.get("lowerThresholdFatal")!=null) {
+						if (d <= binding.getDouble("upperThresholdFatal")) return false;
+					}
+					return true;
+				} catch (Exception ex) {
+					// numeric conversion error
+					return false;
+				}
+			case "lowerThresholdWarning":
+				// the value should be a real
+				try {
+					double d = Double.parseDouble(value);
+
+					// This value must be less than any thresholds above it
+					if (binding.get("upperThresholdFatal")!=null) {
+						if (d >= binding.getDouble("upperThresholdFatal")) return false;
+					}
+					if (binding.get("upperThresholdCritical")!=null) {
+						if (d >= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					if (binding.get("upperThresholdWarning")!=null) {
+						if (d >= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("normalMax")!=null) {
+						if (d >= binding.getDouble("normalMax")) return false;
+					}
+					if (binding.get("normalMin")!=null) {
+						if (d >= binding.getDouble("normalMin")) return false;
+					}
+
+					// This value must be greater than any thresholds below it
+					if (binding.get("lowerThresholdCritical")!=null) {
+						if (d <= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					if (binding.get("lowerThresholdFatal")!=null) {
+						if (d <= binding.getDouble("upperThresholdFatal")) return false;
+					}
+					return true;
+				} catch (Exception ex) {
+					// numeric conversion error
+					return false;
+				}
+			case "lowerThresholdCritical":
+				// the value should be a real
+				try {
+					double d = Double.parseDouble(value);
+
+					// This value must be less than any thresholds above it
+					if (binding.get("upperThresholdFatal")!=null) {
+						if (d >= binding.getDouble("upperThresholdFatal")) return false;
+					}
+					if (binding.get("upperThresholdCritical")!=null) {
+						if (d >= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					if (binding.get("upperThresholdWarning")!=null) {
+						if (d >= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("normalMax")!=null) {
+						if (d >= binding.getDouble("normalMax")) return false;
+					}
+					if (binding.get("normalMin")!=null) {
+						if (d >= binding.getDouble("normalMin")) return false;
+					}
+					if (binding.get("lowerThresholdWarning")!=null) {
+						if (d >= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("lowerThresholdCritical")!=null) {
+						if (d >= binding.getDouble("upperThresholdCritical")) return false;
+					}
+
+					// This value must be greater than any thresholds below it
+					if (binding.get("lowerThresholdFatal")!=null) {
+						if (d <= binding.getDouble("upperThresholdFatal")) return false;
+					}
+					return true;
+				} catch (Exception ex) {
+					// numeric conversion error
+					return false;
+				}
+			case "lowerThresholdFatal":
+				// the value should be a real
+				try {
+					double d = Double.parseDouble(value);
+
+					// This value must be less than any thresholds above it
+					if (binding.get("upperThresholdFatal")!=null) {
+						if (d >= binding.getDouble("upperThresholdFatal")) return false;
+					}
+					if (binding.get("upperThresholdCritical")!=null) {
+						if (d >= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					if (binding.get("upperThresholdWarning")!=null) {
+						if (d >= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("normalMax")!=null) {
+						if (d >= binding.getDouble("normalMax")) return false;
+					}
+					if (binding.get("normalMin")!=null) {
+						if (d >= binding.getDouble("normalMin")) return false;
+					}
+					if (binding.get("lowerThresholdWarning")!=null) {
+						if (d >= binding.getDouble("upperThresholdWarning")) return false;
+					}
+					if (binding.get("lowerThresholdCritical")!=null) {
+						if (d >= binding.getDouble("upperThresholdCritical")) return false;
+					}
+					return true;
+				} catch (Exception ex) {
+					// numeric conversion error
+					return false;
+				}
+			default:
+				break;
+		}
+		return false;
+	}
+
+	/**
+	 * Check to see if the given binding is valid
+	 * @param binding - the ioBinding to check
+	 * @return true if the binding is valid, otherwise false
+	 */
+	static boolean isBindingValid(JsonObject binding) {
+		// determine the type of the binding in order to determine which checks to run
+		boolean result = false;
+		switch (binding.getValue("bindingType")) {
+			case "numericSensor":
+				result = isIoBindingFieldValid(binding,"boundChannel") &&
+						isIoBindingFieldValid(binding,"sensor") &&
+						isIoBindingFieldValid(binding,"inputCurve") &&
+						isIoBindingFieldValid(binding,"inputGearingRatio") &&
+						isIoBindingFieldValid(binding,"physicalBaseUnit") &&
+						isIoBindingFieldValid(binding,"physicalUnitModifier") &&
+						isIoBindingFieldValid(binding,"physicalRateUnit") &&
+						isIoBindingFieldValid(binding,"physicalAuxUnit") &&
+						isIoBindingFieldValid(binding,"rel") &&
+						isIoBindingFieldValid(binding,"physicalAuxUnitModifier") &&
+						isIoBindingFieldValid(binding,"physicalAuxRateUnit");
+					// TODO: add threshold checking once the UI is updated
+					//	isIoBindingFieldValid(binding,"normalMax") &&
+					//	isIoBindingFieldValid(binding,"normalMin") &&
+					//	isIoBindingFieldValid(binding,"upperThresholdWarning") &&
+					//	isIoBindingFieldValid(binding,"upperThresholdCritical") &&
+					//	isIoBindingFieldValid(binding,"upperThresholdFatal") &&
+					//	isIoBindingFieldValid(binding,"lowerThresholdWarning") &&
+					//	isIoBindingFieldValid(binding,"lowerThresholdCritical") &&
+					//	isIoBindingFieldValid(binding,"lowerThresholdFatal");
+				break;
+			case "numericEffecter":
+				result = isIoBindingFieldValid(binding,"boundChannel") &&
+						isIoBindingFieldValid(binding,"effecter") &&
+						isIoBindingFieldValid(binding,"outputCurve") &&
+						isIoBindingFieldValid(binding,"outputGearingRatio") &&
+						isIoBindingFieldValid(binding,"physicalBaseUnit") &&
+						isIoBindingFieldValid(binding,"physicalUnitModifier") &&
+						isIoBindingFieldValid(binding,"physicalRateUnit") &&
+						isIoBindingFieldValid(binding,"physicalAuxUnit") &&
+						isIoBindingFieldValid(binding,"rel") &&
+						isIoBindingFieldValid(binding,"physicalAuxUnitModifier") &&
+						isIoBindingFieldValid(binding,"physicalAuxRateUnit") &&
+						isIoBindingFieldValid(binding,"physicalDefaultValue");
+				break;
+			case "stateSensor":
+				result = isIoBindingFieldValid(binding,"boundChannel") &&
+						isIoBindingFieldValid(binding,"stateSetVendorIANA") &&
+						isIoBindingFieldValid(binding,"stateSet") &&
+						isIoBindingFieldValid(binding,"usedStates") &&
+						isIoBindingFieldValid(binding,"stateWhenHigh") &&
+						isIoBindingFieldValid(binding,"stateWhenLow") &&
+						isIoBindingFieldValid(binding,"possibleStates");
+				break;
+			case "stateEffecter":
+				result = isIoBindingFieldValid(binding,"boundChannel") &&
+						isIoBindingFieldValid(binding,"stateSetVendorIANA") &&
+						isIoBindingFieldValid(binding,"stateSet") &&
+						isIoBindingFieldValid(binding,"usedStates") &&
+						isIoBindingFieldValid(binding,"stateWhenHigh") &&
+						isIoBindingFieldValid(binding,"stateWhenLow") &&
+						isIoBindingFieldValid(binding,"defaultState");
+				break;
+			default:
+				System.out.println("binding type = " + binding.getValue("type"));
+		}
+		return result;
 	}
 }

@@ -42,16 +42,14 @@ import javafx.geometry.Point2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.picmg.jsonreader.JsonAbstractValue;
-import org.picmg.jsonreader.JsonArray;
-import org.picmg.jsonreader.JsonObject;
-import org.picmg.jsonreader.JsonResultFactory;
+import org.picmg.jsonreader.*;
 
 public class NumericSensorController implements Initializable {
 	@FXML private Label nameText;
@@ -86,47 +84,6 @@ public class NumericSensorController implements Initializable {
 	private TreeItem<MainScreenController.TreeData> selectedNode;
 	private boolean updated = false;
 
-	public class NumericSensorData{
-		public String boundChannel;
-		public String physicalSensor;
-		public File inputCurve;
-		public String inputGearingRatio;
-		public String baseUnit;
-		public String unitModifier;
-		public String rateUnit;
-		public String auxUnit;
-		public String auxRateRelationship;
-		public String auxRate;
-		public String auxModifier;
-		ArrayList<String> sensorNames = new ArrayList<String>();
-		ArrayList<Point2D> inputCurvePoints = new ArrayList<>();
-	}
-
-	private NumericSensorData data = new NumericSensorData();
-
-	// choice box choices
-	final String[] unitsChoices = {
-			"None","Unspecified","Degrees_C", "Degrees_F", "Kelvins", "Volts", "Amps", "Watts", "Joules", "Coulombs",
-			"VA", "Nits", "Lumens", "Lux", "Candelas", "kPa", "PSI", "Newtons", "CFM", "RPM", "Hertz",
-			"Seconds", "Minutes", "Hours", "Days", "Weeks", "Mils", "Inches", "Feet", "Cubic_Inches",
-			"Cubic_Feet", "Meters", "Cubic_Centimeters", "Cubic_Meters", "Liters", "Fluid_Ounces",
-			"Radians", "Steradians", "Revolutions", "Cycles", "Gravities", "Ounces", "Pounds",
-			"Foot-Pounds", "Ounce-Inches", "Gauss", "Gilberts", "Henries", "Farads", "Ohms", "Siemens",
-			"Moles", "Becquerels", "PPM+(parts/million)", "Decibels", "DbA", "DbC", "Grays", "Sieverts",
-			"Color_Temperature_Degrees_K", "Bits", "Bytes", "Words_(data)", "DoubleWords", "QuadWords",
-			"Percentage", "Pascals", "Counts", "Grams", "Newton-meters", "Hits", "Misses", "Retries",
-			"Overruns/Overflows", "Underruns", "Collisions", "Packets", "Messages", "Characters",
-			"Errors", "Corrected_Errors", "Uncorrectable_Errors", "Square_Mils", "Square_Inches",
-			"Square_Feet", "Square_Centimeters", "Square_Meters"
-	};
-	final String[] rateChoices = {
-			"None","Per_MicroSecond","Per_MilliSecond","Per_Second","Per_Minute","Per_Hour",
-			"Per_Day","Per_Week","Per_Month","Per_Year"
-	};
-	final String[] relChoices = {
-			"dividedBy","multipliedBy"
-	};
-
 	/**
 	 * loadPointsFromCsvFile()
 	 * load points from the specified csv file into the data array for this object
@@ -135,7 +92,7 @@ public class NumericSensorController implements Initializable {
 	 */
 	public boolean loadPointsFromCsvFile(File input) {
 		// clear any existing points
-		data.inputCurvePoints.clear();
+		ArrayList<Point2D> points = new ArrayList<>();
 
 		// attempt to load the new points
 		try (BufferedReader br = new BufferedReader(new FileReader(input))) {
@@ -153,7 +110,7 @@ public class NumericSensorController implements Initializable {
 				// this point checks out - make a point object and
 				// add it to the response curve.
 				Point2D p = new Point2D(Double.parseDouble(vals[0]),Double.parseDouble(vals[1]));
-				data.inputCurvePoints.add(p);
+				points.add(p);
 			}
 		} catch (FileNotFoundException e) {
 			return false;
@@ -161,117 +118,110 @@ public class NumericSensorController implements Initializable {
 			return false;
 		}
 		// valid curves must have at least two points
-		if (data.inputCurvePoints.size()<2) return false;
+		if (points.size()<2) return false;
+
+		// here if file has been read - set the points in the device configuration
+		JsonArray curve = (JsonArray)((JsonObject)selectedNode.getValue().leaf).get("inputCurve");
+		curve.clear();
+		for (Point2D point:points) {
+			JsonObject jpoint = new JsonObject();
+			jpoint.put("in",new JsonValue(Double.toString(point.getX())));
+			jpoint.put("out",new JsonValue(Double.toString(point.getY())));
+			curve.add(jpoint);
+		}
 		return true;
 	}
 
 	private void updateIcons(){
-		//TODO: add call to mainScreenController to update error icons in tree
-		if (boundChannel.getValue() == null) {
+		boolean isError = false;
+
+		JsonObject binding = (JsonObject)selectedNode.getValue().leaf;
+		if (binding==null) return;
+
+		if (!Device.isIoBindingFieldValid(binding,"boundChannel")) {
 			boundChannelIcon.setVisible(true);
+			isError = true;
 		}else {
 			boundChannelIcon.setVisible(false);
 		}
-		if (physicalSensor.getValue() == null) {
+
+		if (!Device.isIoBindingFieldValid(binding,"sensor")) {
 			physicalSensorIcon.setVisible(true);
+			isError = true;
 		}else {
 			physicalSensorIcon.setVisible(false);
 		}
-		if(inputCurveEnabled.isSelected()){
-			if(data.inputCurve==null){
-				inputCurveIcon.setVisible(true);
-			}else{
-				inputCurveIcon.setVisible(false);
-			}
-		}else{
+
+		if(!Device.isIoBindingFieldValid(binding,"inputCurve")){
+			inputCurveIcon.setVisible(true);
+			isError = true;
+		} else {
 			inputCurveIcon.setVisible(false);
 		}
-		if (data.inputGearingRatio == null) {
+
+
+		if (!Device.isIoBindingFieldValid(binding,"inputGearingRatio")) {
 			inputGearingRatioIcon.setVisible(true);
-		}else {
+			isError = true;
+		} else {
 			inputGearingRatioIcon.setVisible(false);
 		}
-		if (physicalBaseUnit.getValue() == null) {
+
+		if (!Device.isIoBindingFieldValid(binding,"physicalBaseUnit")) {
 			physicalBaseUnitIcon.setVisible(true);
+			isError = true;
 		}else {
 			physicalBaseUnitIcon.setVisible(false);
 		}
-		if (data.unitModifier == null) {
+
+		if (!Device.isIoBindingFieldValid(binding,"physicalUnitModifier")) {
 			physicalUnitModifierIcon.setVisible(true);
+			isError = true;
 		}else {
 			physicalUnitModifierIcon.setVisible(false);
 		}
-		if (physicalRate.getValue() == null) {
+
+		if (!Device.isIoBindingFieldValid(binding,"physicalRateUnit")) {
 			physicalRateIcon.setVisible(true);
+			isError = true;
 		}else {
 			physicalRateIcon.setVisible(false);
 		}
-		if (rel.getValue() == null) {
+
+		if (!Device.isIoBindingFieldValid(binding,"rel")) {
 			relIcon.setVisible(true);
+			isError = true;
 		}else {
 			relIcon.setVisible(false);
 		}
-		if (physicalAux.getValue() == null) {
+		if (!Device.isIoBindingFieldValid(binding,"physicalAuxUnit")) {
 			physicalAuxIcon.setVisible(true);
+			isError = true;
 		}else {
 			physicalAuxIcon.setVisible(false);
 		}
-		if (physicalAuxRate.getValue() == null) {
+
+		if (!Device.isIoBindingFieldValid(binding,"physicalAuxRateUnit")) {
 			physicalAuxRateIcon.setVisible(true);
+			isError = true;
 		}else {
 			physicalAuxRateIcon.setVisible(false);
 		}
-		if (data.auxModifier == null) {
+
+		if (!Device.isIoBindingFieldValid(binding,"physicalAuxUnitModifier")) {
 			physicalAuxRateModifierIcon.setVisible(true);
+			isError = true;
 		}else {
 			physicalAuxRateModifierIcon.setVisible(false);
 		}
-	}
 
-	public boolean isError(){
-		if(updated) {
-			boolean isError = false;
-			if (boundChannel.getValue() == null) {
-				isError = true;
-			}
-			if (physicalSensor.getValue() == null) {
-				isError = true;
-			}
-			if(inputCurveEnabled.isSelected()){
-				if(data.inputCurve==null){
-					isError = true;
-				}
-			}
-			if (inputGearingRatio.getText() == null) {
-				isError = true;
-			}
-			if (physicalBaseUnit.getValue() == null) {
-				isError = true;
-			}
-			if (physicalUnitModifier.getText() == null) {
-				isError = true;
-			}
-			if (physicalRate.getValue() == null) {
-				isError = true;
-			}
-			if (rel.getValue() == null) {
-				isError = true;
-			}
-			if (physicalAux.getValue() == null) {
-				isError = true;
-			}
-			if (physicalAuxRate.getValue() == null) {
-				isError = true;
-			}
-			if (physicalAuxUnitModifier.getText() == null) {
-				isError = true;
-			}
-			return  isError;
+		// now update the tree icon
+		if (isError) {
+			selectedNode.getValue().error.setValue(true);
+		} else {
+			selectedNode.getValue().error.setValue(false);
 		}
-		return true;
-
 	}
-
 
 	@Override
 	/**
@@ -300,9 +250,7 @@ public class NumericSensorController implements Initializable {
 				FileChooser fileChooser = new FileChooser();
 				fileChooser.setTitle("Open Resource File");
 				File datafile = fileChooser.showOpenDialog(selectCurve.getScene().getWindow());
-				data.inputCurve = datafile;
 				loadPointsFromCsvFile(datafile);
-				System.out.println(data.inputCurve.toString());
 				updateIcons();
 			}
 		});
@@ -320,8 +268,13 @@ public class NumericSensorController implements Initializable {
 				}
 				responseCurveViewController viewController = fxmlLoader.<responseCurveViewController>getController();
 
-				// set the datapoints
-				viewController.setDataPoints(data.inputCurvePoints);
+				// set the datapoints from the device model
+				JsonArray curve = (JsonArray)((JsonObject)selectedNode.getValue().leaf).get("inputCurve");
+				ArrayList<Point2D> points = new ArrayList<>();
+				for (JsonAbstractValue val:curve) {
+					points.add(new Point2D(val.getDouble("in"),val.getDouble("out")));
+				}
+				viewController.setDataPoints(points);
 
 				// show the graph in a modal dialog box
 				Scene scene = new Scene(dlg, 800, 600);
@@ -353,26 +306,31 @@ public class NumericSensorController implements Initializable {
 		physicalBaseUnit.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			if (physicalBaseUnit.getValue()!=null)
 				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalBaseUnit",physicalBaseUnit.getValue());
+			setControlEnables();
 			updateIcons();
 		});
 		physicalRate.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			if (physicalRate.getValue()!=null)
 				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalRateUnit",physicalRate.getValue());
+			setControlEnables();
 			updateIcons();
 		});
 		physicalAux.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			if (physicalAux.getValue()!=null)
 				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnit",physicalAux.getValue());
+			setControlEnables();
 			updateIcons();
 		});
 		rel.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			if (rel.getValue()!=null)
 				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"rel",rel.getValue());
+			setControlEnables();
 			updateIcons();
 		});
 		physicalAuxRate.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			if (physicalAuxRate.getValue()!=null)
 				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxRateUnit",physicalAuxRate.getValue());
+			setControlEnables();
 			updateIcons();
 		});
 
@@ -381,28 +339,22 @@ public class NumericSensorController implements Initializable {
 		//textboxes run on new value
 		inputGearingRatio.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
-				data.inputGearingRatio = inputGearingRatio.getText();
-				if(data.inputGearingRatio.equals("")){
-					data.inputGearingRatio=null;
-				}
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"inputGearingRatio",inputGearingRatio.getText());
+				setControlEnables();
 				updateIcons();
 			}
 		});
 		physicalUnitModifier.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
-				data.unitModifier = physicalUnitModifier.getText();
-				if(data.unitModifier.equals("")){
-					data.unitModifier=null;
-				}
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalUnitModifier",physicalUnitModifier.getText());
+				setControlEnables();
 				updateIcons();
 			}
 		});
 		physicalAuxUnitModifier.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
-				data.auxModifier = physicalAuxUnitModifier.getText();
-				if(data.auxModifier.equals("")){
-					data.auxModifier=null;
-				}
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnitModifier",physicalAuxUnitModifier.getText());
+				setControlEnables();
 				updateIcons();
 			}
 		});
@@ -415,6 +367,7 @@ public class NumericSensorController implements Initializable {
 			device.restoreBindingToDefaults(selectedNode.getValue().name);
 			setPaneValues();
 			setControlEnables();
+			updateIcons();
 		});
 	}
 
@@ -424,10 +377,7 @@ public class NumericSensorController implements Initializable {
 	 */
 	private void setSensorChoices() {
 		JsonResultFactory factory = new JsonResultFactory();
-		String val = physicalSensor.getValue();
 		physicalSensor.getItems().clear();
-		if (val!=null) physicalSensor.setValue(val);
-		data.sensorNames.clear();
 
 		if (boundChannel.getValue() != null) {
 			try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir") + "/lib/sensors"))) {
@@ -435,7 +385,6 @@ public class NumericSensorController implements Initializable {
 					if (!Files.isDirectory(path)) {
 						JsonAbstractValue json = factory.buildFromFile(path);
 						String name = json.getValue("name");
-						data.sensorNames.add(name);
 
 						// check to see if one of the supported interfaces for this sensor matches
 						// the interface of the bound channel.
@@ -475,25 +424,25 @@ public class NumericSensorController implements Initializable {
 			boundChannel.setValue(null);
 
 			// if bound channel is non-null, set value according to json.
+			for(int i=0; i<channelChoices.size(); i++) {
+				boundChannel.getItems().add(channelChoices.get(i));
+			}
 			if(device.getConfiguredBindingValueFromKey(bindingName,"boundChannel") != null){
 				boundChannel.setValue(device.getConfiguredBindingValueFromKey(bindingName,"boundChannel"));
 			}else{
-				for(int i=0; i<channelChoices.size(); i++) {
-					boundChannel.getItems().add(channelChoices.get(i));
-				}
 				boundChannel.setValue(null);
 			}
 		}
 
 		// if sensor is non-null, set value according to json. Else, allow for population.
+		setSensorChoices();
 		if(device.getConfiguredBindingValueFromKey(bindingName,"sensor") != null){
 			// here if a value has been set in the configuration - set it in the pane
 			String value = device.getConfiguredBindingValueFromKey(bindingName,"sensor.name");
-			physicalSensor.setValue(device.getConfiguredBindingValueFromKey(bindingName,"sensor.name"));
-		} {
+			physicalSensor.setValue(value);
+		} else {
 			physicalSensor.setValue(null);
 		}
-		setSensorChoices();
 
 		// if input curve is non-null, set value according to json. Else, allow for population.
 		if(device.getBindingValueFromKey(bindingName,"inputCurve") != null){
@@ -505,62 +454,61 @@ public class NumericSensorController implements Initializable {
 
 		// if gearing ratio is non-null, set value according to json. Else, allow for population.
 		inputGearingRatio.setText("");
-		if(device.getBindingValueFromKey(bindingName,"inputGearingRatio") != null){
-			inputGearingRatio.setText(device.getBindingValueFromKey(bindingName,"inputGearingRatio"));
+		if(device.getConfiguredBindingValueFromKey(bindingName,"inputGearingRatio") != null){
+			inputGearingRatio.setText(device.getConfiguredBindingValueFromKey(bindingName,"inputGearingRatio"));
 		} else {
 			inputGearingRatio.setText(null);
 		}
 
 		// if physical base unit is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(bindingName,"physicalBaseUnit") != null){
-			physicalBaseUnit.setValue(device.getBindingValueFromKey(bindingName,"physicalBaseUnit"));
-		}else{
-			physicalBaseUnit.getItems().clear();
-			for (String choice:unitsChoices) physicalBaseUnit.getItems().add(choice);
+		physicalBaseUnit.getItems().clear();
+		for (String choice:Device.unitsChoices) physicalBaseUnit.getItems().add(choice);
+		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalBaseUnit") != null){
+			physicalBaseUnit.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalBaseUnit"));
 		}
 
 		// if physical unit modifier is non-null, set value according to json. Else, allow for population.
 		physicalUnitModifier.setText("");
-		if(device.getBindingValueFromKey(bindingName,"phsicalUnitModifier") != null){
-			physicalUnitModifier.setText(device.getBindingValueFromKey(bindingName,"phsicalUnitModifier"));
+		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalUnitModifier") != null){
+			physicalUnitModifier.setText(device.getConfiguredBindingValueFromKey(bindingName,"physicalUnitModifier"));
+		} else {
+			physicalUnitModifier.setText(null);
 		}
 
 		// if physical rate is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(bindingName,"physicalRateUnit") != null){
-			physicalRate.setValue(device.getBindingValueFromKey(bindingName,"physicalRateUnit"));
-		}else{
-			physicalRate.getItems().clear();
-			for (String choice:rateChoices) physicalRate.getItems().add(choice);
+		physicalRate.getItems().clear();
+		for (String choice:Device.rateChoices) physicalRate.getItems().add(choice);
+		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalRateUnit") != null){
+			physicalRate.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalRateUnit"));
 		}
 
 		// if physical aux is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(bindingName,"physicalAuxUnit") != null){
-			physicalAux.setValue(device.getBindingValueFromKey(bindingName,"physicalAuxUnit"));
-		}else{
-			physicalAux.getItems().clear();
-			for (String choice:unitsChoices) physicalAux.getItems().add(choice);
+		physicalAux.getItems().clear();
+		for (String choice:Device.unitsChoices) physicalAux.getItems().add(choice);
+		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxUnit") != null){
+			physicalAux.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxUnit"));
 		}
 
 		// if rel is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(bindingName,"physicalAuxUnit") != null){
-			rel.setValue(device.getBindingValueFromKey(bindingName,"physicalAuxUnit"));
-		}else{
-			rel.getItems().clear();
-			for (String choice:relChoices) rel.getItems().add(choice);
+		rel.getItems().clear();
+		for (String choice:Device.relChoices) rel.getItems().add(choice);
+		if(device.getConfiguredBindingValueFromKey(bindingName,"rel") != null){
+			rel.setValue(device.getConfiguredBindingValueFromKey(bindingName,"rel"));
 		}
 
 		// if physical aux unit modifier is non-null, set value according to json. Else, allow for population.
 		physicalAuxUnitModifier.setText("");
-		if(device.getBindingValueFromKey(bindingName,"physicalAuxUnitModifier") != null){
-			physicalAuxUnitModifier.setText(device.getBindingValueFromKey(bindingName,"physicalAuxUnitModifier"));
+		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxUnitModifier") != null){
+			physicalAuxUnitModifier.setText(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxUnitModifier"));
+		} else {
+			physicalAuxUnitModifier.setText(null);
 		}
 
 		// if physical Aux Rate is non-null, set value according to json. Else, allow for population.
-		if(device.getBindingValueFromKey(bindingName,"physicalAuxRate") != null){
-			physicalAuxRate.setValue(device.getBindingValueFromKey(bindingName,"physicalAuxRate"));
-		}else{
-			physicalAuxRate.getItems().clear();
-			for (String choice:rateChoices) physicalAuxRate.getItems().add(choice);
+		physicalAuxRate.getItems().clear();
+		for (String choice:Device.rateChoices) physicalAuxRate.getItems().add(choice);
+		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxRateUnit") != null){
+			physicalAuxRate.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxRateUnit"));
 		}
 
 		updated = true;
@@ -599,17 +547,16 @@ public class NumericSensorController implements Initializable {
 		} else {
 			if (device.getConfiguredBindingValueFromKey(bindingName, "boundChannel") != null) {
 				// here if the binding has been set - check to see if the sensor has been set
-				if (device.getConfiguredBindingValueFromKey(bindingName, "sensor") != null) {
+				if (device.getConfiguredBindingValueFromKey(bindingName, "sensor.name") != null) {
 					// sensor has been set
-					if ((device.getBindingValueFromKey(bindingName, "inputCurve") != null) ||
-							(device.getBindingValueFromKey(bindingName, "inputGearingRatio") != null) ||
-							(device.getBindingValueFromKey(bindingName, "physicalBaseUnit") != null) ||
-							(device.getBindingValueFromKey(bindingName, "phsicalUnitModifier") != null) ||
-							(device.getBindingValueFromKey(bindingName, "physicalRateUnit") != null) ||
-							(device.getBindingValueFromKey(bindingName, "rel") != null) ||
-							(device.getBindingValueFromKey(bindingName, "physicalAuxUnit") != null) ||
-							(device.getBindingValueFromKey(bindingName, "physicalAuxUnitModifier") != null) ||
-							(device.getBindingValueFromKey(bindingName, "physicalAuxRateUnit") != null)) {
+					if ((device.getConfiguredBindingValueFromKey(bindingName, "inputGearingRatio") != null) ||
+							(device.getConfiguredBindingValueFromKey(bindingName, "physicalBaseUnit") != null) ||
+							(device.getConfiguredBindingValueFromKey(bindingName, "physicalUnitModifier") != null) ||
+							(device.getConfiguredBindingValueFromKey(bindingName, "physicalRateUnit") != null) ||
+							(device.getConfiguredBindingValueFromKey(bindingName, "rel") != null) ||
+							(device.getConfiguredBindingValueFromKey(bindingName, "physicalAuxUnit") != null) ||
+							(device.getConfiguredBindingValueFromKey(bindingName, "physicalAuxUnitModifier") != null) ||
+							(device.getConfiguredBindingValueFromKey(bindingName, "physicalAuxRateUnit") != null)) {
 						// the binding, sensor, and at least one other field are set - state 4
 						disableBinding = true;
 						disableSensor = true;
@@ -666,7 +613,6 @@ public class NumericSensorController implements Initializable {
 
 		this.device = device;
 		this.selectedNode = selectedNode;
-System.out.println("update");
 		setPaneValues();
 		setControlEnables();
 		updateIcons();

@@ -44,7 +44,7 @@ public class JsonValue implements JsonAbstractValue {
      * constructor - create the value and initialize it from the provided string.
      */
     public JsonValue(String value) {
-        if (value.equalsIgnoreCase("null")) {
+        if ((value==null)||(value.equalsIgnoreCase("null"))) {
         	this.value = null;
         } else {
         	this.value = value;
@@ -57,7 +57,7 @@ public class JsonValue implements JsonAbstractValue {
      * @param value - the new value to be set.
      */
     public void set(String value) {
-        if (value.equalsIgnoreCase("null")) {
+        if ((value==null)||(value.equalsIgnoreCase("null"))) {
             this.value = null;
         } else {
             this.value = value;
