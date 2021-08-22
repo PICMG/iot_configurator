@@ -245,17 +245,49 @@
 				"description":null,
 				"fields": [
 					{
-						"type": 1,
-						"required": true,
-						"description": "Chassis Type",
-						"format": "string",
-						"length": null,
-						"value": "I/O Module"
-					},
-					{
 						"type": 2,
 						"required": true,
 						"description": "Model",
+						"format": "string",
+						"length": null,
+						"value": null
+					},
+					{
+						"type": 3,
+						"required": true,
+						"description": "Part Number",
+						"format": "string",
+						"length": null,
+						"value": null
+					},
+					{
+						"type": 4,
+						"required": true,
+						"description": "Serial Number",
+						"format": "string",
+						"length": null,
+						"value": null
+					},
+					{
+						"type": 5,
+						"required": true,
+						"description": "Manufacturer",
+						"format": "string",
+						"length": null,
+						"value": "PICMG"
+					},
+					{
+						"type": 7,
+						"required": true,
+						"description": "Vendor",
+						"format": "string",
+						"length": null,
+						"value": null
+					},
+					{
+						"type": 8,
+						"required": true,
+						"description": "Name",
 						"format": "string",
 						"length": null,
 						"value": null
@@ -332,7 +364,7 @@
 						"bindingType": "numericSensor",
 						"name": "Sensor1",
 						"includeInPdr": true,				
-						"required": false,
+						"required": true,
 						"isVirtual": false,
 						"description": "generic numeric sensor",
 						"allowedInterfaceTypes": ["analog_in","count_in","rate_in","quadrature_in"],

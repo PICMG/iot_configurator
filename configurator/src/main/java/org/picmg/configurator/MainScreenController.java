@@ -26,8 +26,11 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.*;
 
+import javafx.beans.InvalidationListener;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableBooleanValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -42,6 +45,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.stage.FileChooser;
 import javafx.util.Callback;
 import org.picmg.jsonreader.JsonAbstractValue;
 import org.picmg.jsonreader.JsonArray;
@@ -50,18 +54,17 @@ import org.picmg.jsonreader.JsonResultFactory;
 import org.picmg.jsonreader.JsonValue;
 
 public class MainScreenController implements Initializable {
-	JsonObject appConfig;
 	JsonObject hardware;
 	JsonObject sensorLib;
 	JsonObject effecterLib;
 	JsonObject stateLib;
 	JsonObject deviceLib;
 	JsonObject jdev;	
-	JsonObject defaultMeta;
 	Device     device;
+	SimpleBooleanProperty configurationError;
+
 	@FXML private TreeView<TreeData> treeView;
 	@FXML private AnchorPane bindingPane;
-	private AnchorPane stateSensorPane;
 
 	public static AnchorPane stateSensorContent;
 	public static AnchorPane stateEffecterContent;
@@ -152,17 +155,20 @@ public class MainScreenController implements Initializable {
         	setContextMenu(null);
 			TreeItem selectedNode = treeView.getSelectionModel().getSelectedItem();
         	TreeItem<TreeData> it = getTreeItem();
-			errorCheck(it.getParent());
-        	boolean err = getItem().error.getValue();
+
+        	errorCheck();
+
+			boolean err = getItem().error.getValue();
         	setError(err,getItem().leaf.getValue("required"));
 			treeView.getSelectionModel().select(selectedNode);
 
 			getItem().error.addListener((observable, oldValue, newValue) -> {
 				boolean errorVal = getItem().error.getValue();
 				setError(errorVal,getItem().leaf.getValue("required"));
+				errorCheck();
         	});
 
-				// set the behavior when the cell is clicked by the mouse
+			// set the behavior when the cell is clicked by the mouse
         	setOnMouseClicked(new EventHandler<MouseEvent>() {
                 public void handle(MouseEvent t) {                	
                 		//TODO: add code to set up the context pane for the io binding
@@ -284,12 +290,12 @@ public class MainScreenController implements Initializable {
                         	JsonArray bindings = (JsonArray)((JsonObject)ent).get("ioBindings");
                         	bindings.forEach(binding -> {
                         		TreeItem<TreeData> ti = new TreeItem<TreeData>(new TreeData(bindings, binding,"ioBinding"));
-                        		errorCheck(ti);
+                        		//errorCheck(ti);
                         		entityItem.getChildren().add(ti);
                         	});
                         	JsonArray parameters = (JsonArray)((JsonObject)ent).get("parameters");
                     		entityItem.getChildren().add(new TreeItem<TreeData>(new TreeData(ent, parameters,"parameters")));
-							errorCheck(treeView.getRoot());
+                    		errorCheck();
                     	}
                     });
             	});
@@ -595,16 +601,19 @@ public class MainScreenController implements Initializable {
 		}
 	}
 
-	// TODO: walk the tree, checking data rather than selecting each node.  This will improve performance and stability
-	// Checks for errors in all logical entities. displays error icon if found.
-	public void errorCheck(TreeItem<TreeData> treeNode) {
-
+	/**
+	 * walk the tree searching for errors.  set error indicators as found.
+	 * @param treeNode - the current tree node to recurse
+	 * @returns true if error found, otherwise, false
+	 */
+	private boolean errorChecker(TreeItem<TreeData> treeNode, boolean error) {
+		boolean result = error;
 		if (treeNode.getChildren().isEmpty()) {
 			// Do nothing if the node is empty.
 		} else {
 			// Otherwise, loop through every child
 			for (TreeItem<TreeData> node : treeNode.getChildren()) {
-				errorCheck(node);
+				result |= errorChecker(node,error);
 			}
 		}
 		try {
@@ -625,7 +634,7 @@ public class MainScreenController implements Initializable {
 							iv.setFitHeight(12);
 							iv.setVisible(true);
 							treeNode.setGraphic(iv);
-
+							result |= true;
 						} else {
 							treeNode.getValue().error.setValue(false);
 							treeNode.setGraphic(null);
@@ -644,6 +653,7 @@ public class MainScreenController implements Initializable {
 							iv.setFitHeight(12);
 							iv.setVisible(true);
 							treeNode.setGraphic(iv);
+							result |= true;
 						} else {
 							treeNode.getValue().error.setValue(false);
 							treeNode.setGraphic(null);
@@ -657,6 +667,12 @@ public class MainScreenController implements Initializable {
 		}catch(NullPointerException ex){
 			//catch block
 		}
+		return result;
+	}
+
+	// Checks for errors in all tree nodes. displays error icon if found.
+	public void errorCheck() {
+		configurationError.set(errorChecker(treeView.getRoot(),false));
 	}
 
 	// Clears error value in all treeItems by setting the error value to false.
@@ -680,21 +696,26 @@ public class MainScreenController implements Initializable {
 				}
 				// If the current node has children then check
 				if (!treeNode.getChildren().isEmpty()) {
-					errorCheck(node);
+					errorClear(node);
 				}
 			}
 		}
 	}
 
+	public SimpleBooleanProperty getErrorProperty() {
+		return configurationError;
+	}
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		setPaneBindings();
 
+		configurationError = new SimpleBooleanProperty();
+		configurationError.set(true);
+
+		// load the default hardware profile
         JsonResultFactory factory = new JsonResultFactory();
-        appConfig = (JsonObject)factory.buildFromResource("config.json");
         hardware = (JsonObject)factory.buildFromResource("microsam_new2.json");
-        defaultMeta = (JsonObject)factory.buildFromResource("default_meta.json");
 
         // Load the libraries from the resource folders - these are the default
         // picmg libraries and sensors
@@ -707,9 +728,8 @@ public class MainScreenController implements Initializable {
         deviceLib = new JsonObject();
         addLibrariesFromResourceFolder(deviceLib,"devices","devices");
 
+        // create a copy of the hardware file to be configured
         device = new Device(hardware);
-
-        device.canEntityBeAdded("servo1");
 
         // create the tree based on the device
         TreeItem<TreeData> rootNode = treeView.getRoot();
