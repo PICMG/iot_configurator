@@ -189,6 +189,16 @@ public class MainScreenController implements Initializable {
    			contextMenu.getItems().add(mi);
         	setContextMenu(contextMenu);
 
+			errorCheck();
+			setError(getItem().error.getValue(),getItem().leaf.getValue("required"));
+
+			getItem().error.addListener((observable, oldValue, newValue) -> {
+				if (getItem()==null) return;
+				boolean errorVal = getItem().error.getValue();
+				setError(errorVal,getItem().leaf.getValue("required"));
+				errorCheck();
+			});
+
         	// set the handler for the menu item
             mi.setOnAction(new EventHandler<ActionEvent>() {
             	@Override
@@ -664,7 +674,25 @@ public class MainScreenController implements Initializable {
 						clearPanes();
 				}
 			}
-		}catch(NullPointerException ex){
+			else {
+				if (treeNode.getValue().nodeType.equals("fruRecord")) {
+					if (!Device.isFruRecordValid((JsonObject)treeNode.getValue().leaf)) {
+						treeNode.getValue().error.setValue(true);
+						ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+						InputStream is = classLoader.getResourceAsStream("red_dot.png");
+						ImageView iv = new ImageView(new Image(is));
+						iv.setFitWidth(12);
+						iv.setFitHeight(12);
+						iv.setVisible(true);
+						treeNode.setGraphic(iv);
+						result |= true;
+					} else {
+						treeNode.getValue().error.setValue(false);
+						treeNode.setGraphic(null);
+					}
+				}
+			}
+		} catch(NullPointerException ex){
 			//catch block
 		}
 		return result;
@@ -672,6 +700,7 @@ public class MainScreenController implements Initializable {
 
 	// Checks for errors in all tree nodes. displays error icon if found.
 	public void errorCheck() {
+		configurationError.set(false);
 		configurationError.set(errorChecker(treeView.getRoot(),false));
 	}
 
@@ -799,7 +828,7 @@ public class MainScreenController implements Initializable {
 					}
 					else if(selectedNode.getValue().nodeType=="fruRecord") {
 						clearPanes();
-						fruPaneController.update((JsonObject) selectedNode.getValue().leaf,
+						fruPaneController.update(treeView.getSelectionModel().getSelectedItem(), (JsonObject) selectedNode.getValue().leaf,
 								(JsonObject) device.getCapabilitiesFruRecordByName(selectedNode.getValue().leaf.getValue("name")));
 						fruContent.setVisible(true);
 					}

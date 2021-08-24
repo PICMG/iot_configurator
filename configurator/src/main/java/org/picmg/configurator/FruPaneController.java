@@ -22,6 +22,8 @@
 //
 package org.picmg.configurator;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -45,6 +47,7 @@ public class FruPaneController implements Initializable {
 	// member data
 	private JsonObject jsonFru;
 	private JsonObject jsonCapabilitiesFru;
+	private TreeItem<MainScreenController.TreeData> selectedNode;
 
 	private final int DMTF_IANA = 412;
 	private final String[] typeChoices = {"Chassis Type","Model","Part Number", "Serial Number","Manufacturer",
@@ -186,6 +189,10 @@ public class FruPaneController implements Initializable {
 		}
 		fields.add(field);
 		updateControls();
+
+		// signal a change to the tree node
+		selectedNode.getValue().error.set(false);
+		selectedNode.getValue().error.set(Device.isFruRecordValid((JsonObject)selectedNode.getValue().leaf));
 	}
 
 	/**
@@ -205,6 +212,10 @@ public class FruPaneController implements Initializable {
 
 		fields.remove(selected);
 		updateControls();
+
+		// signal a change to the tree node
+		selectedNode.getValue().error.set(false);
+		selectedNode.getValue().error.set(Device.isFruRecordValid((JsonObject)selectedNode.getValue().leaf));
 	}
 
 	/**
@@ -242,6 +253,10 @@ public class FruPaneController implements Initializable {
 		((JsonValue) (field.get("value"))).set("");
 
 		updateControls();
+
+		// signal a change to the tree node
+		selectedNode.getValue().error.set(false);
+		selectedNode.getValue().error.set(Device.isFruRecordValid((JsonObject)selectedNode.getValue().leaf));
 	}
 
 	/**
@@ -260,6 +275,9 @@ public class FruPaneController implements Initializable {
 
 		((JsonValue)(field.get("value"))).set((String)e.getNewValue());
 		updateControls();
+		// signal a change to the tree node
+		selectedNode.getValue().error.set(false);
+		selectedNode.getValue().error.set(Device.isFruRecordValid((JsonObject)selectedNode.getValue().leaf));
 	}
 
 	/**
@@ -278,6 +296,10 @@ public class FruPaneController implements Initializable {
 		((JsonValue)(field.get("format"))).set((String)e.getNewValue());
 		((JsonValue)(field.get("value"))).set("");
 		updateControls();
+
+		// signal a change to the tree node
+		selectedNode.getValue().error.set(false);
+		selectedNode.getValue().error.set(Device.isFruRecordValid((JsonObject)selectedNode.getValue().leaf));
 	}
 
 	/**
@@ -295,6 +317,10 @@ public class FruPaneController implements Initializable {
 
 		((JsonValue)(field.get("type"))).set((String)e.getNewValue());
 		updateControls();
+
+		// signal a change to the tree node
+		selectedNode.getValue().error.set(false);
+		selectedNode.getValue().error.set(Device.isFruRecordValid((JsonObject)selectedNode.getValue().leaf));
 	}
 
 	/**
@@ -418,16 +444,20 @@ public class FruPaneController implements Initializable {
 	/** update()
 	 * This function is called when the pane is changed from the main menu.
 	 * It updates all the controls based on the java objects that it corresponds to.
-	 * @param fru the json object for this fru record
-	 * @param capabilitiesFru the json object for the corresponding fru record in the
+	 * @param fru the json object for this fru record (from the configuration section of the device)
+	 * @param configurationFru the json object for the corresponding fru record in the
 	 *                        capabilities section of the input file
 	 */
-	public void update(JsonObject fru, JsonObject capabilitiesFru)
+	public void update( TreeItem<MainScreenController.TreeData> selectedNode, JsonObject fru, JsonObject configurationFru)
 	{
 		// do any configuration required prior to making the pane visible
 		jsonFru = fru;
-		jsonCapabilitiesFru = capabilitiesFru;
+		jsonCapabilitiesFru = configurationFru;
+		this.selectedNode = selectedNode;
 
 		updateControls();
+		// signal a change to the tree node
+		selectedNode.getValue().error.set(false);
+		selectedNode.getValue().error.set(Device.isFruRecordValid((JsonObject)selectedNode.getValue().leaf));
 	}
 }

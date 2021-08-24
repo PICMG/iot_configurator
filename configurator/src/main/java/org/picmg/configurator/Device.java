@@ -459,6 +459,86 @@ public class Device {
 		return null;
 	}
 
+	/** isFruRecordValid()
+	 * check to see if there are any errors in this fru record set.
+	 */
+	static public boolean isFruRecordValid(JsonObject jsonFru) {
+
+		// check the value of the vendor IANA
+		String value = jsonFru.getValue("vendorIANA");
+		if (value==null) { return false; }
+		if (!App.isInteger(value)) { return false; }
+
+		boolean required = jsonFru.getBoolean("required");
+
+		// check the fru fields
+		JsonArray fruFields = (JsonArray)jsonFru.get("fields");
+		for (JsonAbstractValue field : fruFields) {
+			JsonObject fruField = (JsonObject) field;
+			boolean fieldRequired;
+
+			// don't check optional fields
+			fieldRequired = fruField.getBoolean("required");
+			if (!fieldRequired) continue;
+
+			value = fruField.getValue("type");
+			if (value == null) { return false; }
+			if (!App.isInteger(value)) { return false; }
+
+			String format = fruField.getValue("format");
+			if (value == null) { return false; }
+
+			// get the value of the field
+			value = fruField.getValue("value");
+			if (value == null) { return false; }
+
+			switch(format) {
+				case "uint8":
+				case "uint16":
+				case "uint32":
+					if (!App.isInteger(value)) { return false; }
+					if (Integer.parseInt(value)<0) { return false; }
+					break;
+				case "bool8":
+				case "sint8":
+				case "sint16":
+				case "sint32":
+					if (!App.isInteger(value)) { return false; }
+					break;
+				case "real32":
+				case "real64":
+					if (!App.isFloat(value)) { return false; }
+					break;
+				case "string":
+					// no checking required for strings - any value is okay
+					break;
+				case "timestamp 104":
+				case "bytes":
+					// the structure of a timestamp 104 or bytes should be an array of bytes
+					JsonAbstractValue ary = fruField.get("value");
+
+					if (!ary.getClass().isAssignableFrom(JsonArray.class)) { return false;}
+
+					for (JsonAbstractValue obj:(JsonArray)ary) {
+						// check to make sure the element exists and is an integer
+						if (obj.getValue("") == null) {
+							return false;
+						}
+						if (!App.isInteger(obj.getValue(""))) {
+							return false;
+						}
+					}
+					break;
+				default:
+					// this is an unknown type flag an error
+					return false;
+			}
+		}
+
+		// no errors found
+		return true;
+	}
+
 	/*******************************************************************************************************************
 	 * this function returns true if the named binding field is editable.  Editable fields will have a null value in
 	 * for the corresponding field in the capabilities section.
