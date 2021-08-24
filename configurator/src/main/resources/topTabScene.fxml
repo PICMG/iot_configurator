@@ -17,7 +17,7 @@
               <MenuItem fx:id="fileOpenMenuItem" mnemonicParsing="false" text="Open" />
             </items>
           </Menu>
-          <Menu fx:id="exportMenu" mnemonicParsing="false" text="Export" />
+          <Menu fx:id="exportMenu" mnemonicParsing="false" onHiding="#notifyExport" onShowing="#notifyExport" />
         </menus>
       </MenuBar>
       <TabPane prefHeight="741.0" prefWidth="1024.0" tabClosingPolicy="UNAVAILABLE">

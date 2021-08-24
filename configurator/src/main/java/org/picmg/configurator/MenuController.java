@@ -26,6 +26,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -60,6 +61,12 @@ public class MenuController implements Initializable {
 	void updateMenuChoices(Boolean configError) {
 		exportMenu.setDisable(configError);
 	}
+
+	@FXML void notifyExport(Event event) {
+		FileChooser fileChooser = new FileChooser();
+		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+	}
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -106,10 +113,15 @@ public class MenuController implements Initializable {
 			File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
 		});
 
-		exportMenu.setOnAction( e -> {
-			FileChooser fileChooser = new FileChooser();
-			File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+		// this code is a work-around to get a menu-level, clickable control
+		Label exportLabel = new Label("Export");
+		exportLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				FileChooser fileChooser = new FileChooser();
+				File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+			}
 		});
-
+		exportMenu.setGraphic(exportLabel);
 	}
 }
