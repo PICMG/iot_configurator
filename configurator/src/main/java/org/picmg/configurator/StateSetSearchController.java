@@ -47,7 +47,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import org.picmg.jsonreader.JsonAbstractValue;
 import org.picmg.jsonreader.JsonResultFactory;
 
-public class SearchTestController implements Initializable {	
+public class StateSetSearchController implements Initializable {
 	
 	// handles to fxml elements
 	@FXML private TableView<TableData> stateSetTable;

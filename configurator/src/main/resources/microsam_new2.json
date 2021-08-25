@@ -245,17 +245,49 @@
 				"description":null,
 				"fields": [
 					{
-						"type": 1,
-						"required": true,
-						"description": "Chassis Type",
-						"format": "string",
-						"length": null,
-						"value": "I/O Module"
-					},
-					{
 						"type": 2,
 						"required": true,
 						"description": "Model",
+						"format": "string",
+						"length": null,
+						"value": null
+					},
+					{
+						"type": 3,
+						"required": true,
+						"description": "Part Number",
+						"format": "string",
+						"length": null,
+						"value": null
+					},
+					{
+						"type": 4,
+						"required": true,
+						"description": "Serial Number",
+						"format": "string",
+						"length": null,
+						"value": null
+					},
+					{
+						"type": 5,
+						"required": true,
+						"description": "Manufacturer",
+						"format": "string",
+						"length": null,
+						"value": "PICMG"
+					},
+					{
+						"type": 7,
+						"required": true,
+						"description": "Vendor",
+						"format": "string",
+						"length": null,
+						"value": null
+					},
+					{
+						"type": 8,
+						"required": true,
+						"description": "Name",
 						"format": "string",
 						"length": null,
 						"value": null
@@ -280,10 +312,11 @@
 						"description": "Global interlock input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "interlock_in",
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 96,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -294,11 +327,13 @@
 						"description": "Global interlock output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "interlock_out",
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 96,
 						"defaultState": 1,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2
+						"stateWhenHigh": 2,
+						"usedStates": 6
+
 					},
 					{
 						"bindingType": "stateSensor",
@@ -309,10 +344,11 @@
 						"description": "Trigger input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "trigger_in",
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 2,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -322,17 +358,18 @@
 						"description": "Trigger output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "trigger_out",
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 2,
-						"defaultState": null,
+						"defaultState": 1,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "numericSensor",
 						"name": "Sensor1",
 						"includeInPdr": true,				
-						"required": false,
+						"required": true,
 						"isVirtual": false,
 						"description": "generic numeric sensor",
 						"allowedInterfaceTypes": ["analog_in","count_in","rate_in","quadrature_in"],
@@ -341,8 +378,9 @@
 						"boundChannel": null, 
 						"inputGearingRatio": null,
 						"physicalBaseUnit": null,
-						"phsicalUnitModifier": null,
+						"physicalUnitModifier": null,
 						"physicalRateUnit": null,
+						"rel": null,
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
 						"physicalAuxRateUnit": null
@@ -355,10 +393,11 @@
 						"isVirtual": false,
 						"description": "generic state sensor",
 						"allowedInterfaceTypes": ["digital_in"],
-						"stateSetVendor": null,
+						"stateSetVendorIANA": null,
 						"stateSet": null,
 						"stateWhenHigh": null, 
-						"stateWhenLow": null
+						"stateWhenLow": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "numericEffecter",
@@ -373,8 +412,9 @@
 						"boundChannel": null, 
 						"ouputGearingRatio": null,
 						"physicalBaseUnit": null,
-						"phsicalUnitModifier": null,
+						"physicalUnitModifier": null,
 						"physicalRateUnit": null,
+						"rel": null,
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
 						"physicalAuxRateUnit": null
@@ -387,11 +427,12 @@
 						"isVirtual": false,
 						"description": "generic state effecter",
 						"allowedInterfaceTypes": ["digital_out"],
-						"stateSetVendor": null,
+						"stateSetVendorIANA": null,
 						"stateSet": null,
 						"defaultState": null,
 						"stateWhenHigh": null,
-						"stateWhenLow" : null 
+						"stateWhenLow" : null,
+						"usedStates": null
 					}
 				],
 				"parameters": [
@@ -422,10 +463,11 @@
 						"description": "Global interlock input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "interlock_in",
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 96,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -436,11 +478,12 @@
 						"description": "Global interlock ouput binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "interlock_out",
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 96,
 						"defaultState": null,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateSensor",
@@ -451,10 +494,11 @@
 						"description": "Trigger input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "trigger_in",
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 2,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -465,11 +509,12 @@
 						"description": "Trigger output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "trigger_out",
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 2,
-						"defaultState": null,
+						"defaultState": 1,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "numericSensor",
@@ -484,8 +529,9 @@
 						"boundChannel": null, 
 						"inputGearingRatio": null,
 						"physicalBaseUnit": null,
-						"phsicalUnitModifier": null,
+						"physicalUnitModifier": null,
 						"physicalRateUnit": null,
+						"rel": null,
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
 						"physicalAuxRateUnit": null
@@ -503,8 +549,9 @@
 						"boundChannel": null, 
 						"ouputGearingRatio": null,
 						"physicalBaseUnit": null,
-						"phsicalUnitModifier": null,
+						"physicalUnitModifier": null,
 						"physicalRateUnit": null,
+						"rel": null,
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
 						"physicalAuxRateUnit": null						
@@ -538,10 +585,11 @@
 						"description": "Global interlock input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "interlock_in",
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 96,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -552,11 +600,12 @@
 						"description": "Global interlock ouput binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "interlock_out",
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 96,
 						"defaultState": null,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateSensor",
@@ -567,10 +616,11 @@
 						"description": "Trigger input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "trigger_in",
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 2,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -581,11 +631,12 @@
 						"description": "Trigger output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "trigger_out",
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 2,
-						"defaultState": null,
+						"defaultState": 1,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateSensor",
@@ -596,10 +647,11 @@
 						"description": "positive limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 67,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
+						"stateWhenHigh": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "stateSensor",
@@ -610,10 +662,11 @@
 						"description": "negative limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 67,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
+						"stateWhenHigh": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "numericSensor",
@@ -628,8 +681,9 @@
 						"boundChannel": null, 
 						"inputGearingRatio": null,
 						"physicalBaseUnit": null,
-						"phsicalUnitModifier": null,
+						"physicalUnitModifier": null,
 						"physicalRateUnit": null,
+						"rel": null,
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
 						"physicalAuxRateUnit": null
@@ -642,10 +696,11 @@
 						"description": "optional motor brake output from the controller, active high",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": null,
-						"stateSetVendor": null,
+						"stateSetVendorIANA": null,
 						"stateSet": null,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
+						"stateWhenHigh": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "numericEffecter",
@@ -660,8 +715,9 @@
 						"boundChannel": null, 
 						"ouputGearingRatio": null,
 						"physicalBaseUnit": null,
-						"phsicalUnitModifier": null,
+						"physicalUnitModifier": null,
 						"physicalRateUnit": null,
+						"rel": null,
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
 						"physicalAuxRateUnit": null						
@@ -679,11 +735,13 @@
 						"boundChannel": null, 
 						"ouputGearingRatio": null,
 						"physicalBaseUnit": null,
-						"phsicalUnitModifier": null,
+						"physicalUnitModifier": null,
 						"physicalRateUnit": null,
+						"rel": null,
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
-						"physicalAuxRateUnit": null						
+						"physicalAuxRateUnit": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -695,11 +753,12 @@
 						"allowedInterfaceTypes": null,
 						"effecter": null,
 						"boundChannel": null,
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 32769,
 						"defaultState": null,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
+						"stateWhenHigh": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "stateSensor",
@@ -711,11 +770,12 @@
 						"allowedInterfaceTypes": null,
 						"sensor": null,
 						"boundChannel": null, 
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 32770,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
-					}					
+						"stateWhenHigh": null,
+						"usedStates": null
+					}
 				],
 				"parameters": [
 					{
@@ -863,10 +923,11 @@
 						"description": "Global interlock input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "interlock_in",
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 96,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -877,11 +938,12 @@
 						"description": "Global interlock ouput binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "interlock_out",
-						"stateSetVendor": 412,
+						"stateSetVendorIANA": 412,
 						"stateSet": 96,
 						"defaultState": null,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateSensor",
@@ -892,10 +954,11 @@
 						"description": "Trigger input binding",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "trigger_in",
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 2,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -906,11 +969,12 @@
 						"description": "Trigger output binding",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": "trigger_out",
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 2,
-						"defaultState": null,
+						"defaultState": 1,
 						"stateWhenLow": 1,
-						"stateWhenHigh": 2 
+						"stateWhenHigh": 2,
+						"usedStates": 6
 					},
 					{
 						"bindingType": "stateSensor",
@@ -921,10 +985,11 @@
 						"description": "positive limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 67,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
+						"stateWhenHigh": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "stateSensor",
@@ -935,10 +1000,11 @@
 						"description": "negative limit switch",
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": null,
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 67,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
+						"stateWhenHigh": null,
+						"usedStates": null
 					},
 					{
 						"name": "BrakeEffecter", 
@@ -948,10 +1014,11 @@
 						"description": "optional motor brake output from the controller, active high",
 						"allowedInterfaceTypes": ["digital_out"],
 						"boundChannel": null,
-						"stateSetVendor": null,
+						"stateSetVendorIANA": null,
 						"stateSet": null,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
+						"stateWhenHigh": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "numericEffecter",
@@ -966,8 +1033,9 @@
 						"boundChannel": null, 
 						"ouputGearingRatio": null,
 						"physicalBaseUnit": null,
-						"phsicalUnitModifier": null,
+						"physicalUnitModifier": null,
 						"physicalRateUnit": null,
+						"rel": null,
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
 						"physicalAuxRateUnit": null						
@@ -985,11 +1053,13 @@
 						"boundChannel": null, 
 						"ouputGearingRatio": null,
 						"physicalBaseUnit": null,
-						"phsicalUnitModifier": null,
+						"physicalUnitModifier": null,
 						"physicalRateUnit": null,
+						"rel": null,
 						"physicalAuxUnit": null,
 						"physicalAuxUnitModifier": null,
-						"physicalAuxRateUnit": null						
+						"physicalAuxRateUnit": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "stateEffecter",
@@ -1001,11 +1071,12 @@
 						"allowedInterfaceTypes": null,
 						"effecter": null,
 						"boundChannel": null,
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 32769,
 						"defaultState": null,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
+						"stateWhenHigh": null,
+						"usedStates": null
 					},
 					{
 						"bindingType": "stateSensor",
@@ -1017,11 +1088,12 @@
 						"allowedInterfaceTypes": null,
 						"sensor": null,
 						"boundChannel": null, 
-						"stateSetVendor": 12634,
+						"stateSetVendorIANA": 12634,
 						"stateSet": 32770,
 						"stateWhenLow": null,
-						"stateWhenHigh": null 
-					}					
+						"stateWhenHigh": null,
+						"usedStates": null
+					}
 				],
 				"parameters": [
 					{
