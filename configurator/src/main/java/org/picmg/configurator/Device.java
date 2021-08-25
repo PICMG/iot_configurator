@@ -22,6 +22,8 @@
 //
 package org.picmg.configurator;
 
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -57,8 +59,11 @@ public class Device {
 	JsonObject jdev;
 	ArrayList<String> allUsedPins;
 	ArrayList<String> allUsedChannels;
-	
-	// constructor with Json initializer
+
+	/**
+	 * constructor with Json initializer
+	 * @param jdev
+	 */
 	public Device(JsonObject jdev) {
 		this.jdev = new JsonObject(jdev);
 		
@@ -196,8 +201,8 @@ public class Device {
 				JsonObject cfg = (JsonObject) jdev.get("configuration");
 				JsonArray cfgFruRecords = (JsonArray) cfg.get("fruRecords");
 				JsonObject newrecord = new JsonObject(frec);
-				cfgFruRecords.add(frec);
-				return frec;
+				cfgFruRecords.add(newrecord);
+				return newrecord;
 			}
 		}
 		return null;
@@ -985,6 +990,16 @@ public class Device {
 				}catch (Exception ex) {
 					return false;
 				}
+			case "vendorIANA":
+			case "stateSetVendorIANA":
+			case "stateWhenHigh":
+			case "stateWhenLow":
+			case "usedStates":
+			case "defaultState":
+			case "stateSet":
+				if (value == null ) return false;
+				if (!App.isInteger(value)) return false;
+				return true;
 			case "physicalBaseUnit":
 			case "physicalAuxUnit":
 				if (virtual) {
@@ -1262,6 +1277,39 @@ public class Device {
 	}
 
 	/**
+	 * check the given logical entity to make sure all its fields are valid
+	 * @param entity
+	 * @return true if no errors, otherwise false
+	 */
+	static boolean isLogicalEntityValid(JsonObject entity) {
+		String val = entity.getValue("entityVendorIANA");
+		if (val==null) return false;
+		if (!App.isInteger(val)) return false;
+
+		val = entity.getValue("name");
+		if (val==null) return false;
+
+		JsonAbstractValue bindings = entity.get("ioBindings");
+		if (bindings==null) return false;
+		if (!bindings.getClass().isAssignableFrom(JsonArray.class)) return false;
+
+		// if there are any required, but invalid bindings, this entity is not valid
+		for (int i = 0; i < ((JsonArray)bindings).size();i++) {
+			JsonObject binding = (JsonObject)((JsonArray)bindings).get(i);
+			boolean required = binding.getBoolean("required");
+			if ((required)&&(!isBindingValid(binding))) return false;
+		}
+
+		// check parameters for any required but null
+		JsonArray parameters = (JsonArray)entity.get("parameters");
+		for (int i = 0; i < ((JsonArray)parameters).size();i++) {
+			JsonObject parameter = (JsonObject)parameters.get(i);
+			if (parameter.get("value")==null) return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Check to see if the given binding is valid
 	 * @param binding - the ioBinding to check
 	 * @return true if the binding is valid, otherwise false
@@ -1312,8 +1360,7 @@ public class Device {
 						isIoBindingFieldValid(binding,"stateSet") &&
 						isIoBindingFieldValid(binding,"usedStates") &&
 						isIoBindingFieldValid(binding,"stateWhenHigh") &&
-						isIoBindingFieldValid(binding,"stateWhenLow") &&
-						isIoBindingFieldValid(binding,"possibleStates");
+						isIoBindingFieldValid(binding,"stateWhenLow");
 				break;
 			case "stateEffecter":
 				result = isIoBindingFieldValid(binding,"boundChannel") &&
@@ -1328,5 +1375,46 @@ public class Device {
 				System.out.println("binding type = " + binding.getValue("type"));
 		}
 		return result;
+	}
+
+	public void exportConfiguration(File outputFile) {
+		// create a copy of the device structure
+		JsonObject cleanDevice = new JsonObject(jdev);
+
+		JsonObject configuration = (JsonObject)cleanDevice.get("configuration");
+		JsonArray fruRecords = (JsonArray)configuration.get("fruRecords");
+		JsonArray logicalEntities = (JsonArray)configuration.get("logicalEntities");
+
+		// strip out any incomplete FRU records
+		for (int i = fruRecords.size()-1;i>=0;i--) {
+			JsonObject fruRecord = (JsonObject)fruRecords.get(i);
+			if (!isFruRecordValid(fruRecord)) fruRecords.remove(fruRecord);
+		}
+
+		// strip out any incomplete Logical Entities
+		for (int i = logicalEntities.size()-1;i>=0;i--) {
+			JsonObject entity = (JsonObject)logicalEntities.get(i);
+			if (!isLogicalEntityValid(entity)) logicalEntities.remove(entity);
+		}
+
+		// strip out any remaining incomplete io bindings
+		for (int i = 0;i<logicalEntities.size();i++) {
+			JsonObject entity = (JsonObject)logicalEntities.get(i);
+			// find check the IO Bindings
+			JsonArray ioBindings = (JsonArray)entity.get("ioBindings");
+			for (int j = ioBindings.size()-1;j>=0;j--) {
+				JsonObject binding = (JsonObject)ioBindings.get(j);
+				if (!isBindingValid(binding)) ioBindings.remove(binding);
+			}
+		}
+
+		// write the result
+		try (
+			FileWriter writer = new FileWriter(outputFile);
+			BufferedWriter bw = new BufferedWriter(writer)) {
+			cleanDevice.writeToFile(bw);
+			bw.close();
+		} catch (IOException e) {
+		}
 	}
 }

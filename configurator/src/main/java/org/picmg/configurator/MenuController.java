@@ -46,17 +46,20 @@ import java.io.*;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.Random;
 import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
-	@FXML MenuItem fileOpenMenuItem;
+	@FXML Menu resetMenu;
 	@FXML Menu exportMenu;
 	@FXML MenuBar mainMenubar;
 	@FXML AnchorPane deviceTabAnchorPane;
 	@FXML AnchorPane sensorsTabAnchorPane;
 	@FXML AnchorPane effectersTabAnchorPane;
 	@FXML AnchorPane stateSetsTabAnchorPane;
+
+	MainScreenController mainController; // the controller for the main pane
 
 	void updateMenuChoices(Boolean configError) {
 		exportMenu.setDisable(configError);
@@ -81,8 +84,8 @@ public class MenuController implements Initializable {
 
 				// set up a listener to change the state of the main menu when the configuration error
 				// condition changes
-				MainScreenController controller = loader.getController();
-				controller.getErrorProperty().addListener( new ChangeListener<Boolean>() {
+				mainController = loader.getController();
+				mainController.getErrorProperty().addListener( new ChangeListener<Boolean>() {
 					@Override
 					public void changed(ObservableValue<? extends Boolean> observable,
 										Boolean oldValue, Boolean newValue) {
@@ -108,10 +111,25 @@ public class MenuController implements Initializable {
 			e.printStackTrace();
 		}
 
-		fileOpenMenuItem.setOnAction( e -> {
-			FileChooser fileChooser = new FileChooser();
-			File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+		Label resetLabel = new Label("Reset");
+		resetLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+				alert.setTitle("Warning");
+				alert.setHeaderText("Reset Configuration:");
+				alert.setContentText("If you proceed, all current work will be lost.  Continue?");
+
+				Optional<ButtonType> result = alert.showAndWait();
+				if (result == null) return;
+				if (result.get() == null) return;
+				if (result.get() == ButtonType.OK){
+					mainController.resetDevice();
+				}
+			}
 		});
+		resetMenu.setGraphic(resetLabel);
+
 
 		// this code is a work-around to get a menu-level, clickable control
 		Label exportLabel = new Label("Export");
@@ -119,7 +137,9 @@ public class MenuController implements Initializable {
 			@Override
 			public void handle(MouseEvent event) {
 				FileChooser fileChooser = new FileChooser();
-				File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+				fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+				File selectedFile = fileChooser.showSaveDialog(mainMenubar.getScene().getWindow());
+				if (selectedFile != null) mainController.exportConfiguration(selectedFile);
 			}
 		});
 		exportMenu.setGraphic(exportLabel);

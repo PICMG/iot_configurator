@@ -459,16 +459,13 @@ public class MainScreenController implements Initializable {
             }
         }        
     }
-    
-	void writeFile() {
-        try (FileWriter writer = new FileWriter("output.json");
-                BufferedWriter bw = new BufferedWriter(writer)) {
 
-               jdev.writeToFile(bw);
-               bw.close();
-           } catch (IOException e) {
-               System.err.format("IOException: %s%n", e);
-           }
+	/**
+	 * export the configuration to the specified output file.
+	 * @param outputFile - the name of the file to output to
+	 */
+	public void exportConfiguration(File outputFile) {
+       	device.exportConfiguration(outputFile);
 	}
 
 	
@@ -735,6 +732,22 @@ public class MainScreenController implements Initializable {
 		return configurationError;
 	}
 
+	public void resetDevice() {
+		configurationError.set(true);
+
+		// create a copy of the hardware file to be configured
+		device = new Device(hardware);
+
+		// create the tree based on the device
+		TreeItem<TreeData> rootNode = treeView.getRoot();
+		rootNode = new TreeItem<TreeData>(new TreeData(null,null,"device"));
+		treeView.setRoot(rootNode);
+		rootNode.setExpanded(true);
+		populateTree(rootNode);
+
+		clearPanes();
+	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		setPaneBindings();
@@ -757,15 +770,7 @@ public class MainScreenController implements Initializable {
         deviceLib = new JsonObject();
         addLibrariesFromResourceFolder(deviceLib,"devices","devices");
 
-        // create a copy of the hardware file to be configured
-        device = new Device(hardware);
-
-        // create the tree based on the device
-        TreeItem<TreeData> rootNode = treeView.getRoot();
-        rootNode = new TreeItem<TreeData>(new TreeData(null,null,"device"));
-        treeView.setRoot(rootNode);
-        rootNode.setExpanded(true);
-        populateTree(rootNode);
+		resetDevice();
 
         treeView.setEditable(true);
         treeView.setCellFactory(new Callback<TreeView<TreeData>,TreeCell<TreeData>>(){
