@@ -1012,7 +1012,7 @@ public class SensorsTabController implements Initializable {
 		minusAccuracyTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { minusAccuracyTextfield.fireEvent(new ActionEvent()); }}});
-		outputUnitsImage.focusedProperty().addListener(new ChangeListener<Boolean>() {
+		outputUnitsTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { outputUnitsTextfield.fireEvent(new ActionEvent()); }}});
 		descriptionTextArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
