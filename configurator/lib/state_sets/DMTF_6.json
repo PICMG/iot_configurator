@@ -1,6 +1,6 @@
 {
 	"name":"Group Resource Level",
-	"stateSetId":6,
+	"stateSetID":6,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

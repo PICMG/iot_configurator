@@ -1,6 +1,6 @@
 {
 	"name":"Switch State",
-	"stateSetId":67,
+	"stateSetID":67,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

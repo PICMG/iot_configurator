@@ -1,6 +1,6 @@
 {
 	"name":"Availability",
-	"stateSetId":2,
+	"stateSetID":2,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

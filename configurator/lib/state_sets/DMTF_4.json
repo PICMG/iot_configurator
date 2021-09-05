@@ -1,6 +1,6 @@
 {
 	"name":"Redundancy Status",
-	"stateSetId":4,
+	"stateSetID":4,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

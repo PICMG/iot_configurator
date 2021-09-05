@@ -1,6 +1,6 @@
 {
 	"name":"Operational Fault State",
-	"stateSetId":10,
+	"stateSetID":10,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

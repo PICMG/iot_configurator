@@ -1,6 +1,6 @@
 {
 	"name":"Trigger State",
-	"stateSetId":1,
+	"stateSetID":1,
 	"vendorIANA":12634,
 	"vendorName":"PICMG",
 	"oemStateValueRecords":[

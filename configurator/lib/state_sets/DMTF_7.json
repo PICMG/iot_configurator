@@ -1,6 +1,6 @@
 {
 	"name":"Redundancy Entity Role",
-	"stateSetId":7,
+	"stateSetID":7,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

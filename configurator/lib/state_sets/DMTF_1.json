@@ -1,6 +1,6 @@
 {
 	"name":"Health State",
-	"stateSetId":1,
+	"stateSetID":1,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

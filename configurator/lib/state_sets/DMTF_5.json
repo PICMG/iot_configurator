@@ -1,6 +1,6 @@
 {
 	"name":"Health/Redundancy Trend",
-	"stateSetId":5,
+	"stateSetID":5,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

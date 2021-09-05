@@ -1,6 +1,6 @@
 {
 	"name":"Operational Stress Status",
-	"stateSetId":9,
+	"stateSetID":9,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

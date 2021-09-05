@@ -78,7 +78,7 @@ public class StateEffecterController implements Initializable {
 //						JsonObject cdef = (JsonObject)it1.next();
 //						if(cdef.getValue("name").equals(selectedState.getText())) {
 //							device.setBindingValueFromKey(selectedNode.getValue().name, "stateSetVendor", cdef.getValue("vendorIANA"));
-//							device.setBindingValueFromKey(selectedNode.getValue().name, "stateSet", cdef.getValue("stateSetId"));
+//							device.setBindingValueFromKey(selectedNode.getValue().name, "stateSet", cdef.getValue("stateSetID"));
 //						}
 //					}
 //				} catch (IOException ex) {
@@ -262,7 +262,7 @@ public class StateEffecterController implements Initializable {
 			Iterator<JsonAbstractValue> it1 = stateSets.iterator();
 			while (it1.hasNext()) {
 				JsonObject cdef = (JsonObject)it1.next();
-				if(cdef.getValue("stateSetId").equals(device.getBindingValueFromKey(selectedNode.getValue().name,"stateSet"))) {
+				if(cdef.getValue("stateSetID").equals(device.getBindingValueFromKey(selectedNode.getValue().name,"stateSet"))) {
 					selectedState.clear();
 					stateSet = cdef.getValue("name");
 					selectedState.setText(stateSet);

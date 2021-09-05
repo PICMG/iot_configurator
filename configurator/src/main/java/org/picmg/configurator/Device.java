@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import org.picmg.jsonreader.*;
@@ -1377,6 +1378,15 @@ public class Device {
 		return result;
 	}
 
+	JsonObject getStateSetFromLibrary(String filename) {
+		JsonResultFactory factory = new JsonResultFactory();
+
+		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+		String path = System.getProperty("user.dir")+"/lib/state_sets/"+filename;
+		JsonObject obj = (JsonObject) factory.buildFromFile(Paths.get(path));
+		return obj;
+	}
+
 	public void exportConfiguration(File outputFile) {
 		// create a copy of the device structure
 		JsonObject cleanDevice = new JsonObject(jdev);
@@ -1384,6 +1394,10 @@ public class Device {
 		JsonObject configuration = (JsonObject)cleanDevice.get("configuration");
 		JsonArray fruRecords = (JsonArray)configuration.get("fruRecords");
 		JsonArray logicalEntities = (JsonArray)configuration.get("logicalEntities");
+
+		// add a blank OEM State sets section to the file
+		JsonArray oemStateSets = new JsonArray();
+		cleanDevice.put("oemStateSets", oemStateSets);
 
 		// strip out any incomplete FRU records
 		for (int i = fruRecords.size()-1;i>=0;i--) {
@@ -1405,6 +1419,44 @@ public class Device {
 			for (int j = ioBindings.size()-1;j>=0;j--) {
 				JsonObject binding = (JsonObject)ioBindings.get(j);
 				if (!isBindingValid(binding)) ioBindings.remove(binding);
+			}
+		}
+
+		// add any required OEM Fru Sets
+		for (int i = 0;i<logicalEntities.size();i++) {
+			JsonObject entity = (JsonObject)logicalEntities.get(i);
+
+			// check each IO Binding for an OEM State set
+			JsonArray ioBindings = (JsonArray)entity.get("ioBindings");
+			for (int j = 0; j<ioBindings.size();j++) {
+				JsonObject binding = (JsonObject)ioBindings.get(j);
+				if (binding.containsKey("stateSetVendorIANA")) {
+					// check to see if it is a PICMG state set
+					// TODO: add possibiltiy for other vendor OEM State sets
+					if (binding.getInteger("stateSetVendorIANA")==12634) {
+						// here if PICMG
+						// Check to see if the state set has already been added
+						int stateSet = binding.getInteger("stateSet");
+
+						// check for each entry in the oemState sets to see if there is a
+						// match.
+						boolean matchFound = false;
+						for (int ssnum = 0; ssnum<oemStateSets.size(); ssnum++) {
+							JsonObject setdef = (JsonObject)oemStateSets.get(ssnum);
+							if ((setdef.getInteger("vendorIANA")==12634)&&
+								(setdef.getInteger("stateSetID")==stateSet)) {
+								matchFound = true;
+								break;
+							}
+						}
+						if (!matchFound) {
+							// here if the set is not already in the list - add it
+							String filename = "PICMG_"+Integer.toString(stateSet)+".json";
+							JsonObject obj = getStateSetFromLibrary(filename);
+							if (obj!=null) oemStateSets.add(obj);
+						}
+					}
+				}
 			}
 		}
 

@@ -1,6 +1,6 @@
 {
 	"name":"Predictive Condition",
-	"stateSetId":3,
+	"stateSetID":3,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[

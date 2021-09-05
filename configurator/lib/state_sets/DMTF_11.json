@@ -1,6 +1,6 @@
 {
 	"name":"Operational Running State",
-	"stateSetId":11,
+	"stateSetID":11,
 	"vendorIANA":412,
 	"vendorName":"DMTF",
 	"oemStateValueRecords":[
