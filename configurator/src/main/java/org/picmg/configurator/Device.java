@@ -1009,9 +1009,10 @@ public class Device {
 				}
 				// otherwise,the value should be one of the units choices
 				if (value == null) return false;
-				for (String choice : unitsChoices)
-					if (value.equals(choice)) return true;
-				return false;
+				if (!App.isInteger(value)) return false;
+				if (Integer.parseInt(value)>=unitsChoices.length) return false;
+				if (Integer.parseInt(value)<0) return false;
+				return true;
 			case "physicalRateUnit":
 			case "physicalAuxRateUnit":
 				if (virtual) {
@@ -1020,9 +1021,10 @@ public class Device {
 				}
 				// otherwise,the value should be one of the units choices
 				if (value == null) return false;
-				for (String choice : rateChoices)
-					if (value.equals(choice)) return true;
-				return false;
+				if (!App.isInteger(value)) return false;
+				if (Integer.parseInt(value)>=rateChoices.length) return false;
+				if (Integer.parseInt(value)<0) return false;
+				return true;
 			case "rel":
 				if (virtual) {
 					// value must be null
@@ -1030,9 +1032,10 @@ public class Device {
 				}
 				// otherwise,the value should be one of the units choices
 				if (value == null) return false;
-				for (String choice : relChoices)
-					if (value.equals(choice)) return true;
-				return false;
+				if (!App.isInteger(value)) return false;
+				if (Integer.parseInt(value)>=relChoices.length) return false;
+				if (Integer.parseInt(value)<0) return false;
+				return true;
 			case "normalMax":
 				if (inPdr) {
 					// value must be null
