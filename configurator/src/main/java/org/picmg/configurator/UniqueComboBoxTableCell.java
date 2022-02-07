@@ -64,9 +64,9 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
     ObjectProperty<S> item;            // the item stored in this cell
     ObservableList<T> choices;                  // the dynamic list of choices
     boolean cancel = false;
-    TableColumn column = null;
-    TablePosition position = null;
-    TableView view = null;
+    TableColumn column;
+    TablePosition position;
+    TableView view;
     static Image redDotImage;
     static Image yellowDotImage;
 
