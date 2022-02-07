@@ -28,6 +28,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -62,6 +63,10 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
     TextField tf;    // the textfield control to use when there are no choices
     ObjectProperty<S> item;            // the item stored in this cell
     ObservableList<T> choices;                  // the dynamic list of choices
+    boolean cancel = false;
+    TableColumn column = null;
+    TablePosition position = null;
+    TableView view = null;
     static Image redDotImage;
     static Image yellowDotImage;
 
@@ -166,11 +171,15 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * non-editing state, without saving any user input.
      */
     public void cancelEdit() {
+        super.cancelEdit();
         setText(getValue(item.get()));
         cb.setValue(converter.get().fromString(getValue(item.get())));
-        tf.setText(getValue(item.get()));
+        if(!cancel) {
+            clickCommit(getConverter().fromString(tf.getText()), column);
+            setValue(item.get(), converter.get().fromString(tf.getText()));
+        }
         updateCellMarking();
-        super.cancelEdit();
+        cancel = false;
     }
 
     /**
@@ -348,6 +357,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
                 if (handler.getCode() == KeyCode.ESCAPE) {
                     // abort any edit in progress
                     cb.setValue(getConverter().fromString(getValue(item.get())));
+                    cancel = true;
                     cancelEdit();
                     handler.consume();
                 }
@@ -393,6 +403,12 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
                     commitEdit(getConverter().fromString(tf.getText()));
                     setValue(item.get(), converter.get().fromString(tf.getText()));
                     handler.consume();
+                }
+                else
+                {
+                    column = this.getTableColumn();
+                    position = this.getTableView().getEditingCell();
+                    view = this.getTableView();
                 }
             });
 
@@ -463,6 +479,27 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
             cb.requestFocus();
             tf.setDisable(true);
         }
+    }
+
+    public void clickCommit(T var1, TableColumn column)
+    {
+            TableView var2 = view;
+
+        if (var2 != null) {
+                TableColumn.CellEditEvent var3 = new TableColumn.CellEditEvent(view, position, column.editCommitEvent(), var1);
+                int row = var3.getTablePosition().getRow();
+                if(this.getTableColumn() != null)
+                 Event.fireEvent(column, var3);
+
+            }
+
+            this.updateItem(var1, false);
+            if (var2 != null) {
+                var2.edit(-1, (TableColumn)null);
+            }
+
+
+
     }
 
     /**
@@ -538,8 +575,6 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
                 setValue.invoke(value);
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             }
-        } else {
-            System.out.println("here");
         }
     }
 }
