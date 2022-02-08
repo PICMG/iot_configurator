@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
@@ -97,10 +98,20 @@ public class App extends Application {
 			stage.setTitle("PICMG Configurator");
 			stage.setScene(scene);
 			stage.show();
+			//Handling close event
+			stage.setOnCloseRequest(event -> {
+				close();
+			});
 
 		} catch (IOException e) {
 	    	System.out.println(e);
 		}
+	}
+
+	public void close(){
+		System.out.println("Closing the PICMG Configurator");
+		Platform.exit();
+		System.exit(0);
 	}
 
 	/**
