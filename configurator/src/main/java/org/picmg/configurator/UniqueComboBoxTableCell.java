@@ -28,6 +28,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -54,6 +55,7 @@ import java.lang.reflect.Method;
  * With the exception of the above noted difference, this control has been designed
  * to be functionally equivalent to the JavaFx comboBox as described in the
  * online documentation.
+ *
  * @param <S> - The type object associated with the TableView this cell is stored in
  * @param <T> - The type object stored/selected in the cell
  */
@@ -62,6 +64,11 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
     TextField tf;    // the textfield control to use when there are no choices
     ObjectProperty<S> item;            // the item stored in this cell
     ObservableList<T> choices;                  // the dynamic list of choices
+    boolean cancel = false;
+    String previousText = "";
+    TableColumn column;
+    TablePosition position;
+    TableView view;
     static Image redDotImage;
     static Image yellowDotImage;
 
@@ -72,7 +79,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
 
     /**
      * Constructors
-     *
+     * <p>
      * Although the documentation shows multiple different constructors, the following
      * is the only one that is ever used since cells are constructed by forColumn()
      */
@@ -98,12 +105,12 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
         // save these items for later when the combo box gets built
         this.choices = items;
 
-        if (redDotImage==null) {
+        if (redDotImage == null) {
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             InputStream is = classLoader.getResourceAsStream("red_dot.png");
             if (is != null) redDotImage = new Image(is);
         }
-        if (yellowDotImage==null) {
+        if (yellowDotImage == null) {
             ClassLoader classLoader = ClassLoader.getSystemClassLoader();
             InputStream is = classLoader.getResourceAsStream("yellow_dot.png");
             if (is != null) yellowDotImage = new Image(is);
@@ -111,12 +118,13 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
 
     }
 
-    /** forColumn()
+    /**
+     * forColumn()
      * These are called back by the cell factory to create an instance of the cell.
      */
     @SafeVarargs
     public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn(T... tArry) {
-        return forTableColumn((StringConverter)new DefaultStringConverter(), (Object[])tArry);
+        return forTableColumn((StringConverter) new DefaultStringConverter(), (Object[]) tArry);
     }
 
     @SafeVarargs
@@ -125,7 +133,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
     }
 
     public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn(ObservableList<T> ol) {
-        return forTableColumn((StringConverter)new DefaultStringConverter(), (ObservableList)ol);
+        return forTableColumn((StringConverter) new DefaultStringConverter(), (ObservableList) ol);
     }
 
     public static <S, T> Callback<TableColumn<S, T>, TableCell<S, T>> forTableColumn(StringConverter<T> sc, ObservableList<T> ol) {
@@ -134,7 +142,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
 
     private void updateCellMarking() {
         Method fn;
-        if ((item==null)||(item.get()==null)) return;
+        if ((item == null) || (item.get() == null)) return;
         try {
             fn = item.get().getClass().getMethod("getState", (Class<?>[]) null);
             String state = (String) fn.invoke(item.get());
@@ -166,17 +174,22 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * non-editing state, without saving any user input.
      */
     public void cancelEdit() {
+        super.cancelEdit();
         setText(getValue(item.get()));
         cb.setValue(converter.get().fromString(getValue(item.get())));
-        tf.setText(getValue(item.get()));
+        if (!cancel) {
+            clickCommit(getConverter().fromString(tf.getText()), column);
+            setValue(item.get(), converter.get().fromString(tf.getText()));
+        }
         updateCellMarking();
-        super.cancelEdit();
+        cancel = false;
     }
 
     /**
      * getConverter()
      * from the user documentation:
      * Returns the StringConverter used in this cell.
+     *
      * @return the string converter used in this cell
      */
     public StringConverter<T> getConverter() {
@@ -187,6 +200,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * getItems()
      * From the user documentation:
      * Returns the items to be displayed in the ChoiceBox when it is showing.
+     *
      * @return the choice box choices
      */
     public ObservableList<T> getItems() {
@@ -197,6 +211,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * isComboBoxEditable()
      * From the user documentation:
      * Returns true if the ComboBox is editable.
+     *
      * @return - a boolean - true if editable
      */
     public boolean isComboBoxEditable() {
@@ -208,6 +223,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * From the user documentation:
      * Configures the ComboBox to be editable (to allow user input
      * outside of the options provide in the dropdown list).
+     *
      * @param value - the value to set
      */
     public void setComboBoxEditable(boolean value) {
@@ -218,6 +234,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * setConverter()
      * From the user documentation:
      * Sets the StringConverter to be used in this cell.
+     *
      * @param value - the value to set
      */
     public void setConverter(StringConverter<T> value) {
@@ -228,6 +245,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * getDescription()
      * This is a special helper function that gets the value of the description field from
      * the data model.
+     *
      * @param data - the data model for the row of the table
      * @return - the value for the cell
      */
@@ -245,6 +263,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * getMaxValue()
      * This is a special helper function that gets the max value of the field from
      * the data model.
+     *
      * @param data - the data model for the row of the table
      * @return - the value for the cell
      */
@@ -262,6 +281,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * getMinValue()
      * This is a special helper function that gets the value of the field from
      * the data model.
+     *
      * @param data - the data model for the row of the table
      * @return - the value for the cell
      */
@@ -279,6 +299,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * getValue()
      * This is a special helper function that gets the value of the field from
      * the data model.
+     *
      * @param data - the data model for the row of the table
      * @return - the value for the cell
      */
@@ -296,6 +317,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * getEditable()
      * This is a special helper function that gets the value of the editable field from
      * the data model.
+     *
      * @param data - the data model for the row of the table
      * @return - the value for the cell
      */
@@ -313,15 +335,16 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
      * setValue()
      * this is a special helper function that sets the changed value back to the
      * dta model.
-     * @param data - the data model to write to
+     *
+     * @param data  - the data model to write to
      * @param value - the new value to write
      */
-    private void setValue(S data,T value) {
+    private void setValue(S data, T value) {
         Method fn;
         try {
             fn = data.getClass().getMethod("setValue", String.class);
             fn.invoke(data, converter.get().toString(value));
-        } catch (NoSuchMethodException |InvocationTargetException | IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
         }
     }
 
@@ -334,13 +357,13 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
     @Override
     public void startEdit() {
         // only execute this code if the item can be edited
-        if ((!this.isEditable())||(!this.getTableColumn().isEditable())||(!this.getTableView().isEditable())) return;
-
+        if ((!this.isEditable()) || (!this.getTableColumn().isEditable()) || (!this.getTableView().isEditable()))
+            return;
         // get a fresh copy of the item from the table
         item.set(getTableRow().getItem());
 
         // create a combo box for the cell if one doesn't already exist
-        if (this.cb==null) {
+        if (this.cb == null) {
             // set the choices for the combo box
             this.cb = new ComboBox<>(this.choices);
             // handle special processing for special keys
@@ -348,6 +371,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
                 if (handler.getCode() == KeyCode.ESCAPE) {
                     // abort any edit in progress
                     cb.setValue(getConverter().fromString(getValue(item.get())));
+                    cancel = true;
                     cancelEdit();
                     handler.consume();
                 }
@@ -356,11 +380,11 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
             // handle changes in the combo box
             cb.setOnAction((handler) -> {
                 if (getConverter() != null) {
-                    if (cb.getValue()!=null) {
+                    if (cb.getValue() != null) {
                         setValue(item.get(), cb.getValue());
                         commitEdit(cb.getValue());
                     } else {
-                        commitEdit((T)getText());
+                        commitEdit((T) getText());
                     }
                     handler.consume();
                 }
@@ -378,28 +402,38 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
             });
 
             this.tf = new TextField();
+            previousText = tf.getText();
+
+            tf.setOnKeyPressed((handler) -> {
+                if (handler.getCode() == KeyCode.ESCAPE) {
+                    cancel = true;
+                    cancelEdit();
+                    handler.consume();
+                }
+            });
+
             // handle special processing for special keys
             // On key pressed is important (rather than onIKeyReleased) because
             // escape and enter must be intercepted before loss of focus.
             tf.setOnKeyReleased((handler) -> {
-                if (handler.getCode() == KeyCode.ESCAPE) {
-                    // abort any edit in progress
-                    cancelEdit();
-                    handler.consume();
-                } else if ((handler.getCode() == KeyCode.ENTER) ||
-                        (handler.getCode() == KeyCode.TAB))
-                {
+                if ((handler.getCode() == KeyCode.ENTER) ||
+                        (handler.getCode() == KeyCode.TAB)) {
                     // commit any edit in progress
                     commitEdit(getConverter().fromString(tf.getText()));
                     setValue(item.get(), converter.get().fromString(tf.getText()));
+                    cancel = false;
                     handler.consume();
+                } else {
+                    column = this.getTableColumn();
+                    position = this.getTableView().getEditingCell();
+                    view = this.getTableView();
                 }
             });
 
             // handle loss of focus event - this works if the focus is lost to
             // another cell in the table, but not another pane altogether
             tf.focusedProperty().addListener((event) -> {
-                if (!tf.isFocused()) {
+                if (!tf.isFocused() && !cancel) {
                     commitEdit(getConverter().fromString(tf.getText()));
                     setValue(item.get(), converter.get().fromString(tf.getText()));
                 }
@@ -433,20 +467,20 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
                 this.choices = (ObservableList<T>) getChoices.invoke(rowData);
                 this.cb.setItems(this.choices);
             }
-        } catch (NoSuchMethodException | InvocationTargetException |IllegalAccessException e) {
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
         }
 
         // set the initial text in the combo box
         String val = getValue(rowData);
         tf.setText(val);
-        cb.setValue((T)val);
+        cb.setValue((T) val);
 
         // clear the text in the row
         setText("");
 
         cb.setPrefWidth(1e100);
         tf.setPrefWidth(1e100);
-        if (choices==null) {
+        if (choices == null) {
             // there are no choices - disable the popup and enable text entry
             // insert the text field into the cell by setting it as the graphic
             // make sure that the box width fills the cell
@@ -465,13 +499,31 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
         }
     }
 
+    public void clickCommit(T var1, TableColumn column) {
+        TableView var2 = view;
+
+        if (var2 != null) {
+            TableColumn.CellEditEvent var3 = new TableColumn.CellEditEvent(view, position, column.editCommitEvent(), var1);
+            int row = var3.getTablePosition().getRow();
+            if (this.getTableColumn() != null)
+                Event.fireEvent(column, var3);
+
+        }
+
+        this.updateItem(var1, false);
+        if (var2 != null) {
+            var2.edit(-1, (TableColumn) null);
+        }
+    }
+
     /**
      * updateItem()
      * From the user documentation:
      * The updateItem method should not be called by developers, but it is
      * the best method for developers to override to allow for them to
      * customise the visuals of the cell.
-     * @param item - The new item for the cell.
+     *
+     * @param item  - The new item for the cell.
      * @param empty - whether or not this cell represents data from the list.
      *              If it is empty, then it does not represent any domain data,
      *              but is a cell being used to render an "empty" row.
@@ -487,7 +539,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
             setGraphic(null);
         } else if (!isEditing()) {
             this.item.set(getTableRow().getItem());
-            if ((this.item!=null)&&(this.item.get()!=null)) {
+            if ((this.item != null) && (this.item.get() != null)) {
                 // disable the control if it is not editable.
                 if (!isEditable()) {
                     getTableRow().setDisable(true);
@@ -503,11 +555,11 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
                 StringBuilder sb = new StringBuilder();
                 sb.append(getDescription(this.item.get()));
 
-                if (getMaxValue(this.item.get())!=null) {
-                    sb.append("\nMaximum Value = "+getMaxValue(this.item.get()));
+                if (getMaxValue(this.item.get()) != null) {
+                    sb.append("\nMaximum Value = " + getMaxValue(this.item.get()));
                 }
-                if (getMinValue(this.item.get())!=null) {
-                    sb.append("\nMinimum Value = "+getMinValue(this.item.get()));
+                if (getMinValue(this.item.get()) != null) {
+                    sb.append("\nMinimum Value = " + getMinValue(this.item.get()));
                 }
                 tt.setText(sb.toString());
                 tt.setPrefWidth(350);
@@ -520,7 +572,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
 
             // set the proper text - using the converter if specified
             String value = "";
-            if (getItem()!=null) {
+            if (getItem() != null) {
                 if (converter.get() != null) {
                     // here if the converter is specified
                     value = converter.get().toString(getItem());
@@ -538,8 +590,6 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
                 setValue.invoke(value);
             } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
             }
-        } else {
-            System.out.println("here");
         }
     }
 }
