@@ -102,6 +102,8 @@ public class MenuController implements Initializable {
 
 			{
 				// effecters
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("effectersTabView.fxml"));
+				effectersTabAnchorPane.getChildren().add(loader.load());
 			}
 
 			{
