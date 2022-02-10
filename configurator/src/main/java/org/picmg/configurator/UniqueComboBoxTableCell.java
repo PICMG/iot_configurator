@@ -33,6 +33,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -403,12 +404,28 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
 
             this.tf = new TextField();
             previousText = tf.getText();
-
             tf.setOnKeyPressed((handler) -> {
                 if (handler.getCode() == KeyCode.ESCAPE) {
                     cancel = true;
                     cancelEdit();
                     handler.consume();
+                }
+                if(handler.getCode() == KeyCode.TAB || handler.getCode() == KeyCode.ENTER)
+                {
+                    commitEdit(getConverter().fromString(tf.getText()));
+                    setValue(item.get(), converter.get().fromString(tf.getText()));
+                    cancel = false;
+                    handler.consume();
+                    if(getIndex() + 1 < getTableView().getItems().size()) {
+                        getTableView().getSelectionModel().select(getIndex() + 1);
+                        getTableView().getFocusModel().focus(getIndex() + 1, getTableColumn());
+                        getTableView().requestFocus();
+                    }
+                    else
+                    {
+                        getTableView().getSelectionModel().select(0);
+                        getTableView().getFocusModel().focus(0, getTableColumn());
+                    }
                 }
             });
 
@@ -416,13 +433,9 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
             // On key pressed is important (rather than onIKeyReleased) because
             // escape and enter must be intercepted before loss of focus.
             tf.setOnKeyReleased((handler) -> {
-                if ((handler.getCode() == KeyCode.ENTER) ||
-                        (handler.getCode() == KeyCode.TAB)) {
+                if ((handler.getCode() == KeyCode.ENTER)) {
                     // commit any edit in progress
-                    commitEdit(getConverter().fromString(tf.getText()));
-                    setValue(item.get(), converter.get().fromString(tf.getText()));
-                    cancel = false;
-                    handler.consume();
+                    // Dont do anything
                 } else {
                     column = this.getTableColumn();
                     position = this.getTableView().getEditingCell();

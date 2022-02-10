@@ -121,12 +121,9 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
     }
 
     public void cancelEdit() {
-        System.out.println("CANCELK");
         super.cancelEdit();
         setText(getValue(getTableRow().getItem()));
-        System.out.println(cancel);
         if (cancel) {
-            System.out.println("NOPE");
             clickCommit(getConverter().fromString(tf.getText()), column);
             setValue(getTableRow().getItem(), tf.getText());
         }
@@ -149,11 +146,20 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
             tf.addEventFilter(KeyEvent.KEY_PRESSED,
                     event ->
                     {
-                        System.out.println(event.getCode());
                         if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.TAB) {
                             this.cancel = false;
                             commitEdit(getConverter().fromString(tf.getText()));
                             setValue(getTableRow().getItem(), tf.getText());
+                            if(getIndex() + 1 < getTableView().getItems().size()) {
+                                getTableView().getSelectionModel().select(getIndex() + 1);
+                                getTableView().getFocusModel().focus(getIndex() + 1, getTableColumn());
+                            }
+                            else
+                            {
+                                getTableView().getSelectionModel().select(0);
+                                getTableView().getFocusModel().focus(0, getTableColumn());
+                            }
+
                             event.consume();
                         } else if (event.getCode() == KeyCode.ESCAPE) {
                             this.cancel = false;
