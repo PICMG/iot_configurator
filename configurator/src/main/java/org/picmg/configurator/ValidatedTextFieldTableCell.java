@@ -150,6 +150,16 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
                             this.cancel = false;
                             commitEdit(getConverter().fromString(tf.getText()));
                             setValue(getTableRow().getItem(), tf.getText());
+                            if(getIndex() + 1 < getTableView().getItems().size()) {
+                                getTableView().getSelectionModel().select(getIndex() + 1);
+                                getTableView().getFocusModel().focus(getIndex() + 1, getTableColumn());
+                            }
+                            else
+                            {
+                                getTableView().getSelectionModel().select(0);
+                                getTableView().getFocusModel().focus(0, getTableColumn());
+                            }
+
                             event.consume();
                         } else if (event.getCode() == KeyCode.ESCAPE) {
                             this.cancel = false;
