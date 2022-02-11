@@ -22,12 +22,12 @@
                   <AnchorPane fx:id="deviceTabAnchorPane" prefHeight="200.0" prefWidth="200.0" />
                </content>
             </Tab>
-          <Tab text="Sensors">
+          <Tab text="Sensors" fx:id="sensorTab">
                <content>
                   <AnchorPane fx:id="sensorsTabAnchorPane" prefHeight="200.0" prefWidth="200.0" />
                </content>
             </Tab>
-            <Tab text="Effecters">
+            <Tab text="Effecters" fx:id="effectersTab">
               <content>
                 <AnchorPane fx:id="effectersTabAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
               </content>
