@@ -26,7 +26,7 @@ public class TestApp extends App{
             stage.setTitle("PICMG Configurator");
             stage.setScene(scene);
             stage.show();
-            clickSensors(scene);
+            clickEffecters(scene);
             System.out.println("Here is where the test would go");
         } catch (IOException e) {
             System.out.println(e);
@@ -43,5 +43,21 @@ public class TestApp extends App{
         robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
         robot.mousePress(MouseButton.PRIMARY);
         System.out.println("Done With testing");
+    }
+
+    /**
+     * ClickEffecters
+     * This method would click the effecters tab using robot. Similar to the other click methods
+     * @param scene - main scene being shown on the screen
+     */
+    public void clickEffecters(Scene scene)
+    {
+        Window area = scene.getWindow();
+        Node effecterTab = scene.lookup("#effectersTab");
+        Robot robot = new Robot();
+        Point2D point = effecterTab.localToScene(0,0);
+        System.out.println(scene.getX()+" "+scene.getY());
+        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
+        robot.mousePress(MouseButton.PRIMARY);
     }
 }
