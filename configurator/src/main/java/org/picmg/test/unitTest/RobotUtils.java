@@ -1,11 +1,10 @@
-package org.picmg.unitTest;
+package org.picmg.test.unitTest;
 
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.input.MouseButton;
 import javafx.scene.robot.Robot;
-import javafx.stage.Stage;
 import javafx.stage.Window;
 
 public class RobotUtils {

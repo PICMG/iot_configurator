@@ -1,18 +1,10 @@
 package org.picmg.configurator;
 
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Bounds;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.input.InputEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
-import javafx.stage.Window;
-import org.picmg.unitTest.RobotUtils;
+import org.picmg.test.unitTest.RobotUtils;
 
 import java.io.IOException;
 

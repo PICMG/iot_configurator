@@ -31,8 +31,9 @@
 	<build>
 		<!-- Unit test -->
 		<testSourceDirectory>
-			src/main/java/org/picmg/unitTest
+			src/main/java/org/picmg/test
 		</testSourceDirectory>
+
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
