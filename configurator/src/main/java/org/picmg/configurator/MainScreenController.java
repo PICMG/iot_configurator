@@ -288,7 +288,6 @@ public class MainScreenController implements Initializable {
 									new TreeItem<>(new TreeData(data.leaf, ent, "logicalEntity"));
 							entityItem.setExpanded(true);
 							Node temp = entityItem.getGraphic();
-							temp.setId("logicalEntity");
 							entityItem.setGraphic(temp);
 							getTreeItem().getChildren().add(entityItem);
 
