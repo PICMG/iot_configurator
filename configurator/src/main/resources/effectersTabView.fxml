@@ -20,15 +20,15 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="739.0" prefWidth="1025.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.picmg.configurator.EffectersTabController">
+<AnchorPane prefHeight="739.0" prefWidth="1025.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.picmg.configurator.EffectersTabController">
    <children>
       <SplitPane dividerPositions="0.49021909233176836" prefHeight="738.0" prefWidth="1024.0">
          <items>
             <TableView fx:id="EffecterTableView" prefHeight="738.0" prefWidth="498.0">
               <columns>
                 <TableColumn fx:id="manufacturerColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="153.0" text="manufacturer" />
-                  <TableColumn fx:id="modelColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="158.0" text="model #" />
-                  <TableColumn fx:id="typeColumn" maxWidth="1.7976931348623157E308" prefWidth="187.0" text="type" />
+                <TableColumn fx:id="modelColumn" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="158.0" text="model #" />
+                <TableColumn fx:id="typeColumn" maxWidth="1.7976931348623157E308" prefWidth="187.0" text="type" />
               </columns>
             </TableView>
             <VBox prefHeight="200.0" prefWidth="100.0">
@@ -45,24 +45,24 @@
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="411.0" minWidth="10.0" prefWidth="328.0" />
                     </columnConstraints>
                     <rowConstraints>
-                      <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="65.0" minHeight="65.0" prefHeight="65.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="100.0" minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="274.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="65.0" minHeight="65.0" prefHeight="65.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="100.0" minHeight="100.0" prefHeight="100.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="26.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="26.0" minHeight="26.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     <RowConstraints maxHeight="274.0" minHeight="10.0" prefHeight="38.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label text="Name" />
@@ -76,37 +76,26 @@
                         <Label text="Interfaces" GridPane.rowIndex="4" />
                         <VBox prefHeight="400.0" prefWidth="100.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                            <children>
-                              <CheckBox fx:id="analogCheckbox" mnemonicParsing="false" onAction="#onAnalogAction" text="analog" />
                               <CheckBox fx:id="digitalCheckbox" mnemonicParsing="false" onAction="#onDigitalAction" text="digital" />
-                              <CheckBox fx:id="countCheckbox" mnemonicParsing="false" onAction="#onCountAction" text="count" />
+                              <CheckBox fx:id="analogCheckbox" mnemonicParsing="false" onAction="#onAnalogAction" text="analog" />
+                              <CheckBox fx:id="pwmCheckbox" mnemonicParsing="false"  onAction="#onPwmAction" text="pwm" />
                               <CheckBox fx:id="rateCheckbox" mnemonicParsing="false" onAction="#onRateAction" text="rate" />
-                              <CheckBox fx:id="quadratureCheckbox" mnemonicParsing="false" onAction="#onQuadratureAction" text="quadrature" />
+                              <CheckBox fx:id="stepCheckbox" mnemonicParsing="false" onAction="#onStepAction" text="step" />
                            </children>
                         </VBox>
-                        <Label text="minus accuracy" GridPane.rowIndex="14" />
-                        <Label text="max sample rate" GridPane.rowIndex="5" />
-                        <Label text="base unit" GridPane.rowIndex="6" />
-                        <Label text="unit modifier" GridPane.rowIndex="7" />
-                        <Label text="rate unit" GridPane.rowIndex="8" />
-                        <Label text="aux unit" GridPane.rowIndex="9" />
-                        <Label text="aux unit modifier" GridPane.rowIndex="10" />
-                        <Label text="base/aux relationship" GridPane.rowIndex="11" />
-                        <Label text="aux rate unit" GridPane.rowIndex="12" />
-                        <Label text="plus accuracy" GridPane.rowIndex="13" />
-                        <Label text="output units" GridPane.rowIndex="15" />
-                        <Label text="Output Curve" GridPane.rowIndex="16" />
+                        <Label text="Minus Accuracy" GridPane.rowIndex="12" />
+                        <Label text="Max Sample Rate" GridPane.rowIndex="5" />
+                        <Label text="Base Unit" GridPane.rowIndex="8" />
+                        <Label text="Aux Unit" GridPane.rowIndex="9" />
+                        <Label text="Aux Relation" GridPane.rowIndex="7" />
+                        <Label text="Plus Accuracy" GridPane.rowIndex="11" />
+                        <Label text="Intput Units" GridPane.rowIndex="13" />
+                        <Label text="Output Curve" GridPane.rowIndex="14" />
                         <TextField fx:id="maxSampleRateTextfield" onAction="#onMaxSampleRateAction" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                        <ChoiceBox fx:id="baseUnitChoicebox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-                        <ChoiceBox fx:id="rateUnitChoicebox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
-                        <ChoiceBox fx:id="auxUnitChoicebox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="9" />
-                        <ChoiceBox fx:id="relChoicebox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="11" />
-                        <ChoiceBox fx:id="auxRateChoicebox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="12" />
-                        <TextField fx:id="unitModifierTextField" onAction="#onUnitModifierAction" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-                        <TextField fx:id="auxUnitModifierTextfield" onAction="#onAuxUnitModifierAction" GridPane.columnIndex="2" GridPane.rowIndex="10" />
-                        <TextField fx:id="plusAccuracyTextfield" onAction="#onPlusAccuractyAction" GridPane.columnIndex="2" GridPane.rowIndex="13" />
-                        <TextField fx:id="minusAccuracyTextfield" onAction="#onMinusAccuracyAction" GridPane.columnIndex="2" GridPane.rowIndex="14" />
-                        <TextField fx:id="outputUnitsTextfield" onAction="#onOutputUnitsAction" GridPane.columnIndex="2" GridPane.rowIndex="15" />
-                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="16">
+                        <TextField fx:id="plusAccuracyTextfield" onAction="#onPlusAccuractyAction" GridPane.columnIndex="2" GridPane.rowIndex="11" />
+                        <TextField fx:id="minusAccuracyTextfield" onAction="#onMinusAccuracyAction" GridPane.columnIndex="2" GridPane.rowIndex="12" />
+                        <TextField fx:id="outputUnitsTextfield" onAction="#onOutputUnitsAction" GridPane.columnIndex="2" GridPane.rowIndex="13" />
+                        <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="14">
                            <children>
                               <Button fx:id="selectCurveButton" mnemonicParsing="false" onAction="#onOutputCurveSelectAction" text="Select From File" />
                               <Button fx:id="viewCurveButton" mnemonicParsing="false" onAction="#onOutputCurveViewAction" text="View" />
@@ -118,12 +107,7 @@
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="unitModifierImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
-                           <image>
-                              <Image url="@red_dot.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="baseUnitImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6">
+                        <ImageView fx:id="baseUnitImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8">
                            <image>
                               <Image url="@red_dot.png" />
                            </image>
@@ -148,17 +132,7 @@
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="rateUnitImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="8">
-                           <image>
-                              <Image url="@red_dot.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="relImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11">
-                           <image>
-                              <Image url="@red_dot.png" />
-                           </image>
-                        </ImageView>
-                        <ImageView fx:id="auxUnitModifierImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="10">
+                        <ImageView fx:id="relImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
                            <image>
                               <Image url="@red_dot.png" />
                            </image>
@@ -168,31 +142,79 @@
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="minusAccuracyImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="14">
+                        <ImageView fx:id="minusAccuracyImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12">
                            <image>
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="outputCurveImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="16">
+                        <ImageView fx:id="outputCurveImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="14">
                            <image>
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="outputUnitsImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="15">
+                        <ImageView fx:id="outputUnitsImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13">
                            <image>
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="plusAccuracyImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13">
+                        <ImageView fx:id="plusAccuracyImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="11">
                            <image>
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="auxRateUnitImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="12">
+                        <ImageView fx:id="ratedMaxImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="15">
                            <image>
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
+                        <ImageView fx:id="nominalValueImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="16">
+                           <image>
+                              <Image url="@red_dot.png" />
+                           </image>
+                        </ImageView>
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="8" GridPane.valignment="CENTER">
+                           <children>
+                              <ChoiceBox fx:id="baseUnitChoicebox" prefHeight="25.0" prefWidth="100.0" />
+                              <Label alignment="CENTER" minWidth="40.0" text=" x 10 ^ ">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <TextField fx:id="unitModifierTextField" alignment="TOP_LEFT" onAction="#onUnitModifierAction" prefHeight="20.0" prefWidth="77.0" promptText="mod">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </TextField>
+                              <Label minWidth="25.0" text=" per ">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <ChoiceBox fx:id="rateUnitChoicebox" prefWidth="150.0" />
+                           </children>
+                        </HBox>
+                        <HBox alignment="CENTER" disable="true" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                           <children>
+                              <ChoiceBox fx:id="auxUnitChoicebox" prefWidth="100.0" />
+                              <Label alignment="CENTER" minWidth="40.0" text=" x 10 ^ ">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <TextField fx:id="auxUnitModifierTextfield" onAction="#onAuxUnitModifierAction" prefHeight="20.0" prefWidth="77.0" promptText="mod" />
+                              <Label minWidth="25.0" text=" per ">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <ChoiceBox fx:id="auxRateChoicebox" prefWidth="150.0" />
+                           </children>
+                        </HBox>
+                        <Label text="Rated Max" GridPane.rowIndex="15" />
+                        <Label text="Nominal Value" GridPane.rowIndex="16" />
+                        <ChoiceBox fx:id="relChoicebox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="7" />
+                        <TextField GridPane.columnIndex="2" GridPane.rowIndex="15" />
+                        <TextField GridPane.columnIndex="2" GridPane.rowIndex="16" />
                      </children>
                   </GridPane>
                </children>

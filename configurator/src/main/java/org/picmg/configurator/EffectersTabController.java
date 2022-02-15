@@ -64,11 +64,11 @@ public class EffectersTabController implements Initializable {
 	@FXML private TextField manufacturerTextfield;
 	@FXML private TextField partNumberTextField;
 	@FXML private TextArea descriptionTextArea;
-	@FXML private CheckBox analogCheckbox;
 	@FXML private CheckBox digitalCheckbox;
-	@FXML private CheckBox countCheckbox;
+	@FXML private CheckBox analogCheckbox;
+	@FXML private CheckBox pwmCheckbox;
 	@FXML private CheckBox rateCheckbox;
-	@FXML private CheckBox quadratureCheckbox;
+	@FXML private CheckBox stepCheckbox;
 	@FXML private TextField maxSampleRateTextfield;
 	@FXML private ChoiceBox<String> baseUnitChoicebox;
 	@FXML private ChoiceBox<String> rateUnitChoicebox;
@@ -84,21 +84,22 @@ public class EffectersTabController implements Initializable {
 	@FXML private Button viewCurveButton;
 	@FXML private Button saveChangesButton;
 	@FXML private ImageView manufacturerImage;
-	@FXML private ImageView unitModifierImage;
+//	@FXML private ImageView unitModifierImage;
 	@FXML private ImageView baseUnitImage;
 	@FXML private ImageView maxSampleRateImage;
 	@FXML private ImageView interfacesImage;
 	@FXML private ImageView descriptionImage;
 	@FXML private ImageView modelImage;
-	@FXML private ImageView rateUnitImage;
 	@FXML private ImageView relImage;
-	@FXML private ImageView auxUnitModifierImage;
+//	@FXML private ImageView auxUnitModifierImage;
 	@FXML private ImageView auxUnitImage;
 	@FXML private ImageView minusAccuracyImage;
 	@FXML private ImageView outputCurveImage;
 	@FXML private ImageView outputUnitsImage;
 	@FXML private ImageView plusAccuracyImage;
-	@FXML private ImageView auxRateUnitImage;
+//	@FXML private ImageView auxRateUnitImage;
+	@FXML private ImageView ratedMaxImage;
+	@FXML private ImageView nominalValueImage;
 
 	// choice box choices
 	final String[] unitsChoices = {
@@ -137,9 +138,9 @@ public class EffectersTabController implements Initializable {
 		SimpleStringProperty description = new SimpleStringProperty();
 		SimpleBooleanProperty analog = new SimpleBooleanProperty();
 		SimpleBooleanProperty digital = new SimpleBooleanProperty();
-		SimpleBooleanProperty count = new SimpleBooleanProperty();
+		SimpleBooleanProperty pwm = new SimpleBooleanProperty();
 		SimpleBooleanProperty rate = new SimpleBooleanProperty();
-		SimpleBooleanProperty quadrature = new SimpleBooleanProperty();
+		SimpleBooleanProperty step = new SimpleBooleanProperty();
 		SimpleStringProperty maxSampleRate = new SimpleStringProperty();
 		SimpleStringProperty baseUnit = new SimpleStringProperty();
 		SimpleStringProperty unitModifier = new SimpleStringProperty();
@@ -167,12 +168,12 @@ public class EffectersTabController implements Initializable {
 		public void setAnalog(boolean analog) {this.analog.set(analog);}
 		public boolean isDigital() {return digital.get();}
 		public void setDigital(boolean digital) {this.digital.set(digital);}
-		public boolean isCount() {return count.get();}
-		public void setCount(boolean count) {this.count.set(count);}
+		public boolean isPwm() {return pwm.get();}
+		public void setPwm(boolean pwm) {this.pwm.set(pwm);}
 		public boolean isRate() {return rate.get();}
 		public void setRate(boolean rate) {this.rate.set(rate);}
-		public boolean isQuadrature() {return quadrature.get();}
-		public void setQuadrature(boolean quadrature) {this.quadrature.set(quadrature);}
+		public boolean isStep() {return step.get();}
+		public void setStep(boolean step) {this.step.set(step);}
 		public String getMaxSampleRate() {return maxSampleRate.get();}
 		public void setMaxSampleRate(String maxSampleRate) {this.maxSampleRate.set(maxSampleRate);}
 		public String getBaseUnit() {return baseUnit.get();}
@@ -332,20 +333,20 @@ public class EffectersTabController implements Initializable {
 				if (!anInterface.getClass().isAssignableFrom(JsonValue.class)) continue;
 				JsonValue interfaceName = (JsonValue) anInterface;
 				switch (interfaceName.getValue("")) {
-					case "analog_in":
+					case "analog_out":
 						analog.set(true);
 						break;
-					case "digital_in":
+					case "digital_out":
 						digital.set(true);
 						break;
-					case "count_in":
-						count.set(true);
+					case "pwm_out":
+						pwm.set(true);
 						break;
-					case "rate_in":
+					case "rate_out":
 						rate.set(true);
 						break;
-					case "quadrature_in":
-						quadrature.set(true);
+					case "step_out":
+						step.set(true);
 					default:
 						break;
 				}
@@ -445,11 +446,11 @@ public class EffectersTabController implements Initializable {
 			json.put("responseCurve", responseData);
 
 			JsonArray interfaces = new JsonArray();
-			if (analog.get()) interfaces.add(new JsonValue("analog_in"));
-			if (digital.get()) interfaces.add(new JsonValue("digital_in"));
-			if (count.get()) interfaces.add(new JsonValue("count_in"));
-			if (rate.get()) interfaces.add(new JsonValue("rate_in"));
-			if (quadrature.get()) interfaces.add(new JsonValue("quadrature_in"));
+			if (analog.get()) interfaces.add(new JsonValue("analog_out"));
+			if (digital.get()) interfaces.add(new JsonValue("digital_out"));
+			if (pwm.get()) interfaces.add(new JsonValue("pwm_out"));
+			if (rate.get()) interfaces.add(new JsonValue("rate_out"));
+			if (step.get()) interfaces.add(new JsonValue("step_out"));
 			json.put("supportedInterfaces", interfaces);
 
 			// write the json to the file
@@ -483,9 +484,9 @@ public class EffectersTabController implements Initializable {
 			description.set(data.description.get());
 			analog.set(data.analog.get());
 			digital.set(data.digital.get());
-			count.set(data.count.get());
+			pwm.set(data.pwm.get());
 			rate.set(data.rate.get());
-			quadrature.set(data.quadrature.get());
+			step.set(data.step.get());
 			maxSampleRate.set(data.maxSampleRate.get());
 			baseUnit.set(data.baseUnit.get());
 			unitModifier.set(data.unitModifier.get());
@@ -567,21 +568,17 @@ public class EffectersTabController implements Initializable {
 	 */
 	public boolean isValid() {
 		if (manufacturerImage.isVisible()) return false;
-		if (unitModifierImage.isVisible()) return false;
 		if (baseUnitImage.isVisible()) return false;
 		if (maxSampleRateImage.isVisible()) return false;
 		if (interfacesImage.isVisible()) return false;
 		if (descriptionImage.isVisible()) return false;
 		if (modelImage.isVisible()) return false;
-		if (rateUnitImage.isVisible()) return false;
 		if (relImage.isVisible()) return false;
-		if (auxUnitModifierImage.isVisible()) return false;
 		if (auxUnitImage.isVisible()) return false;
 		if (minusAccuracyImage.isVisible()) return false;
 		if (outputCurveImage.isVisible()) return false;
 		if (outputUnitsImage.isVisible()) return false;
 		if (plusAccuracyImage.isVisible()) return false;
-		if (auxRateUnitImage.isVisible()) return false;
 		return true;
 	}
 
@@ -608,8 +605,8 @@ public class EffectersTabController implements Initializable {
 	@FXML
 	void onAnalogAction(ActionEvent event) {
 		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
+				&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
+				&&(!stepCheckbox.isSelected())) {
 			interfacesImage.setVisible(true);
 		} else {
 			interfacesImage.setVisible(false);
@@ -622,8 +619,8 @@ public class EffectersTabController implements Initializable {
 	@FXML
 	void onDigitalAction(ActionEvent event) {
 		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-			&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-			&&(!quadratureCheckbox.isSelected())) {
+			&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
+			&&(!stepCheckbox.isSelected())) {
 			interfacesImage.setVisible(true);
 		} else {
 			interfacesImage.setVisible(false);
@@ -634,15 +631,15 @@ public class EffectersTabController implements Initializable {
 	}
 
 	@FXML
-	void onCountAction(ActionEvent event) {
+	void onPwmAction(ActionEvent event) {
 		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
+				&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
+				&&(!stepCheckbox.isSelected())) {
 			interfacesImage.setVisible(true);
 		} else {
 			interfacesImage.setVisible(false);
 		}
-		workingData.setCount(countCheckbox.isSelected());
+		workingData.setPwm(pwmCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
@@ -650,8 +647,8 @@ public class EffectersTabController implements Initializable {
 	@FXML
 	void onRateAction(ActionEvent event) {
 		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
+				&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
+				&&(!stepCheckbox.isSelected())) {
 			interfacesImage.setVisible(true);
 		} else {
 			interfacesImage.setVisible(false);
@@ -662,15 +659,15 @@ public class EffectersTabController implements Initializable {
 	}
 
 	@FXML
-	void onQuadratureAction(ActionEvent event) {
+	void onStepAction(ActionEvent event) {
 		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
+				&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
+				&&(!stepCheckbox.isSelected())) {
 			interfacesImage.setVisible(true);
 		} else {
 			interfacesImage.setVisible(false);
 		}
-		workingData.setQuadrature(quadratureCheckbox.isSelected());
+		workingData.setStep(stepCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
@@ -687,8 +684,8 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(unitModifierTextField.getText())) unitModifierImage.setVisible(true);
-		else unitModifierImage.setVisible(false);
+//		if (!App.isUnsignedInteger(unitModifierTextField.getText())) unitModifierImage.setVisible(true);
+//		else unitModifierImage.setVisible(false);
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -696,8 +693,8 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitModifierImage.setVisible(true);
-		else auxUnitModifierImage.setVisible(false);
+//		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitModifierImage.setVisible(true);
+//		else auxUnitModifierImage.setVisible(false);
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -789,9 +786,9 @@ public class EffectersTabController implements Initializable {
 		descriptionTextArea.setTooltip(createTooltip("A brief description of the effecter."));
 		analogCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
 		digitalCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
-		countCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
+		pwmCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
 		rateCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
-		quadratureCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
+		stepCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
 		maxSampleRateTextfield.setTooltip(createTooltip("The maximum sample rate for the effecter (in Hertz).  Leave blank or set to 0 for no maximum"));
 		baseUnitChoicebox.setTooltip(createTooltip("The base units for the effecter"));
 		rateUnitChoicebox.setTooltip(createTooltip("The rate units for the effecter (if any)"));
@@ -833,9 +830,9 @@ public class EffectersTabController implements Initializable {
 		descriptionTextArea.setText(data.getDescription());
 		analogCheckbox.setSelected(data.isAnalog());
 		digitalCheckbox.setSelected(data.isDigital());
-		countCheckbox.setSelected(data.isCount());
+		pwmCheckbox.setSelected(data.isPwm());
 		rateCheckbox.setSelected(data.isRate());
-		quadratureCheckbox.setSelected(data.isQuadrature());
+		stepCheckbox.setSelected(data.isStep());
 		maxSampleRateTextfield.setText(data.getMaxSampleRate());
 		baseUnitChoicebox.setValue(data.getBaseUnit());
 		unitModifierTextField.setText(data.getUnitModifier());
@@ -851,21 +848,17 @@ public class EffectersTabController implements Initializable {
 
 	public void clearIndicators() {
 		manufacturerImage.setVisible(false);
-		unitModifierImage.setVisible(false);
 		baseUnitImage.setVisible(false);
 		maxSampleRateImage.setVisible(false);
 		interfacesImage.setVisible(false);
 		descriptionImage.setVisible(false);
 		modelImage.setVisible(false);
-		rateUnitImage.setVisible(false);
 		relImage.setVisible(false);
-		auxUnitModifierImage.setVisible(false);
 		auxUnitImage.setVisible(false);
 		minusAccuracyImage.setVisible(false);
 		outputCurveImage.setVisible(false);
 		outputUnitsImage.setVisible(false);
 		plusAccuracyImage.setVisible(false);
-		auxRateUnitImage.setVisible(false);
 	}
 
 	private void selectDefaultEffecter() {
