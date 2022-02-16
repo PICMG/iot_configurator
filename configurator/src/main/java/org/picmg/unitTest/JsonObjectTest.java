@@ -1,5 +1,6 @@
 package org.picmg.unitTest;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
@@ -10,6 +11,13 @@ import java.io.*;
 import static org.junit.Assert.*;
 
 public class JsonObjectTest {
+
+    String lineSeparator;
+
+    @Before
+    public void handlePlatform() {
+        lineSeparator = System.getProperty("line.separator");
+    }
 
     @Test
     public void testGetBoolean() {
@@ -154,22 +162,20 @@ public class JsonObjectTest {
 
         System.out.print("START"); // Prevents unintentional trimming of indent
         jsonObject.dump(3);
-        if (System.getProperty("os.name").equals("Mac OS X")) {
-            assertEquals("START   {\n" +
-                    "      array:      [\n" +
-                    "         Position 0\n" +
-                    "         Position 1\n" +
-                    "      ]\n" +
-                    "      bool:      true\n" +
-                    "      child:      {\n" +
-                    "         string:         EFG\n" +
-                    "      }\n" +
-                    "      double:      1.2\n" +
-                    "      null:      null\n" +
-                    "      number:      5\n" +
-                    "      string:      ABC\n" +
-                    "   }", byteArrayOutputStream.toString().trim());
-        }
+        assertEquals("START   {" + lineSeparator +
+                "      array:      [" + lineSeparator +
+                "         Position 0" + lineSeparator +
+                "         Position 1" + lineSeparator +
+                "      ]" + lineSeparator +
+                "      bool:      true" + lineSeparator +
+                "      child:      {" + lineSeparator +
+                "         string:         EFG" + lineSeparator +
+                "      }" + lineSeparator +
+                "      double:      1.2" + lineSeparator +
+                "      null:      null" + lineSeparator +
+                "      number:      5" + lineSeparator +
+                "      string:      ABC" + lineSeparator +
+                "   }", byteArrayOutputStream.toString().trim());
     }
 
     @Test

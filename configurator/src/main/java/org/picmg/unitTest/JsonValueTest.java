@@ -1,5 +1,6 @@
 package org.picmg.unitTest;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.picmg.jsonreader.JsonValue;
 
@@ -8,6 +9,13 @@ import java.io.*;
 import static org.junit.Assert.*;
 
 public class JsonValueTest {
+
+    String lineSeparator;
+
+    @Before
+    public void handlePlatform() {
+        lineSeparator = System.getProperty("line.separator");
+    }
 
     @Test
     public void testGetValue() {
@@ -78,9 +86,7 @@ public class JsonValueTest {
         jsonValue.set("ABC");
         System.out.print("START"); // Prevents unintentional trimming of indent
         jsonValue.dump(3);
-        if (System.getProperty("os.name").equals("Mac OS X")) {
-            assertEquals("START   ABC", byteArrayOutputStream.toString().trim());
-        }
+        assertEquals("START   ABC", byteArrayOutputStream.toString().trim());
     }
 
     @Test
