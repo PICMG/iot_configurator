@@ -28,7 +28,6 @@ public class TestApp extends App{
             stage.show();
             clickEffecters(scene);
             System.out.println("Here is where the test would go");
-            close();
         } catch (IOException e) {
             System.out.println(e);
         }
