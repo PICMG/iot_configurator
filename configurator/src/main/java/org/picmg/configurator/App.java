@@ -112,7 +112,6 @@ public class App extends Application {
 	public void close(){
 		System.out.println("Closing the PICMG Configurator");
 		Platform.exit();
-		System.exit(0);
 	}
 
 	/**
