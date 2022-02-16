@@ -1,5 +1,6 @@
 package org.picmg.configurator;
 
+import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.collections.ObservableList;
@@ -16,6 +17,9 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class TestApp extends App{
 
@@ -56,13 +60,29 @@ public class TestApp extends App{
             Point2D point = resetButton.localToScene(0, 0);
             System.out.println(scene.getX() + " " + scene.getY());
             robot.mouseMove(point.getX() + scene.getX() + area.getX()+10, point.getY() + scene.getY() + area.getY()+10);
-            robot.mousePress(MouseButton.PRIMARY);
-            robot.mouseRelease(MouseButton.PRIMARY);
-            Node resetOk = area.getScene().lookup("#resetOk");
-            Point2D okLocation = resetOk.localToScene(0, 0);
-            robot.mouseMove(okLocation.getX(), okLocation.getY());
-            robot.mousePress(MouseButton.PRIMARY);
-            robot.mouseRelease(MouseButton.PRIMARY);
+            robot.mouseClick(MouseButton.PRIMARY);
+            Thread thread = new Thread(()->{
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Platform.runLater(()->{
+                    List<Window> temp = Stage.getWindows().stream().collect(Collectors.toList());
+                    Window resetOk = temp.get(1);
+                    Node ok = resetOk.getScene().lookup("#resetOk");
+                    /*.getChildrenUnmodifiable().stream().filter(i -> i instanceof ButtonBar).findFirst();
+                    ButtonBar buttons = (ButtonBar)okLocation.get();
+                    Optional<Node> ok = buttons.getButtons().stream().filter(i -> ((Button)i).getText().equals("OK")).findFirst();*/
+                    System.out.println(ok.toString());
+                    //robot.mouseMove(okLocation.getX(), okLocation.getY());
+                    robot.mousePress(MouseButton.PRIMARY);
+                    robot.mouseRelease(MouseButton.PRIMARY);
+
+                });
+
+            });
+            thread.start();
         }catch(Exception e){
             e.printStackTrace();
         }
