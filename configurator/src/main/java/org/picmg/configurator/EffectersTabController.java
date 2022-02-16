@@ -40,6 +40,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -80,6 +81,8 @@ public class EffectersTabController implements Initializable {
 	@FXML private TextField plusAccuracyTextfield;
 	@FXML private TextField minusAccuracyTextfield;
 	@FXML private TextField outputUnitsTextfield;
+	@FXML private TextField ratedMaxTextfield;
+	@FXML private TextField nominalValueTextfield;
 	@FXML private Button selectCurveButton;
 	@FXML private Button viewCurveButton;
 	@FXML private Button saveChangesButton;
@@ -100,6 +103,7 @@ public class EffectersTabController implements Initializable {
 //	@FXML private ImageView auxRateUnitImage;
 	@FXML private ImageView ratedMaxImage;
 	@FXML private ImageView nominalValueImage;
+	@FXML private HBox auxFields;
 
 	// choice box choices
 	final String[] unitsChoices = {
@@ -121,7 +125,7 @@ public class EffectersTabController implements Initializable {
 		"Per_Day","Per_Week","Per_Month","Per_Year"
 	};
 	final String[] relChoices = {
-		"dividedBy","multipliedBy"
+		"(No Aux)", "dividedBy","multipliedBy"
 	};
 	boolean modified;
 	boolean valid;
@@ -153,6 +157,8 @@ public class EffectersTabController implements Initializable {
 		SimpleStringProperty minusAccuracy = new SimpleStringProperty();
 		SimpleStringProperty outputUnits = new SimpleStringProperty();
 		ArrayList<Point2D> outputCurve = new ArrayList<>();
+		SimpleStringProperty ratedMax = new SimpleStringProperty();
+		SimpleStringProperty nominalValue = new SimpleStringProperty();
 		boolean valid;
 
 		// getters and setters
@@ -196,24 +202,28 @@ public class EffectersTabController implements Initializable {
 		public void setMinusAccuracy(String minusAccuracy) {this.minusAccuracy.set(minusAccuracy);}
 		public String getOutputUnits() {return outputUnits.get();}
 		public void setOutputUnits(String outputUnits) {this.outputUnits.set(outputUnits);}
+		public String getRatedMax() {return ratedMax.get();}
+		public void setRatedMax(String ratedMax) {this.ratedMax.set(ratedMax);}
+		public String getNominalValue() {return nominalValue.get();}
+		public void setNominalValue(String nominalValue) {this.nominalValue.set(nominalValue);}
 		public ArrayList<Point2D> getOutputCurve() {return outputCurve;}
 
 		public String getType() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(baseUnit.get());
-			if ((!auxUnit.get().equals("None"))&&(!auxUnit.get().equals("Unspecified"))) {
-				if (rel.get().equals("multipliedBy")) {
+			if ((!"none".equals(auxUnit.get()))&&(!"Unspecified".equals(auxUnit.get()))) {
+				if ("multipliedBy".equals(rel.get())) {
 					sb.append("_");
 				} else {
 					sb.append("_per_");
 				}
 				sb.append(auxUnit.get());
 			}
-			if (!rateUnit.get().equals("None")) {
+			if (!"None".equals(rateUnit.get())) {
 				sb.append("_");
 				sb.append(rateUnit.get());
 			}
-			if (!auxRateUnit.get().equals("None")) {
+			if (!"None".equals(auxRateUnit.get())) {
 				sb.append("_");
 				sb.append(auxRateUnit.get());
 			}
@@ -259,6 +269,8 @@ public class EffectersTabController implements Initializable {
 			if (((JsonObject)json).get("minusAccuracy")==null) return;
 			if (((JsonObject)json).get("outputUnits")==null) return;
 			if (((JsonObject)json).get("responseCurve")==null) return;
+			if (((JsonObject)json).get("ratedMax")==null) return;
+			if (((JsonObject)json).get("nominalValue")==null) return;
 
 			// check to make sure the json fields are all the right types
 			if (!((JsonObject)json).get("name").getClass().isAssignableFrom(JsonValue.class)) return;
@@ -278,6 +290,8 @@ public class EffectersTabController implements Initializable {
 			if (!((JsonObject)json).get("minusAccuracy").getClass().isAssignableFrom(JsonValue.class)) return;
 			if (!((JsonObject)json).get("outputUnits").getClass().isAssignableFrom(JsonValue.class)) return;
 			if (!((JsonObject)json).get("responseCurve").getClass().isAssignableFrom(JsonArray.class)) return;
+			if (!((JsonObject)json).get("ratedMax").getClass().isAssignableFrom(JsonValue.class)) return;
+			if (!((JsonObject)json).get("nominalValue").getClass().isAssignableFrom(JsonValue.class)) return;
 
 			// make sure numeric types are actual numbers
 			if (!App.isUnsignedInteger(json.getValue("baseUnit"))) return;
@@ -288,9 +302,11 @@ public class EffectersTabController implements Initializable {
 			if (!App.isInteger(json.getValue("auxUnitModifier"))) return;
 			if (!App.isFloat(json.getValue("plusAccuracy"))) return;
 			if (!App.isFloat(json.getValue("minusAccuracy"))) return;
+			if (!App.isFloat(json.getValue("ratedMax"))) return;
+			if (!App.isFloat(json.getValue("nominalValue"))) return;
 			if ((json.getValue("maxSampleRate")!=null)&&
 				   (!App.isUnsignedInteger(json.getValue("maxSampleRate")))) return;
-			
+
 			// check the values of the enumerated fields to make sure they match one of the
 			// possible selections
 			if ((json.getInteger("baseUnit"))>=unitsChoices.length) return;
@@ -327,6 +343,8 @@ public class EffectersTabController implements Initializable {
 			plusAccuracy.set(json.getValue("plusAccuracy"));
 			minusAccuracy.set(json.getValue("minusAccuracy"));
 			outputUnits.set(json.getValue("outputUnits"));
+			ratedMax.set(json.getValue("ratedMax"));
+			nominalValue.set(json.getValue("nominalValue"));
 			// set the supported interfaces values
 			JsonArray interfaces = (JsonArray)((JsonObject)json).get("supportedInterfaces");
 			for (JsonAbstractValue anInterface : interfaces) {
@@ -436,6 +454,8 @@ public class EffectersTabController implements Initializable {
 			json.put("plusAccuracy", new JsonValue(plusAccuracy.get()));
 			json.put("minusAccuracy", new JsonValue(minusAccuracy.get()));
 			json.put("outputUnits", new JsonValue(outputUnits.get()));
+			json.put("ratedMax", new JsonValue(ratedMax.get()));
+			json.put("nominalValue", new JsonValue(nominalValue.get()));
 			JsonArray responseData = new JsonArray();
 			for (Point2D point:outputCurve) {
 				JsonObject obj = new JsonObject();
@@ -498,6 +518,8 @@ public class EffectersTabController implements Initializable {
 			plusAccuracy.set(data.plusAccuracy.get());
 			minusAccuracy.set(data.minusAccuracy.get());
 			outputUnits.set(data.outputUnits.get());
+			ratedMax.set(data.ratedMax.get());
+			nominalValue.set(data.nominalValue.get());
 
 			outputCurve.clear();
 
@@ -556,8 +578,10 @@ public class EffectersTabController implements Initializable {
 				workingData.getModel() +
 				'_' +
 				workingData.getType();
-		nameTextField.setText(name.replaceAll("[^a-z,A-Z,0-9]","_"));
-		workingData.setName(name.replaceAll("[^a-z,A-Z,0-9]","_"));
+		if (nameTextField != null) {
+			nameTextField.setText(name.replaceAll("[^a-z,A-Z,0-9]","_"));
+			workingData.setName(name.replaceAll("[^a-z,A-Z,0-9]","_"));
+		}
 	}
 
 	/**
@@ -579,6 +603,8 @@ public class EffectersTabController implements Initializable {
 		if (outputCurveImage.isVisible()) return false;
 		if (outputUnitsImage.isVisible()) return false;
 		if (plusAccuracyImage.isVisible()) return false;
+		if (ratedMaxImage.isVisible()) return false;
+		if (nominalValueImage.isVisible()) return false;
 		return true;
 	}
 
@@ -684,8 +710,8 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
-//		if (!App.isUnsignedInteger(unitModifierTextField.getText())) unitModifierImage.setVisible(true);
-//		else unitModifierImage.setVisible(false);
+		if (!App.isUnsignedInteger(unitModifierTextField.getText())) baseUnitImage.setVisible(true);
+		else baseUnitImage.setVisible(false);
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -693,8 +719,8 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
-//		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitModifierImage.setVisible(true);
-//		else auxUnitModifierImage.setVisible(false);
+		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitImage.setVisible(true);
+		else auxUnitImage.setVisible(false);
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -761,6 +787,26 @@ public class EffectersTabController implements Initializable {
 	}
 
 	@FXML
+	void onRatedMaxAction(ActionEvent event) {
+		String ratedMax = ratedMaxTextfield.getText();
+		if (!App.isFloat(ratedMax)) ratedMaxImage.setVisible(true);
+		else ratedMaxImage.setVisible(false);
+		workingData.setRatedMax(ratedMax);
+		modified = true;
+		saveChangesButton.setDisable(!isValid());
+	}
+
+	@FXML
+	void onNominalValueAction(ActionEvent event) {
+		String nominalValue = nominalValueTextfield.getText();
+		if (!App.isFloat(nominalValue)) nominalValueImage.setVisible(true);
+		else nominalValueImage.setVisible(false);
+		workingData.setNominalValue(nominalValue);
+		modified = true;
+		saveChangesButton.setDisable(!isValid());
+	}
+
+	@FXML
 	void onSaveChangesAction(ActionEvent event) {
 		String path = System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json";
 		workingData.SaveToFile(path);
@@ -800,6 +846,8 @@ public class EffectersTabController implements Initializable {
 		plusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the positive accuracy of the effecter"));
 		minusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the negative accuracy of the effecter"));
 		outputUnitsTextfield.setTooltip(createTooltip("The output electrical units of the effecter"));
+		ratedMaxTextfield.setTooltip(createTooltip("The maximum rated output value of the effecter."));
+		nominalValueTextfield.setTooltip(createTooltip("The nominal rated value of the effecter."));
 	}
 
 	/**
@@ -844,6 +892,8 @@ public class EffectersTabController implements Initializable {
 		plusAccuracyTextfield.setText(data.getPlusAccuracy());
 		minusAccuracyTextfield.setText(data.getMinusAccuracy());
 		outputUnitsTextfield.setText(data.getOutputUnits());
+		ratedMaxTextfield.setText(data.getRatedMax());
+		nominalValueTextfield.setText(data.getNominalValue());
 	}
 
 	public void clearIndicators() {
@@ -859,6 +909,8 @@ public class EffectersTabController implements Initializable {
 		outputCurveImage.setVisible(false);
 		outputUnitsImage.setVisible(false);
 		plusAccuracyImage.setVisible(false);
+		ratedMaxImage.setVisible(false);
+		nominalValueImage.setVisible(false);
 	}
 
 	private void selectDefaultEffecter() {
@@ -886,6 +938,7 @@ public class EffectersTabController implements Initializable {
 		for (String choice:rateChoices) rateUnitChoicebox.getItems().add(choice);
 		for (String choice:rateChoices) auxRateChoicebox.getItems().add(choice);
 		for (String choice:relChoices) relChoicebox.getItems().add(choice);
+		relChoicebox.setValue(relChoices[0]);
 
 		// set up parameters for other controls
 		descriptionTextArea.setWrapText(true);
@@ -979,6 +1032,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setRel(newString);
 				updateName();
 				modified = true;
+				auxFields.setDisable(relChoices[0].equals(newString));
 				saveChangesButton.setDisable(!isValid());
 			}
 		});
@@ -1006,6 +1060,12 @@ public class EffectersTabController implements Initializable {
 		minusAccuracyTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { minusAccuracyTextfield.fireEvent(new ActionEvent()); }}});
+		ratedMaxTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				if (!newValue) { ratedMaxTextfield.fireEvent(new ActionEvent()); }}});
+		nominalValueTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				if (!newValue) { nominalValueTextfield.fireEvent(new ActionEvent()); }}});
 		outputUnitsImage.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { outputUnitsTextfield.fireEvent(new ActionEvent()); }}});

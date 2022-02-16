@@ -89,7 +89,7 @@
                         <Label text="Aux Unit" GridPane.rowIndex="9" />
                         <Label text="Aux Relation" GridPane.rowIndex="7" />
                         <Label text="Plus Accuracy" GridPane.rowIndex="11" />
-                        <Label text="Intput Units" GridPane.rowIndex="13" />
+                        <Label text="Input Units" GridPane.rowIndex="13" />
                         <Label text="Output Curve" GridPane.rowIndex="14" />
                         <TextField fx:id="maxSampleRateTextfield" onAction="#onMaxSampleRateAction" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                         <TextField fx:id="plusAccuracyTextfield" onAction="#onPlusAccuractyAction" GridPane.columnIndex="2" GridPane.rowIndex="11" />
@@ -193,7 +193,7 @@
                               <ChoiceBox fx:id="rateUnitChoicebox" prefWidth="150.0" />
                            </children>
                         </HBox>
-                        <HBox alignment="CENTER" disable="true" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                        <HBox fx:id="auxFields" alignment="CENTER" disable="true" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
                            <children>
                               <ChoiceBox fx:id="auxUnitChoicebox" prefWidth="100.0" />
                               <Label alignment="CENTER" minWidth="40.0" text=" x 10 ^ ">
@@ -213,8 +213,8 @@
                         <Label text="Rated Max" GridPane.rowIndex="15" />
                         <Label text="Nominal Value" GridPane.rowIndex="16" />
                         <ChoiceBox fx:id="relChoicebox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="7" />
-                        <TextField GridPane.columnIndex="2" GridPane.rowIndex="15" />
-                        <TextField GridPane.columnIndex="2" GridPane.rowIndex="16" />
+                        <TextField fx:id="ratedMaxTextfield" GridPane.columnIndex="2" GridPane.rowIndex="15" onAction="#onRatedMaxAction" />
+                        <TextField fx:id="nominalValueTextfield" GridPane.columnIndex="2" GridPane.rowIndex="16" onAction="#onNominalValueAction" />
                      </children>
                   </GridPane>
                </children>
