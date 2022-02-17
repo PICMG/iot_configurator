@@ -45,7 +45,6 @@ public class TestApp extends App{
         Node sensorTab = scene.lookup("#sensorTab");
         Robot robot = new Robot();
         Point2D point = sensorTab.localToScene(0,0);
-        System.out.println(scene.getX()+" "+scene.getY());
         robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
@@ -58,7 +57,6 @@ public class TestApp extends App{
             Node resetButton = scene.lookup("#resetMenu");
             Robot robot = new Robot();
             Point2D point = resetButton.localToScene(0, 0);
-            System.out.println(scene.getX() + " " + scene.getY());
             robot.mouseMove(point.getX() + scene.getX() + area.getX()+10, point.getY() + scene.getY() + area.getY()+10);
             robot.mouseClick(MouseButton.PRIMARY);
             Thread thread = new Thread(()->{
@@ -71,11 +69,7 @@ public class TestApp extends App{
                     List<Window> temp = Stage.getWindows().stream().collect(Collectors.toList());
                     Window resetOk = temp.get(1);
                     Node ok = resetOk.getScene().lookup("#resetOk");
-                    /*.getChildrenUnmodifiable().stream().filter(i -> i instanceof ButtonBar).findFirst();
-                    ButtonBar buttons = (ButtonBar)okLocation.get();
-                    Optional<Node> ok = buttons.getButtons().stream().filter(i -> ((Button)i).getText().equals("OK")).findFirst();*/
-                    System.out.println(ok.toString());
-                    //robot.mouseMove(okLocation.getX(), okLocation.getY());
+                    Point2D okArea = ok.localToScene(0,0);robot.mouseMove((double)(okArea.getX() + resetOk.getX() + resetOk.getScene().getX()), (double)( okArea.getY()+ resetOk.getY() + resetOk.getScene().getY()));
                     robot.mousePress(MouseButton.PRIMARY);
                     robot.mouseRelease(MouseButton.PRIMARY);
 
