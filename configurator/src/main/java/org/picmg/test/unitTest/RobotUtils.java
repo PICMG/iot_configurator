@@ -1,5 +1,6 @@
 package org.picmg.test.unitTest;
 
+import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -43,6 +44,12 @@ public class RobotUtils {
         robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
+    }
+
+
+    public static void close()
+    {
+        Platform.exit();
     }
 
 }
