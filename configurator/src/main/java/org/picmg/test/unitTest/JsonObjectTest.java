@@ -1,4 +1,4 @@
-package org.picmg.unitTest;
+package org.picmg.test.unitTest;
 
 import org.junit.Test;
 import org.picmg.jsonreader.JsonArray;
