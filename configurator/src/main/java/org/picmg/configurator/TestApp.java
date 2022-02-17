@@ -21,7 +21,7 @@ public class TestApp extends App{
             stage.show();
             clicks(scene);
             System.out.println("Here is where the test would go");
-            
+
         } catch (IOException | InterruptedException e) {
             System.out.println(e);
         }
@@ -30,6 +30,7 @@ public class TestApp extends App{
     public void clicks(Scene scene) throws InterruptedException {
         RobotUtils.clickSensors(scene);
         RobotUtils.clickEffecters(scene);
+        RobotUtils.clickDevice(scene);
         RobotUtils.close();
     }
 }
