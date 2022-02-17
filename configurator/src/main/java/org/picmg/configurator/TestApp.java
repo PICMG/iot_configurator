@@ -29,5 +29,6 @@ public class TestApp extends App{
     public void clicks(Scene scene) throws InterruptedException {
         RobotUtils.clickSensors(scene);
         RobotUtils.clickEffecters(scene);
+        RobotUtils.close();
     }
 }
