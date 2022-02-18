@@ -104,9 +104,6 @@ public class App extends Application {
 		}
 	}
 
-	public void close(){
-		System.out.println("Closing the PICMG Configurator");
-	}
 	/**
 	 * Launch the app
 	 * @param args - the command line arguments for the program
