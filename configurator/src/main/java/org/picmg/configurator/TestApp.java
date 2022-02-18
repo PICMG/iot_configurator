@@ -28,10 +28,10 @@ public class TestApp extends App{
     }
 
     public void clicks(Scene scene) {
-        RobotUtils.clickReset(scene);
         RobotUtils.clickSensors(scene);
         RobotUtils.clickEffecters(scene);
         RobotUtils.clickDevice(scene);
-        RobotUtils.close();
+        RobotUtils.clickReset(scene);
+        //RobotUtils.close();
     }
 }
