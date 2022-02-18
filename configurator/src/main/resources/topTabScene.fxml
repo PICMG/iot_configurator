@@ -17,7 +17,7 @@
       </MenuBar>
       <TabPane prefHeight="741.0" prefWidth="1024.0" tabClosingPolicy="UNAVAILABLE">
         <tabs>
-          <Tab text="Device Configuration">
+          <Tab text="Device Configuration" fx:id="deviceTab">
                <content>
                   <AnchorPane fx:id="deviceTabAnchorPane" prefHeight="200.0" prefWidth="200.0" />
                </content>
