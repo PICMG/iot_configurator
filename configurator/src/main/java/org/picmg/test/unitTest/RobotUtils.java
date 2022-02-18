@@ -50,6 +50,26 @@ public class RobotUtils {
         robot.mouseRelease(MouseButton.PRIMARY);
     }
 
+    /**
+     * This method clicks on the device configuration tab
+     * @param scene
+     */
+    public static void clickDevice(Scene scene)
+    {
+        Window area = scene.getWindow();
+        Node deviceTab = scene.lookup("#deviceTab");
+        Point2D point = deviceTab.localToScene(0,0);
+        if(debug)
+            System.out.println(scene.getX()+" "+scene.getY());
+        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
+        robot.mousePress(MouseButton.PRIMARY);
+        robot.mouseRelease(MouseButton.PRIMARY);
+    }
+
+    /**
+     * This method clicks the reset button
+     * @param scene
+     */
     public static void clickReset(Scene scene) {
         try {
 
