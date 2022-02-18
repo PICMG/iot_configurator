@@ -20,13 +20,14 @@ public class TestApp extends App{
             stage.setTitle("PICMG Configurator");
             stage.setScene(scene);
             stage.show();
+            clicks(scene);
             System.out.println("Here is where the test would go");
         } catch (IOException e) {
             System.out.println(e);
         }
     }
 
-    public void clicks(Scene scene) throws InterruptedException {
+    public void clicks(Scene scene) {
         RobotUtils.clickReset(scene);
         RobotUtils.clickSensors(scene);
         RobotUtils.clickEffecters(scene);
