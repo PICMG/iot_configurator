@@ -1,5 +1,6 @@
 package org.picmg.unitTest;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.picmg.jsonreader.JsonValue;
 
@@ -8,6 +9,13 @@ import java.io.*;
 import static org.junit.Assert.*;
 
 public class JsonValueTest {
+
+    String lineSeparator;
+
+    @Before
+    public void handlePlatform() {
+        lineSeparator = System.getProperty("line.separator");
+    }
 
     @Test
     public void testGetValue() {

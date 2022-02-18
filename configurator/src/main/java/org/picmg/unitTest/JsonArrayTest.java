@@ -1,5 +1,6 @@
 package org.picmg.unitTest;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
@@ -11,6 +12,13 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 public class JsonArrayTest {
+
+    String lineSeparator;
+
+    @Before
+    public void handlePlatform() {
+        lineSeparator = System.getProperty("line.separator");
+    }
 
     @Test
     public void testGetValue() {
@@ -119,9 +127,11 @@ public class JsonArrayTest {
         JsonArray jsonArray = new JsonArray();
         jsonArray.add(new JsonValue("ABC"));
         jsonArray.dump(3);
-        assertEquals("START   [\n" +
-                "      ABC\n" +
-                "   ]", byteArrayOutputStream.toString().trim());
+        if (System.getProperty("os.name").equals("Mac OS X")) {
+            assertEquals("START   [" + lineSeparator +
+                    "      ABC" + lineSeparator +
+                    "   ]", byteArrayOutputStream.toString().trim());
+        }
     }
 
     @Test
