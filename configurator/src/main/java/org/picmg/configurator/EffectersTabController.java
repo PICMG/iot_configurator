@@ -22,6 +22,7 @@
 //
 package org.picmg.configurator;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -80,27 +81,23 @@ public class EffectersTabController implements Initializable {
 	@FXML private TextField auxUnitModifierTextfield;
 	@FXML private TextField plusAccuracyTextfield;
 	@FXML private TextField minusAccuracyTextfield;
-	@FXML private TextField outputUnitsTextfield;
+	@FXML private TextField inputUnitsTextfield;
 	@FXML private TextField ratedMaxTextfield;
 	@FXML private TextField nominalValueTextfield;
 	@FXML private Button selectCurveButton;
 	@FXML private Button viewCurveButton;
 	@FXML private Button saveChangesButton;
 	@FXML private ImageView manufacturerImage;
-//	@FXML private ImageView unitModifierImage;
 	@FXML private ImageView baseUnitImage;
 	@FXML private ImageView maxSampleRateImage;
 	@FXML private ImageView interfacesImage;
 	@FXML private ImageView descriptionImage;
 	@FXML private ImageView modelImage;
-	@FXML private ImageView relImage;
-//	@FXML private ImageView auxUnitModifierImage;
 	@FXML private ImageView auxUnitImage;
 	@FXML private ImageView minusAccuracyImage;
 	@FXML private ImageView outputCurveImage;
-	@FXML private ImageView outputUnitsImage;
+	@FXML private ImageView inputUnitsImage;
 	@FXML private ImageView plusAccuracyImage;
-//	@FXML private ImageView auxRateUnitImage;
 	@FXML private ImageView ratedMaxImage;
 	@FXML private ImageView nominalValueImage;
 	@FXML private HBox auxFields;
@@ -210,22 +207,22 @@ public class EffectersTabController implements Initializable {
 
 		public String getType() {
 			StringBuilder sb = new StringBuilder();
-			sb.append(baseUnit.get());
+			sb.append(parseName(baseUnit.get()));
 			if ((!"none".equals(auxUnit.get()))&&(!"Unspecified".equals(auxUnit.get()))) {
 				if ("multipliedBy".equals(rel.get())) {
 					sb.append("_");
 				} else {
 					sb.append("_per_");
 				}
-				sb.append(auxUnit.get());
+				sb.append(parseName(auxUnit.get()));
 			}
 			if (!"None".equals(rateUnit.get())) {
 				sb.append("_");
-				sb.append(rateUnit.get());
+				sb.append(parseName(rateUnit.get()));
 			}
 			if (!"None".equals(auxRateUnit.get())) {
 				sb.append("_");
-				sb.append(auxRateUnit.get());
+				sb.append(parseName(auxRateUnit.get()));
 			}
 			// remove any special characters from the string
 			String type = sb.toString();
@@ -302,10 +299,12 @@ public class EffectersTabController implements Initializable {
 			if (!App.isInteger(json.getValue("auxUnitModifier"))) return;
 			if (!App.isFloat(json.getValue("plusAccuracy"))) return;
 			if (!App.isFloat(json.getValue("minusAccuracy"))) return;
-			if (!App.isFloat(json.getValue("ratedMax"))) return;
-			if (!App.isFloat(json.getValue("nominalValue"))) return;
 			if ((json.getValue("maxSampleRate")!=null)&&
 				   (!App.isUnsignedInteger(json.getValue("maxSampleRate")))) return;
+			if ((json.getValue("ratedMax")!=null)&&
+					(!App.isFloat(json.getValue("ratedMax")))) return;
+			if ((json.getValue("nominalValue")!=null)&&
+					(!App.isFloat(json.getValue("nominalValue")))) return;
 
 			// check the values of the enumerated fields to make sure they match one of the
 			// possible selections
@@ -332,6 +331,16 @@ public class EffectersTabController implements Initializable {
 				maxSampleRate.set(json.getValue("maxSampleRate"));
 			} else {
 				maxSampleRate.set("0");
+			}
+			if (json.getValue("ratedMax") != null) {
+				ratedMax.set(json.getValue("ratedMax"));
+			} else {
+				ratedMax.set("0");
+			}
+			if (json.getValue("nominalValue") != null) {
+				ratedMax.set(json.getValue("nominalValue"));
+			} else {
+				ratedMax.set("0");
 			}
 			baseUnit.set(unitsChoices[json.getInteger("baseUnit")]);
 			unitModifier.set(json.getValue("unitModifier"));
@@ -454,8 +463,12 @@ public class EffectersTabController implements Initializable {
 			json.put("plusAccuracy", new JsonValue(plusAccuracy.get()));
 			json.put("minusAccuracy", new JsonValue(minusAccuracy.get()));
 			json.put("outputUnits", new JsonValue(outputUnits.get()));
-			json.put("ratedMax", new JsonValue(ratedMax.get()));
-			json.put("nominalValue", new JsonValue(nominalValue.get()));
+			if ((ratedMax.get().isBlank()) || ((App.isFloat(ratedMax.get()) && (Double.parseDouble(ratedMax.get())<=0)))) {
+				json.put("ratedMax", new JsonValue("null"));
+			} else json.put("ratedMax", new JsonValue(ratedMax.get()));
+			if ((nominalValue.get().isBlank()) || ((App.isFloat(nominalValue.get()) && (Double.parseDouble(nominalValue.get())<=0)))) {
+				json.put("nominalValue", new JsonValue("null"));
+			} else json.put("nominalValue", new JsonValue(nominalValue.get()));
 			JsonArray responseData = new JsonArray();
 			for (Point2D point:outputCurve) {
 				JsonObject obj = new JsonObject();
@@ -573,15 +586,19 @@ public class EffectersTabController implements Initializable {
 	 * update the name field based on data within the current working set.
 	 */
 	public void updateName() {
-		String name = workingData.getManufacturer() +
+		String name = parseName(workingData.getManufacturer()) +
 				'-' +
-				workingData.getModel() +
+				parseName(workingData.getModel()) +
 				'_' +
-				workingData.getType();
+				parseName(workingData.getType());
 		if (nameTextField != null) {
 			nameTextField.setText(name.replaceAll("[^a-z,A-Z,0-9]","_"));
 			workingData.setName(name.replaceAll("[^a-z,A-Z,0-9]","_"));
 		}
+	}
+
+	private String parseName(String name) {
+		return name == null || name.isBlank() ? "none" : name;
 	}
 
 	/**
@@ -597,11 +614,10 @@ public class EffectersTabController implements Initializable {
 		if (interfacesImage.isVisible()) return false;
 		if (descriptionImage.isVisible()) return false;
 		if (modelImage.isVisible()) return false;
-		if (relImage.isVisible()) return false;
 		if (auxUnitImage.isVisible()) return false;
 		if (minusAccuracyImage.isVisible()) return false;
 		if (outputCurveImage.isVisible()) return false;
-		if (outputUnitsImage.isVisible()) return false;
+		if (inputUnitsImage.isVisible()) return false;
 		if (plusAccuracyImage.isVisible()) return false;
 		if (ratedMaxImage.isVisible()) return false;
 		if (nominalValueImage.isVisible()) return false;
@@ -610,8 +626,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onManufacturerAction(ActionEvent event) {
-		if (manufacturerTextfield.getText().isBlank()) manufacturerImage.setVisible(true);
-		else manufacturerImage.setVisible(false);
 		workingData.setManufacturer(manufacturerTextfield.getText());
 		modified = true;
 		updateName();
@@ -620,8 +634,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onPartNumberAction(ActionEvent event) {
-		if (partNumberTextField.getText().isBlank()) modelImage.setVisible(true);
-		else modelImage.setVisible(false);
 		workingData.setModel(partNumberTextField.getText());
 		modified = true;
 		updateName();
@@ -630,13 +642,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onAnalogAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!stepCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setAnalog(analogCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -644,13 +649,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onDigitalAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-			&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-			&&(!stepCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setDigital(digitalCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -658,13 +656,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onPwmAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!stepCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setPwm(pwmCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -672,13 +663,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onRateAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!stepCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setRate(rateCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -686,13 +670,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onStepAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!pwmCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!stepCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setStep(stepCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -700,9 +677,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onMaxSampleRateAction(ActionEvent event) {
-		if ((!maxSampleRateTextfield.getText().isBlank())&&
-		   (!App.isUnsignedInteger(maxSampleRateTextfield.getText()))) maxSampleRateImage.setVisible(true);
-		else maxSampleRateImage.setVisible(false);
 		workingData.setMaxSampleRate(maxSampleRateTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -710,8 +684,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(unitModifierTextField.getText())) baseUnitImage.setVisible(true);
-		else baseUnitImage.setVisible(false);
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -719,8 +691,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitImage.setVisible(true);
-		else auxUnitImage.setVisible(false);
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -728,8 +698,6 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onPlusAccuractyAction(ActionEvent event) {
-		if (!App.isFloat(plusAccuracyTextfield.getText())) plusAccuracyImage.setVisible(true);
-		else plusAccuracyImage.setVisible(false);
 		workingData.setPlusAccuracy(plusAccuracyTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -737,17 +705,15 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onMinusAccuracyAction(ActionEvent event) {
-		if (!App.isFloat(minusAccuracyTextfield.getText())) minusAccuracyImage.setVisible(true);
-		else minusAccuracyImage.setVisible(false);
 		workingData.setMinusAccuracy(minusAccuracyTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 
 	@FXML
-	void onOutputUnitsAction(ActionEvent event) {
-		workingData.setOutputUnits(outputUnitsTextfield.getText());
-		outputUnitsImage.setVisible(false);
+	void onInputUnitsAction(ActionEvent event) {
+		workingData.setOutputUnits(inputUnitsTextfield.getText());
+		inputUnitsImage.setVisible(false);
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
@@ -788,20 +754,14 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onRatedMaxAction(ActionEvent event) {
-		String ratedMax = ratedMaxTextfield.getText();
-		if (!App.isFloat(ratedMax)) ratedMaxImage.setVisible(true);
-		else ratedMaxImage.setVisible(false);
-		workingData.setRatedMax(ratedMax);
+		workingData.setRatedMax(ratedMaxTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 
 	@FXML
 	void onNominalValueAction(ActionEvent event) {
-		String nominalValue = nominalValueTextfield.getText();
-		if (!App.isFloat(nominalValue)) nominalValueImage.setVisible(true);
-		else nominalValueImage.setVisible(false);
-		workingData.setNominalValue(nominalValue);
+		workingData.setNominalValue(nominalValueTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
@@ -845,9 +805,9 @@ public class EffectersTabController implements Initializable {
 		auxUnitModifierTextfield.setTooltip(createTooltip("The power of 10 modifier for the auxiliary units"));
 		plusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the positive accuracy of the effecter"));
 		minusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the negative accuracy of the effecter"));
-		outputUnitsTextfield.setTooltip(createTooltip("The output electrical units of the effecter"));
-		ratedMaxTextfield.setTooltip(createTooltip("The maximum rated output value of the effecter."));
-		nominalValueTextfield.setTooltip(createTooltip("The nominal rated value of the effecter."));
+		inputUnitsTextfield.setTooltip(createTooltip("The output electrical units of the effecter"));
+		ratedMaxTextfield.setTooltip(createTooltip("The maximum rated output value of the effecter. Leave blank or set to 0 for none"));
+		nominalValueTextfield.setTooltip(createTooltip("The nominal rated value of the effecter. Leave blank or set to 0 for no none"));
 	}
 
 	/**
@@ -869,6 +829,17 @@ public class EffectersTabController implements Initializable {
 		} catch (IOException e) {
 			// unable to find the directory
 		}
+		initValidation();
+	}
+
+	private void initValidation() {
+		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				partNumberTextField.textProperty().getValueSafe().isBlank(), partNumberTextField.textProperty()));
+		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not()
+				.and(analogCheckbox.selectedProperty().not())
+				.and(pwmCheckbox.selectedProperty()).not()
+				.and(rateCheckbox.selectedProperty()).not()
+				.and(stepCheckbox.selectedProperty().not()));
 	}
 
 	private void setEffecterData(EffecterTableData data) {
@@ -891,26 +862,9 @@ public class EffectersTabController implements Initializable {
 		auxRateChoicebox.setValue(data.getAuxRateUnit());
 		plusAccuracyTextfield.setText(data.getPlusAccuracy());
 		minusAccuracyTextfield.setText(data.getMinusAccuracy());
-		outputUnitsTextfield.setText(data.getOutputUnits());
+		inputUnitsTextfield.setText(data.getOutputUnits());
 		ratedMaxTextfield.setText(data.getRatedMax());
 		nominalValueTextfield.setText(data.getNominalValue());
-	}
-
-	public void clearIndicators() {
-		manufacturerImage.setVisible(false);
-		baseUnitImage.setVisible(false);
-		maxSampleRateImage.setVisible(false);
-		interfacesImage.setVisible(false);
-		descriptionImage.setVisible(false);
-		modelImage.setVisible(false);
-		relImage.setVisible(false);
-		auxUnitImage.setVisible(false);
-		minusAccuracyImage.setVisible(false);
-		outputCurveImage.setVisible(false);
-		outputUnitsImage.setVisible(false);
-		plusAccuracyImage.setVisible(false);
-		ratedMaxImage.setVisible(false);
-		nominalValueImage.setVisible(false);
 	}
 
 	private void selectDefaultEffecter() {
@@ -946,9 +900,6 @@ public class EffectersTabController implements Initializable {
 		// set up the effecter configuration with default data
 		selectDefaultEffecter();
 
-		// clear error indicators
-		clearIndicators();
-
 		// set tooltips for each control
 		setTooltips();
 
@@ -983,7 +934,6 @@ public class EffectersTabController implements Initializable {
 				if (data==null) return;
 				workingData.set(data);
 				setEffecterData(workingData);
-				clearIndicators();
 				modified = false;
 				saveChangesButton.setDisable(true);
 			}
@@ -1066,9 +1016,9 @@ public class EffectersTabController implements Initializable {
 		nominalValueTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { nominalValueTextfield.fireEvent(new ActionEvent()); }}});
-		outputUnitsImage.focusedProperty().addListener(new ChangeListener<Boolean>() {
+		inputUnitsImage.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
-				if (!newValue) { outputUnitsTextfield.fireEvent(new ActionEvent()); }}});
+				if (!newValue) { inputUnitsTextfield.fireEvent(new ActionEvent()); }}});
 		descriptionTextArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) {
@@ -1080,7 +1030,32 @@ public class EffectersTabController implements Initializable {
 				}
 			}
 		});
-		modified = false;
 
+		// bind images to their input constraints
+		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				manufacturerTextfield.getText().isBlank(), manufacturerTextfield.textProperty()));
+		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				partNumberTextField.getText().isBlank(), partNumberTextField.textProperty()));
+		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not().and(analogCheckbox.selectedProperty().not()
+						.and(pwmCheckbox.selectedProperty().not().and(rateCheckbox.selectedProperty().not()
+						.and(stepCheckbox.selectedProperty().not())))));
+		maxSampleRateImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				!maxSampleRateTextfield.getText().isBlank() && !App.isUnsignedInteger(maxSampleRateTextfield.getText()),
+				maxSampleRateTextfield.textProperty()));
+		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isUnsignedInteger(unitModifierTextField.getText()), unitModifierTextField.textProperty()));
+		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isUnsignedInteger(auxUnitModifierTextfield.getText()), auxUnitModifierTextfield.textProperty()));
+		inputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				inputUnitsTextfield.getText().isBlank(), inputUnitsTextfield.textProperty()));
+		plusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isFloat(plusAccuracyTextfield.getText()), plusAccuracyTextfield.textProperty()));
+		minusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isFloat(minusAccuracyTextfield.getText()), minusAccuracyTextfield.textProperty()));
+		ratedMaxImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				!ratedMaxTextfield.getText().isBlank() && !App.isFloat(ratedMaxTextfield.getText()), ratedMaxTextfield.textProperty()));
+		nominalValueImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				!nominalValueTextfield.getText().isBlank() && !App.isFloat(nominalValueTextfield.getText()), nominalValueTextfield.textProperty()));
+		modified = false;
 	}
 }

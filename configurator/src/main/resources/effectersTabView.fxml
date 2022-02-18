@@ -94,7 +94,7 @@
                         <TextField fx:id="maxSampleRateTextfield" onAction="#onMaxSampleRateAction" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                         <TextField fx:id="plusAccuracyTextfield" onAction="#onPlusAccuractyAction" GridPane.columnIndex="2" GridPane.rowIndex="11" />
                         <TextField fx:id="minusAccuracyTextfield" onAction="#onMinusAccuracyAction" GridPane.columnIndex="2" GridPane.rowIndex="12" />
-                        <TextField fx:id="outputUnitsTextfield" onAction="#onOutputUnitsAction" GridPane.columnIndex="2" GridPane.rowIndex="13" />
+                        <TextField fx:id="inputUnitsTextfield" onAction="#onInputUnitsAction" GridPane.columnIndex="2" GridPane.rowIndex="13" />
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="14">
                            <children>
                               <Button fx:id="selectCurveButton" mnemonicParsing="false" onAction="#onOutputCurveSelectAction" text="Select From File" />
@@ -132,11 +132,6 @@
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="relImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
-                           <image>
-                              <Image url="@red_dot.png" />
-                           </image>
-                        </ImageView>
                         <ImageView fx:id="auxUnitImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9">
                            <image>
                               <Image url="@red_dot.png" />
@@ -152,7 +147,7 @@
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="outputUnitsImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13">
+                        <ImageView fx:id="inputUnitsImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="13">
                            <image>
                               <Image url="@red_dot.png" />
                            </image>
