@@ -82,7 +82,7 @@ public class JsonArray extends ArrayList<JsonAbstractValue> implements JsonAbstr
     public boolean getBoolean(String specifier) {
         if (isEmpty()) return false;
         // use the leftmost part of the specifier as the key
-        String[] key = specifier.split(".",2);
+        String[] key = specifier.split("[.]",2);
         int index = Integer.valueOf(key[0]);
         if (index<size()) {
             return get(index).getBoolean(key[1]);
@@ -98,7 +98,7 @@ public class JsonArray extends ArrayList<JsonAbstractValue> implements JsonAbstr
     public String getHandle(String specifier) {
         if (isEmpty()) return "";
         // use the leftmost part of the specifier as the key
-        String[] key = specifier.split(".",2);
+        String[] key = specifier.split("[.]",2);
         int index = Integer.valueOf(key[0]);
         if (index<size()) {
             return get(index).getHandle(key[1]);
@@ -114,7 +114,7 @@ public class JsonArray extends ArrayList<JsonAbstractValue> implements JsonAbstr
     public int getInteger(String specifier) {
         if (isEmpty()) return 0;
         // use the leftmost part of the specifier as the key
-        String[] key = specifier.split(".",2);
+        String[] key = specifier.split("[.]",2);
         int index = Integer.valueOf(key[0]);
         if (index<size()) {
             return get(index).getInteger(key[1]);
@@ -130,7 +130,7 @@ public class JsonArray extends ArrayList<JsonAbstractValue> implements JsonAbstr
     public double getDouble(String specifier) {
         if (isEmpty()) return 0;
         // use the leftmost part of the specifier as the key
-        String[] key = specifier.split(".",2);
+        String[] key = specifier.split("[.]",2);
         int index = Integer.valueOf(key[0]);
         if (index<size()) {
             return get(index).getDouble(key[1]);
