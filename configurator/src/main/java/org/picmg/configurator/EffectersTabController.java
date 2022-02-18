@@ -461,10 +461,10 @@ public class EffectersTabController implements Initializable {
 			json.put("plusAccuracy", new JsonValue(plusAccuracy.get()));
 			json.put("minusAccuracy", new JsonValue(minusAccuracy.get()));
 			json.put("inputUnits", new JsonValue(outputUnits.get()));
-			if ((ratedMax.get().isBlank()) || ((App.isFloat(ratedMax.get()) && (Double.parseDouble(ratedMax.get())<=0)))) {
+			if ((ratedMax.getValueSafe().isBlank()) || ((App.isFloat(ratedMax.get()) && (Double.parseDouble(ratedMax.get())<=0)))) {
 				json.put("ratedMax", new JsonValue("null"));
 			} else json.put("ratedMax", new JsonValue(ratedMax.get()));
-			if ((nominalValue.get().isBlank()) || ((App.isFloat(nominalValue.get()) && (Double.parseDouble(nominalValue.get())<=0)))) {
+			if ((nominalValue.getValueSafe().isBlank()) || ((App.isFloat(nominalValue.get()) && (Double.parseDouble(nominalValue.get())<=0)))) {
 				json.put("nominalValue", new JsonValue("null"));
 			} else json.put("nominalValue", new JsonValue(nominalValue.get()));
 			JsonArray responseData = new JsonArray();
