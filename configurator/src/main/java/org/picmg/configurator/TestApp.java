@@ -1,5 +1,6 @@
 package org.picmg.configurator;
 
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -21,12 +22,13 @@ public class TestApp extends App{
             stage.show();
             clicks(scene);
             System.out.println("Here is where the test would go");
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException e) {
             System.out.println(e);
         }
     }
 
-    public void clicks(Scene scene) throws InterruptedException {
+    public void clicks(Scene scene) {
+        RobotUtils.clickReset(scene);
         RobotUtils.clickSensors(scene);
         RobotUtils.clickEffecters(scene);
         RobotUtils.close();
