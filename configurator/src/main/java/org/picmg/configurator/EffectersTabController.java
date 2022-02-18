@@ -264,7 +264,7 @@ public class EffectersTabController implements Initializable {
 			if (((JsonObject)json).get("auxRateUnit")==null) return;
 			if (((JsonObject)json).get("plusAccuracy")==null) return;
 			if (((JsonObject)json).get("minusAccuracy")==null) return;
-			if (((JsonObject)json).get("outputUnits")==null) return;
+			if (((JsonObject)json).get("inputUnits")==null) return;
 			if (((JsonObject)json).get("responseCurve")==null) return;
 			if (((JsonObject)json).get("ratedMax")==null) return;
 			if (((JsonObject)json).get("nominalValue")==null) return;
@@ -285,7 +285,7 @@ public class EffectersTabController implements Initializable {
 			if (!((JsonObject)json).get("auxRateUnit").getClass().isAssignableFrom(JsonValue.class)) return;
 			if (!((JsonObject)json).get("plusAccuracy").getClass().isAssignableFrom(JsonValue.class)) return;
 			if (!((JsonObject)json).get("minusAccuracy").getClass().isAssignableFrom(JsonValue.class)) return;
-			if (!((JsonObject)json).get("outputUnits").getClass().isAssignableFrom(JsonValue.class)) return;
+			if (!((JsonObject)json).get("inputUnits").getClass().isAssignableFrom(JsonValue.class)) return;
 			if (!((JsonObject)json).get("responseCurve").getClass().isAssignableFrom(JsonArray.class)) return;
 			if (!((JsonObject)json).get("ratedMax").getClass().isAssignableFrom(JsonValue.class)) return;
 			if (!((JsonObject)json).get("nominalValue").getClass().isAssignableFrom(JsonValue.class)) return;
@@ -351,7 +351,7 @@ public class EffectersTabController implements Initializable {
 			auxRateUnit.set(rateChoices[json.getInteger("auxRateUnit")]);
 			plusAccuracy.set(json.getValue("plusAccuracy"));
 			minusAccuracy.set(json.getValue("minusAccuracy"));
-//			inputUnits.set(json.getValue("inputUnits"));
+			outputUnits.set(json.getValue("inputUnits"));
 			// set the supported interfaces values
 			JsonArray interfaces = (JsonArray)((JsonObject)json).get("supportedInterfaces");
 			for (JsonAbstractValue anInterface : interfaces) {
@@ -460,7 +460,7 @@ public class EffectersTabController implements Initializable {
 			}
 			json.put("plusAccuracy", new JsonValue(plusAccuracy.get()));
 			json.put("minusAccuracy", new JsonValue(minusAccuracy.get()));
-			json.put("outputUnits", new JsonValue(outputUnits.get()));
+			json.put("inputUnits", new JsonValue(outputUnits.get()));
 			if ((ratedMax.get().isBlank()) || ((App.isFloat(ratedMax.get()) && (Double.parseDouble(ratedMax.get())<=0)))) {
 				json.put("ratedMax", new JsonValue("null"));
 			} else json.put("ratedMax", new JsonValue(ratedMax.get()));
@@ -549,7 +549,7 @@ public class EffectersTabController implements Initializable {
 		public boolean loadPointsFromCsvFile(File input) {
 			// clear any existing points
 			outputCurve.clear();
-			if (input == null || input.exists() || !input.isFile()) return false;
+			if (input == null || !input.exists() || !input.isFile()) return false;
 
 			// attempt to load the new points
 			try (BufferedReader br = new BufferedReader(new FileReader(input))) {
@@ -712,7 +712,6 @@ public class EffectersTabController implements Initializable {
 	@FXML
 	void onInputUnitsAction(ActionEvent event) {
 		workingData.setOutputUnits(inputUnitsTextfield.getText());
-		inputUnitsImage.setVisible(false);
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
