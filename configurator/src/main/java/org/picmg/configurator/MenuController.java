@@ -102,6 +102,8 @@ public class MenuController implements Initializable {
 
 			{
 				// effecters
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("effectersTabView.fxml"));
+				effectersTabAnchorPane.getChildren().add(loader.load());
 			}
 
 			{
@@ -119,7 +121,8 @@ public class MenuController implements Initializable {
 				alert.setTitle("Warning");
 				alert.setHeaderText("Reset Configuration:");
 				alert.setContentText("If you proceed, all current work will be lost.  Continue?");
-
+				Button temp = (Button) alert.getDialogPane().lookupButton(ButtonType.OK);
+				temp.setId("resetOk");
 				Optional<ButtonType> result = alert.showAndWait();
 				if (result == null) return;
 				if (result.get() == null) return;

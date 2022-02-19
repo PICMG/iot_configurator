@@ -1,5 +1,5 @@
 //*******************************************************************
-//    SensorsTabController.java
+//    EffectersTabController.java
 //
 //    More information on the PICMG IoT data model can be found within
 //    the PICMG family of IoT specifications.  For more information,
@@ -22,6 +22,7 @@
 //
 package org.picmg.configurator;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -40,6 +41,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -55,20 +57,20 @@ import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class SensorsTabController implements Initializable {
-	@FXML private TableView<SensorTableData> SensorTableView;
-	@FXML private TableColumn<SensorTableData, String> manufacturerColumn;
-	@FXML private TableColumn<SensorTableData, String> modelColumn;
-	@FXML private TableColumn<SensorTableData, String> typeColumn;
+public class EffectersTabController implements Initializable {
+	@FXML private TableView<EffecterTableData> EffecterTableView;
+	@FXML private TableColumn<EffecterTableData, String> manufacturerColumn;
+	@FXML private TableColumn<EffecterTableData, String> modelColumn;
+	@FXML private TableColumn<EffecterTableData, String> typeColumn;
 	@FXML private TextField nameTextField;
 	@FXML private TextField manufacturerTextfield;
 	@FXML private TextField partNumberTextField;
 	@FXML private TextArea descriptionTextArea;
-	@FXML private CheckBox analogCheckbox;
 	@FXML private CheckBox digitalCheckbox;
-	@FXML private CheckBox countCheckbox;
+	@FXML private CheckBox analogCheckbox;
+	@FXML private CheckBox pwmCheckbox;
 	@FXML private CheckBox rateCheckbox;
-	@FXML private CheckBox quadratureCheckbox;
+	@FXML private CheckBox stepCheckbox;
 	@FXML private TextField maxSampleRateTextfield;
 	@FXML private ChoiceBox<String> baseUnitChoicebox;
 	@FXML private ChoiceBox<String> rateUnitChoicebox;
@@ -79,26 +81,26 @@ public class SensorsTabController implements Initializable {
 	@FXML private TextField auxUnitModifierTextfield;
 	@FXML private TextField plusAccuracyTextfield;
 	@FXML private TextField minusAccuracyTextfield;
-	@FXML private TextField outputUnitsTextfield;
+	@FXML private TextField inputUnitsTextfield;
+	@FXML private TextField ratedMaxTextfield;
+	@FXML private TextField nominalValueTextfield;
 	@FXML private Button selectCurveButton;
 	@FXML private Button viewCurveButton;
 	@FXML private Button saveChangesButton;
 	@FXML private ImageView manufacturerImage;
-	@FXML private ImageView unitModifierImage;
 	@FXML private ImageView baseUnitImage;
 	@FXML private ImageView maxSampleRateImage;
 	@FXML private ImageView interfacesImage;
 	@FXML private ImageView descriptionImage;
 	@FXML private ImageView modelImage;
-	@FXML private ImageView rateUnitImage;
-	@FXML private ImageView relImage;
-	@FXML private ImageView auxUnitModifierImage;
 	@FXML private ImageView auxUnitImage;
 	@FXML private ImageView minusAccuracyImage;
 	@FXML private ImageView outputCurveImage;
-	@FXML private ImageView outputUnitsImage;
+	@FXML private ImageView inputUnitsImage;
 	@FXML private ImageView plusAccuracyImage;
-	@FXML private ImageView auxRateUnitImage;
+	@FXML private ImageView ratedMaxImage;
+	@FXML private ImageView nominalValueImage;
+	@FXML private HBox auxFields;
 
 	// choice box choices
 	final String[] unitsChoices = {
@@ -120,26 +122,26 @@ public class SensorsTabController implements Initializable {
 		"Per_Day","Per_Week","Per_Month","Per_Year"
 	};
 	final String[] relChoices = {
-		"dividedBy","multipliedBy"
+		"(No Aux)", "dividedBy","multipliedBy"
 	};
 	boolean modified;
 	boolean valid;
-	SensorTableData workingData = new SensorTableData();
+	EffecterTableData workingData = new EffecterTableData();
 
 	/**
-	 * This inner class describes the data model for the sensor table
-	 * and sensor data pane
+	 * This inner class describes the data model for the effecter table
+	 * and effecter data pane
 	 */
-	public class SensorTableData {
+	public class EffecterTableData {
 		SimpleStringProperty name = new SimpleStringProperty();
 		SimpleStringProperty manufacturer = new SimpleStringProperty();
 		SimpleStringProperty model = new SimpleStringProperty();
 		SimpleStringProperty description = new SimpleStringProperty();
 		SimpleBooleanProperty analog = new SimpleBooleanProperty();
 		SimpleBooleanProperty digital = new SimpleBooleanProperty();
-		SimpleBooleanProperty count = new SimpleBooleanProperty();
+		SimpleBooleanProperty pwm = new SimpleBooleanProperty();
 		SimpleBooleanProperty rate = new SimpleBooleanProperty();
-		SimpleBooleanProperty quadrature = new SimpleBooleanProperty();
+		SimpleBooleanProperty step = new SimpleBooleanProperty();
 		SimpleStringProperty maxSampleRate = new SimpleStringProperty();
 		SimpleStringProperty baseUnit = new SimpleStringProperty();
 		SimpleStringProperty unitModifier = new SimpleStringProperty();
@@ -152,6 +154,8 @@ public class SensorsTabController implements Initializable {
 		SimpleStringProperty minusAccuracy = new SimpleStringProperty();
 		SimpleStringProperty outputUnits = new SimpleStringProperty();
 		ArrayList<Point2D> outputCurve = new ArrayList<>();
+		SimpleStringProperty ratedMax = new SimpleStringProperty();
+		SimpleStringProperty nominalValue = new SimpleStringProperty();
 		boolean valid;
 
 		// getters and setters
@@ -167,12 +171,12 @@ public class SensorsTabController implements Initializable {
 		public void setAnalog(boolean analog) {this.analog.set(analog);}
 		public boolean isDigital() {return digital.get();}
 		public void setDigital(boolean digital) {this.digital.set(digital);}
-		public boolean isCount() {return count.get();}
-		public void setCount(boolean count) {this.count.set(count);}
+		public boolean isPwm() {return pwm.get();}
+		public void setPwm(boolean pwm) {this.pwm.set(pwm);}
 		public boolean isRate() {return rate.get();}
 		public void setRate(boolean rate) {this.rate.set(rate);}
-		public boolean isQuadrature() {return quadrature.get();}
-		public void setQuadrature(boolean quadrature) {this.quadrature.set(quadrature);}
+		public boolean isStep() {return step.get();}
+		public void setStep(boolean step) {this.step.set(step);}
 		public String getMaxSampleRate() {return maxSampleRate.get();}
 		public void setMaxSampleRate(String maxSampleRate) {this.maxSampleRate.set(maxSampleRate);}
 		public String getBaseUnit() {return baseUnit.get();}
@@ -195,26 +199,30 @@ public class SensorsTabController implements Initializable {
 		public void setMinusAccuracy(String minusAccuracy) {this.minusAccuracy.set(minusAccuracy);}
 		public String getOutputUnits() {return outputUnits.get();}
 		public void setOutputUnits(String outputUnits) {this.outputUnits.set(outputUnits);}
+		public String getRatedMax() {return ratedMax.get();}
+		public void setRatedMax(String ratedMax) {this.ratedMax.set(ratedMax);}
+		public String getNominalValue() {return nominalValue.get();}
+		public void setNominalValue(String nominalValue) {this.nominalValue.set(nominalValue);}
 		public ArrayList<Point2D> getOutputCurve() {return outputCurve;}
 
 		public String getType() {
 			StringBuilder sb = new StringBuilder();
-			sb.append(baseUnit.get());
-			if ((!auxUnit.get().equals("None"))&&(!auxUnit.get().equals("Unspecified"))) {
-				if (rel.get().equals("multipliedBy")) {
+			sb.append(parseName(baseUnit.get()));
+			if ((!"none".equals(auxUnit.get()))&&(!"Unspecified".equals(auxUnit.get()))) {
+				if ("multipliedBy".equals(rel.get())) {
 					sb.append("_");
 				} else {
 					sb.append("_per_");
 				}
-				sb.append(auxUnit.get());
+				sb.append(parseName(auxUnit.get()));
 			}
-			if (!rateUnit.get().equals("None")) {
+			if (!"None".equals(rateUnit.get())) {
 				sb.append("_");
-				sb.append(rateUnit.get());
+				sb.append(parseName(rateUnit.get()));
 			}
-			if (!auxRateUnit.get().equals("None")) {
+			if (!"None".equals(auxRateUnit.get())) {
 				sb.append("_");
-				sb.append(auxRateUnit.get());
+				sb.append(parseName(auxRateUnit.get()));
 			}
 			// remove any special characters from the string
 			String type = sb.toString();
@@ -223,13 +231,13 @@ public class SensorsTabController implements Initializable {
 
 		// construction
 		/**
-		 * SensorTableData()
+		 * EffecterTableData()
 		 * Attempt to initialize the data structure from the specified (fully qualified)
 		 * filename.  If there are errors, the object will still be created, but the valid
 		 * field will be set (true).
-		 * @param path - the fully qualified path to a sensor data file to initialize from.
+		 * @param path - the fully qualified path to a effecter data file to initialize from.
 		 */
-		public SensorTableData(Path path) {
+		public EffecterTableData(Path path) {
 			valid = false;
 
 			// attempt to load the json
@@ -256,8 +264,10 @@ public class SensorsTabController implements Initializable {
 			if (((JsonObject)json).get("auxRateUnit")==null) return;
 			if (((JsonObject)json).get("plusAccuracy")==null) return;
 			if (((JsonObject)json).get("minusAccuracy")==null) return;
-			if (((JsonObject)json).get("outputUnits")==null) return;
+			if (((JsonObject)json).get("inputUnits")==null) return;
 			if (((JsonObject)json).get("responseCurve")==null) return;
+			if (((JsonObject)json).get("ratedMax")==null) return;
+			if (((JsonObject)json).get("nominalValue")==null) return;
 
 			// check to make sure the json fields are all the right types
 			if (!((JsonObject)json).get("name").getClass().isAssignableFrom(JsonValue.class)) return;
@@ -275,8 +285,10 @@ public class SensorsTabController implements Initializable {
 			if (!((JsonObject)json).get("auxRateUnit").getClass().isAssignableFrom(JsonValue.class)) return;
 			if (!((JsonObject)json).get("plusAccuracy").getClass().isAssignableFrom(JsonValue.class)) return;
 			if (!((JsonObject)json).get("minusAccuracy").getClass().isAssignableFrom(JsonValue.class)) return;
-			if (!((JsonObject)json).get("outputUnits").getClass().isAssignableFrom(JsonValue.class)) return;
+			if (!((JsonObject)json).get("inputUnits").getClass().isAssignableFrom(JsonValue.class)) return;
 			if (!((JsonObject)json).get("responseCurve").getClass().isAssignableFrom(JsonArray.class)) return;
+			if (!((JsonObject)json).get("ratedMax").getClass().isAssignableFrom(JsonValue.class)) return;
+			if (!((JsonObject)json).get("nominalValue").getClass().isAssignableFrom(JsonValue.class)) return;
 
 			// make sure numeric types are actual numbers
 			if (!App.isUnsignedInteger(json.getValue("baseUnit"))) return;
@@ -289,7 +301,11 @@ public class SensorsTabController implements Initializable {
 			if (!App.isFloat(json.getValue("minusAccuracy"))) return;
 			if ((json.getValue("maxSampleRate")!=null)&&
 				   (!App.isUnsignedInteger(json.getValue("maxSampleRate")))) return;
-			
+			if ((json.getValue("ratedMax")!=null)&&
+					(!App.isFloat(json.getValue("ratedMax")))) return;
+			if ((json.getValue("nominalValue")!=null)&&
+					(!App.isFloat(json.getValue("nominalValue")))) return;
+
 			// check the values of the enumerated fields to make sure they match one of the
 			// possible selections
 			if ((json.getInteger("baseUnit"))>=unitsChoices.length) return;
@@ -316,6 +332,16 @@ public class SensorsTabController implements Initializable {
 			} else {
 				maxSampleRate.set("0");
 			}
+			if (json.getValue("ratedMax") != null) {
+				ratedMax.set(json.getValue("ratedMax"));
+			} else {
+				ratedMax.set("0");
+			}
+			if (json.getValue("nominalValue") != null) {
+				nominalValue.set(json.getValue("nominalValue"));
+			} else {
+				nominalValue.set("0");
+			}
 			baseUnit.set(unitsChoices[json.getInteger("baseUnit")]);
 			unitModifier.set(json.getValue("unitModifier"));
 			rateUnit.set(rateChoices[json.getInteger("rateUnit")]);
@@ -325,27 +351,27 @@ public class SensorsTabController implements Initializable {
 			auxRateUnit.set(rateChoices[json.getInteger("auxRateUnit")]);
 			plusAccuracy.set(json.getValue("plusAccuracy"));
 			minusAccuracy.set(json.getValue("minusAccuracy"));
-			outputUnits.set(json.getValue("outputUnits"));
+			outputUnits.set(json.getValue("inputUnits"));
 			// set the supported interfaces values
 			JsonArray interfaces = (JsonArray)((JsonObject)json).get("supportedInterfaces");
 			for (JsonAbstractValue anInterface : interfaces) {
 				if (!anInterface.getClass().isAssignableFrom(JsonValue.class)) continue;
 				JsonValue interfaceName = (JsonValue) anInterface;
 				switch (interfaceName.getValue("")) {
-					case "analog_in":
+					case "analog_out":
 						analog.set(true);
 						break;
-					case "digital_in":
+					case "digital_out":
 						digital.set(true);
 						break;
-					case "count_in":
-						count.set(true);
+					case "pwm_out":
+						pwm.set(true);
 						break;
-					case "rate_in":
+					case "rate_out":
 						rate.set(true);
 						break;
-					case "quadrature_in":
-						quadrature.set(true);
+					case "step_out":
+						step.set(true);
 					default:
 						break;
 				}
@@ -374,7 +400,7 @@ public class SensorsTabController implements Initializable {
 
 		/**
 		 * SaveToFile()
-		 * Save the sensor data to the specified file path
+		 * Save the effecter data to the specified file path
 		 */
 		public void SaveToFile(String path) {
 			// create the Json Object
@@ -396,7 +422,7 @@ public class SensorsTabController implements Initializable {
 				}
 				json.put("baseUnit", new JsonValue(str));
 			}
-			if ((maxSampleRate.get().isBlank())||((App.isFloat(maxSampleRate.get())&&(Double.parseDouble(maxSampleRate.get())<=0)))) {
+			if ((maxSampleRate.getValueSafe().isBlank()) || ((App.isFloat(maxSampleRate.get()) && (Double.parseDouble(maxSampleRate.get())<=0)))) {
 				json.put("maxSampleRate", new JsonValue("null"));
 			} else json.put("maxSampleRate", new JsonValue(maxSampleRate.get()));
 			json.put("unitModifier", new JsonValue(unitModifier.get()));
@@ -434,7 +460,13 @@ public class SensorsTabController implements Initializable {
 			}
 			json.put("plusAccuracy", new JsonValue(plusAccuracy.get()));
 			json.put("minusAccuracy", new JsonValue(minusAccuracy.get()));
-			json.put("outputUnits", new JsonValue(outputUnits.get()));
+			json.put("inputUnits", new JsonValue(outputUnits.get()));
+			if ((ratedMax.getValueSafe().isBlank()) || ((App.isFloat(ratedMax.get()) && (Double.parseDouble(ratedMax.get())<=0)))) {
+				json.put("ratedMax", new JsonValue("null"));
+			} else json.put("ratedMax", new JsonValue(ratedMax.get()));
+			if ((nominalValue.getValueSafe().isBlank()) || ((App.isFloat(nominalValue.get()) && (Double.parseDouble(nominalValue.get())<=0)))) {
+				json.put("nominalValue", new JsonValue("null"));
+			} else json.put("nominalValue", new JsonValue(nominalValue.get()));
 			JsonArray responseData = new JsonArray();
 			for (Point2D point:outputCurve) {
 				JsonObject obj = new JsonObject();
@@ -445,11 +477,11 @@ public class SensorsTabController implements Initializable {
 			json.put("responseCurve", responseData);
 
 			JsonArray interfaces = new JsonArray();
-			if (analog.get()) interfaces.add(new JsonValue("analog_in"));
-			if (digital.get()) interfaces.add(new JsonValue("digital_in"));
-			if (count.get()) interfaces.add(new JsonValue("count_in"));
-			if (rate.get()) interfaces.add(new JsonValue("rate_in"));
-			if (quadrature.get()) interfaces.add(new JsonValue("quadrature_in"));
+			if (analog.get()) interfaces.add(new JsonValue("analog_out"));
+			if (digital.get()) interfaces.add(new JsonValue("digital_out"));
+			if (pwm.get()) interfaces.add(new JsonValue("pwm_out"));
+			if (rate.get()) interfaces.add(new JsonValue("rate_out"));
+			if (step.get()) interfaces.add(new JsonValue("step_out"));
 			json.put("supportedInterfaces", interfaces);
 
 			// write the json to the file
@@ -467,7 +499,7 @@ public class SensorsTabController implements Initializable {
 		/**
 		 * empty constructor
 		 */
-		public SensorTableData() {
+		public EffecterTableData() {
 			valid = false;
 		}
 
@@ -476,16 +508,16 @@ public class SensorsTabController implements Initializable {
 		 * set the values of this object to match those of the given object.
 		 * @param data - the object to set from
 		 */
-		public void set(SensorTableData data) {
+		public void set(EffecterTableData data) {
 			name.set(data.name.get());
 			manufacturer.set(data.manufacturer.get());
 			model.set(data.model.get());
 			description.set(data.description.get());
 			analog.set(data.analog.get());
 			digital.set(data.digital.get());
-			count.set(data.count.get());
+			pwm.set(data.pwm.get());
 			rate.set(data.rate.get());
-			quadrature.set(data.quadrature.get());
+			step.set(data.step.get());
 			maxSampleRate.set(data.maxSampleRate.get());
 			baseUnit.set(data.baseUnit.get());
 			unitModifier.set(data.unitModifier.get());
@@ -497,6 +529,8 @@ public class SensorsTabController implements Initializable {
 			plusAccuracy.set(data.plusAccuracy.get());
 			minusAccuracy.set(data.minusAccuracy.get());
 			outputUnits.set(data.outputUnits.get());
+			ratedMax.set(data.ratedMax.get());
+			nominalValue.set(data.nominalValue.get());
 
 			outputCurve.clear();
 
@@ -515,6 +549,7 @@ public class SensorsTabController implements Initializable {
 		public boolean loadPointsFromCsvFile(File input) {
 			// clear any existing points
 			outputCurve.clear();
+			if (input == null || !input.exists() || !input.isFile()) return false;
 
 			// attempt to load the new points
 			try (BufferedReader br = new BufferedReader(new FileReader(input))) {
@@ -550,13 +585,19 @@ public class SensorsTabController implements Initializable {
 	 * update the name field based on data within the current working set.
 	 */
 	public void updateName() {
-		String name = workingData.getManufacturer() +
+		String name = parseName(workingData.getManufacturer()) +
 				'-' +
-				workingData.getModel() +
+				parseName(workingData.getModel()) +
 				'_' +
-				workingData.getType();
-		nameTextField.setText(name.replaceAll("[^a-z,A-Z,0-9]","_"));
-		workingData.setName(name.replaceAll("[^a-z,A-Z,0-9]","_"));
+				parseName(workingData.getType());
+		if (nameTextField != null) {
+			nameTextField.setText(name.replaceAll("[^a-z,A-Z,0-9]","_"));
+			workingData.setName(name.replaceAll("[^a-z,A-Z,0-9]","_"));
+		}
+	}
+
+	private String parseName(String name) {
+		return name == null || name.isBlank() ? "none" : name;
 	}
 
 	/**
@@ -567,28 +608,23 @@ public class SensorsTabController implements Initializable {
 	 */
 	public boolean isValid() {
 		if (manufacturerImage.isVisible()) return false;
-		if (unitModifierImage.isVisible()) return false;
 		if (baseUnitImage.isVisible()) return false;
 		if (maxSampleRateImage.isVisible()) return false;
 		if (interfacesImage.isVisible()) return false;
 		if (descriptionImage.isVisible()) return false;
 		if (modelImage.isVisible()) return false;
-		if (rateUnitImage.isVisible()) return false;
-		if (relImage.isVisible()) return false;
-		if (auxUnitModifierImage.isVisible()) return false;
 		if (auxUnitImage.isVisible()) return false;
 		if (minusAccuracyImage.isVisible()) return false;
 		if (outputCurveImage.isVisible()) return false;
-		if (outputUnitsImage.isVisible()) return false;
+		if (inputUnitsImage.isVisible()) return false;
 		if (plusAccuracyImage.isVisible()) return false;
-		if (auxRateUnitImage.isVisible()) return false;
+		if (ratedMaxImage.isVisible()) return false;
+		if (nominalValueImage.isVisible()) return false;
 		return true;
 	}
-	
+
 	@FXML
 	void onManufacturerAction(ActionEvent event) {
-		if (manufacturerTextfield.getText().isBlank()) manufacturerImage.setVisible(true);
-		else manufacturerImage.setVisible(false);
 		workingData.setManufacturer(manufacturerTextfield.getText());
 		modified = true;
 		updateName();
@@ -597,8 +633,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onPartNumberAction(ActionEvent event) {
-		if (partNumberTextField.getText().isBlank()) modelImage.setVisible(true);
-		else modelImage.setVisible(false);
 		workingData.setModel(partNumberTextField.getText());
 		modified = true;
 		updateName();
@@ -607,13 +641,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onAnalogAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setAnalog(analogCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -621,65 +648,34 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onDigitalAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-			&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-			&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setDigital(digitalCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 
 	@FXML
-	void onCountAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
-		workingData.setCount(countCheckbox.isSelected());
+	void onPwmAction(ActionEvent event) {
+		workingData.setPwm(pwmCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 
 	@FXML
 	void onRateAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setRate(rateCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 
 	@FXML
-	void onQuadratureAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
-		workingData.setQuadrature(quadratureCheckbox.isSelected());
+	void onStepAction(ActionEvent event) {
+		workingData.setStep(stepCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 
 	@FXML
 	void onMaxSampleRateAction(ActionEvent event) {
-		if ((!maxSampleRateTextfield.getText().isBlank())&&
-		   (!App.isUnsignedInteger(maxSampleRateTextfield.getText()))) maxSampleRateImage.setVisible(true);
-		else maxSampleRateImage.setVisible(false);
 		workingData.setMaxSampleRate(maxSampleRateTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -687,8 +683,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(unitModifierTextField.getText())) unitModifierImage.setVisible(true);
-		else unitModifierImage.setVisible(false);
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -696,8 +690,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitModifierImage.setVisible(true);
-		else auxUnitModifierImage.setVisible(false);
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -705,8 +697,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onPlusAccuractyAction(ActionEvent event) {
-		if (!App.isFloat(plusAccuracyTextfield.getText())) plusAccuracyImage.setVisible(true);
-		else plusAccuracyImage.setVisible(false);
 		workingData.setPlusAccuracy(plusAccuracyTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -714,17 +704,14 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onMinusAccuracyAction(ActionEvent event) {
-		if (!App.isFloat(minusAccuracyTextfield.getText())) minusAccuracyImage.setVisible(true);
-		else minusAccuracyImage.setVisible(false);
 		workingData.setMinusAccuracy(minusAccuracyTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 
 	@FXML
-	void onOutputUnitsAction(ActionEvent event) {
-		workingData.setOutputUnits(outputUnitsTextfield.getText());
-		outputUnitsImage.setVisible(false);
+	void onInputUnitsAction(ActionEvent event) {
+		workingData.setOutputUnits(inputUnitsTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
@@ -758,19 +745,33 @@ public class SensorsTabController implements Initializable {
 		Scene scene = new Scene(dlg, 800, 600);
 		Stage stage = new Stage();
 		stage.initModality(Modality.APPLICATION_MODAL);
-		stage.setTitle("Sensor Response Curve");
+		stage.setTitle("Effecter Response Curve");
 		stage.setScene(scene);
 		stage.showAndWait();
 	}
 
 	@FXML
+	void onRatedMaxAction(ActionEvent event) {
+		workingData.setRatedMax(ratedMaxTextfield.getText());
+		modified = true;
+		saveChangesButton.setDisable(!isValid());
+	}
+
+	@FXML
+	void onNominalValueAction(ActionEvent event) {
+		workingData.setNominalValue(nominalValueTextfield.getText());
+		modified = true;
+		saveChangesButton.setDisable(!isValid());
+	}
+
+	@FXML
 	void onSaveChangesAction(ActionEvent event) {
-		String path = System.getProperty("user.dir")+"/lib/sensors/" + workingData.getName()+".json";
+		String path = System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json";
 		workingData.SaveToFile(path);
 		modified = false;
 		saveChangesButton.setDisable(true);
 		initializeTable();
-		selectDefaultSensor();
+		selectDefaultEffecter();
 	}
 
 	Tooltip createTooltip(String tip) {
@@ -783,41 +784,43 @@ public class SensorsTabController implements Initializable {
 	 * set the tooltip for each control
 	 */
 	private void setTooltips() {
-		nameTextField.setTooltip(createTooltip("The name of the sensor data file (not editable)"));
-		manufacturerTextfield.setTooltip(createTooltip("The name of the manufacturer of the sensor"));
-		partNumberTextField.setTooltip(createTooltip("The manufacturer's part number or model number for the sensor"));
-		descriptionTextArea.setTooltip(createTooltip("A brief description of the sensor."));
-		analogCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
-		digitalCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
-		countCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
-		rateCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
-		quadratureCheckbox.setTooltip(createTooltip("The electrical interface type for the sensor"));
-		maxSampleRateTextfield.setTooltip(createTooltip("The maximum sample rate for the sensor (in Hertz).  Leave blank or set to 0 for no maximum"));
-		baseUnitChoicebox.setTooltip(createTooltip("The base units for the sensor"));
-		rateUnitChoicebox.setTooltip(createTooltip("The rate units for the sensor (if any)"));
-		auxUnitChoicebox.setTooltip(createTooltip("The auxiliary units for the sensor (if any)"));
-		relChoicebox.setTooltip(createTooltip("The relationship between the base units and the auxiliary units of the sensor"));
-		auxRateChoicebox.setTooltip(createTooltip("The auxiliary rate units for the sensor (if any)"));
+		nameTextField.setTooltip(createTooltip("The name of the effecter data file (not editable)"));
+		manufacturerTextfield.setTooltip(createTooltip("The name of the manufacturer of the effecter"));
+		partNumberTextField.setTooltip(createTooltip("The manufacturer's part number or model number for the effecter"));
+		descriptionTextArea.setTooltip(createTooltip("A brief description of the effecter."));
+		analogCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
+		digitalCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
+		pwmCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
+		rateCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
+		stepCheckbox.setTooltip(createTooltip("The electrical interface type for the effecter"));
+		maxSampleRateTextfield.setTooltip(createTooltip("The maximum sample rate for the effecter (in Hertz).  Leave blank or set to 0 for no maximum"));
+		baseUnitChoicebox.setTooltip(createTooltip("The base units for the effecter"));
+		rateUnitChoicebox.setTooltip(createTooltip("The rate units for the effecter (if any)"));
+		auxUnitChoicebox.setTooltip(createTooltip("The auxiliary units for the effecter (if any)"));
+		relChoicebox.setTooltip(createTooltip("The relationship between the base units and the auxiliary units of the effecter"));
+		auxRateChoicebox.setTooltip(createTooltip("The auxiliary rate units for the effecter (if any)"));
 		unitModifierTextField.setTooltip(createTooltip("The power of 10 modifier for the base units"));
 		auxUnitModifierTextfield.setTooltip(createTooltip("The power of 10 modifier for the auxiliary units"));
-		plusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the positive accuracy of the sensor"));
-		minusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the negative accuracy of the sensor"));
-		outputUnitsTextfield.setTooltip(createTooltip("The output electrical units of the sensor"));
+		plusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the positive accuracy of the effecter"));
+		minusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the negative accuracy of the effecter"));
+		inputUnitsTextfield.setTooltip(createTooltip("The input electrical units of the effecter"));
+		ratedMaxTextfield.setTooltip(createTooltip("The maximum rated output value of the effecter. Leave blank or set to 0 for none"));
+		nominalValueTextfield.setTooltip(createTooltip("The nominal rated value of the effecter. Leave blank or set to 0 for no none"));
 	}
-	
+
 	/**
 	 * initializeTable()
 	 * initialize the contents of the table with contents from the library folder
 	 */
 	private void initializeTable() {
-		SensorTableView.getItems().clear();
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/sensors"))) {
+		EffecterTableView.getItems().clear();
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/effecters"))) {
 			for (Path path : stream) {
 				if (!Files.isDirectory(path)) {
-					SensorTableData data = new SensorTableData(path);
+					EffecterTableData data = new EffecterTableData(path);
 					if (data.valid) {
 						// place the data in the table
-						SensorTableView.getItems().add(data);
+						EffecterTableView.getItems().add(data);
 					}
 				}
 			}
@@ -826,16 +829,16 @@ public class SensorsTabController implements Initializable {
 		}
 	}
 
-	private void setSensorData(SensorTableData data) {
+	private void setEffecterData(EffecterTableData data) {
 		nameTextField.setText(data.getName());
 		manufacturerTextfield.setText(data.getManufacturer());
 		partNumberTextField.setText(data.getModel());
 		descriptionTextArea.setText(data.getDescription());
 		analogCheckbox.setSelected(data.isAnalog());
 		digitalCheckbox.setSelected(data.isDigital());
-		countCheckbox.setSelected(data.isCount());
+		pwmCheckbox.setSelected(data.isPwm());
 		rateCheckbox.setSelected(data.isRate());
-		quadratureCheckbox.setSelected(data.isQuadrature());
+		stepCheckbox.setSelected(data.isStep());
 		maxSampleRateTextfield.setText(data.getMaxSampleRate());
 		baseUnitChoicebox.setValue(data.getBaseUnit());
 		unitModifierTextField.setText(data.getUnitModifier());
@@ -846,33 +849,17 @@ public class SensorsTabController implements Initializable {
 		auxRateChoicebox.setValue(data.getAuxRateUnit());
 		plusAccuracyTextfield.setText(data.getPlusAccuracy());
 		minusAccuracyTextfield.setText(data.getMinusAccuracy());
-		outputUnitsTextfield.setText(data.getOutputUnits());
+		inputUnitsTextfield.setText(data.getOutputUnits());
+		ratedMaxTextfield.setText(data.getRatedMax());
+		nominalValueTextfield.setText(data.getNominalValue());
 	}
 
-	public void clearIndicators() {
-		manufacturerImage.setVisible(false);
-		unitModifierImage.setVisible(false);
-		baseUnitImage.setVisible(false);
-		maxSampleRateImage.setVisible(false);
-		interfacesImage.setVisible(false);
-		descriptionImage.setVisible(false);
-		modelImage.setVisible(false);
-		rateUnitImage.setVisible(false);
-		relImage.setVisible(false);
-		auxUnitModifierImage.setVisible(false);
-		auxUnitImage.setVisible(false);
-		minusAccuracyImage.setVisible(false);
-		outputCurveImage.setVisible(false);
-		outputUnitsImage.setVisible(false);
-		plusAccuracyImage.setVisible(false);
-		auxRateUnitImage.setVisible(false);
-	}
-
-	private void selectDefaultSensor() {
-		SensorTableView.getSelectionModel().select(0);
-		SensorTableData selecteddata = SensorTableView.getSelectionModel().getSelectedItem();
+	private void selectDefaultEffecter() {
+		EffecterTableView.getSelectionModel().select(0);
+		EffecterTableData selecteddata = EffecterTableView.getSelectionModel().getSelectedItem();
+		if (selecteddata == null) return;
 		workingData.set(selecteddata);
-		setSensorData(selecteddata);
+		setEffecterData(selecteddata);
 		modified = false;
 		saveChangesButton.setDisable(true);
 	}
@@ -883,7 +870,7 @@ public class SensorsTabController implements Initializable {
 		modelColumn.setCellValueFactory(new PropertyValueFactory<>("model"));
 		typeColumn.setCellValueFactory(new PropertyValueFactory<>("type"));
 
-		// set up the table view with sensors from the library
+		// set up the table view with effecters from the library
 		initializeTable();
 
 		// set the values for each choicebox
@@ -892,15 +879,13 @@ public class SensorsTabController implements Initializable {
 		for (String choice:rateChoices) rateUnitChoicebox.getItems().add(choice);
 		for (String choice:rateChoices) auxRateChoicebox.getItems().add(choice);
 		for (String choice:relChoices) relChoicebox.getItems().add(choice);
+		relChoicebox.setValue(relChoices[0]);
 
 		// set up parameters for other controls
 		descriptionTextArea.setWrapText(true);
 
-		// set up the sensor configuration with default data
-		selectDefaultSensor();
-
-		// clear error indicators
-		clearIndicators();
+		// set up the effecter configuration with default data
+		selectDefaultEffecter();
 
 		// set tooltips for each control
 		setTooltips();
@@ -909,13 +894,13 @@ public class SensorsTabController implements Initializable {
 		// set any additional listeners
 		//====================================
 		// add an event filter to the tableview to prevent changing selections without permission
-		SensorTableView.addEventFilter(
+		EffecterTableView.addEventFilter(
 				MouseEvent.MOUSE_PRESSED,
 				new EventHandler<MouseEvent>() {
 					public void handle(final MouseEvent mouseEvent) {
 						if (modified) {
 							Alert alert = new Alert(Alert.AlertType.WARNING,
-									"If you select a new sensor now, unsaved work on the existing sensor will be lost.",
+									"If you select a new effecter now, unsaved work on the existing effecter will be lost.",
 									ButtonType.OK, ButtonType.CANCEL);
 							alert.setTitle("Loss of Data Warning");
 							Optional<ButtonType> result = alert.showAndWait();
@@ -925,18 +910,17 @@ public class SensorsTabController implements Initializable {
 						}
 					}
 				});
-		// select new sensor from table view
-		ObservableList<SensorTableData> tableSelection = SensorTableView.getSelectionModel().getSelectedItems();
-		tableSelection.addListener(new ListChangeListener<SensorTableData>() {
+		// select new effecter from table view
+		ObservableList<EffecterTableData> tableSelection = EffecterTableView.getSelectionModel().getSelectedItems();
+		tableSelection.addListener(new ListChangeListener<EffecterTableData>() {
 			@Override
-			public void onChanged(Change<? extends SensorTableData> c) {
+			public void onChanged(Change<? extends EffecterTableData> c) {
 				// here if a new selection has been made from the table - populate the
 				// controls with the data
-				SensorTableData data = SensorTableView.getSelectionModel().getSelectedItem();
+				EffecterTableData data = EffecterTableView.getSelectionModel().getSelectedItem();
 				if (data==null) return;
 				workingData.set(data);
-				setSensorData(workingData);
-				clearIndicators();
+				setEffecterData(workingData);
 				modified = false;
 				saveChangesButton.setDisable(true);
 			}
@@ -985,6 +969,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setRel(newString);
 				updateName();
 				modified = true;
+				auxFields.setDisable(relChoices[0].equals(newString));
 				saveChangesButton.setDisable(!isValid());
 			}
 		});
@@ -1012,21 +997,53 @@ public class SensorsTabController implements Initializable {
 		minusAccuracyTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { minusAccuracyTextfield.fireEvent(new ActionEvent()); }}});
-		outputUnitsTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
+		ratedMaxTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
-				if (!newValue) { outputUnitsTextfield.fireEvent(new ActionEvent()); }}});
+				if (!newValue) { ratedMaxTextfield.fireEvent(new ActionEvent()); }}});
+		nominalValueTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				if (!newValue) { nominalValueTextfield.fireEvent(new ActionEvent()); }}});
+		inputUnitsImage.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				if (!newValue) { inputUnitsTextfield.fireEvent(new ActionEvent()); }}});
 		descriptionTextArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) {
-					if (descriptionTextArea.getText().isBlank()) descriptionImage.setVisible(true);
-					else descriptionImage.setVisible(false);
 					workingData.setDescription(descriptionTextArea.getText());
 					saveChangesButton.setDisable(!isValid());
 					modified = true;
 				}
 			}
 		});
-		modified = false;
 
+		// bind images to their input constraints
+		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				manufacturerTextfield.textProperty().getValueSafe().isBlank(), manufacturerTextfield.textProperty()));
+		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				partNumberTextField.textProperty().getValueSafe().isBlank(), partNumberTextField.textProperty()));
+		descriptionImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				descriptionTextArea.textProperty().getValueSafe().isBlank(), descriptionTextArea.textProperty()));
+		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not().and(analogCheckbox.selectedProperty().not()
+						.and(pwmCheckbox.selectedProperty().not().and(rateCheckbox.selectedProperty().not()
+						.and(stepCheckbox.selectedProperty().not())))));
+		maxSampleRateImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				!maxSampleRateTextfield.textProperty().getValueSafe().isBlank() && !App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
+				maxSampleRateTextfield.textProperty()));
+		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()), unitModifierTextField.textProperty()));
+		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()), auxUnitModifierTextfield.textProperty()));
+		inputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				inputUnitsTextfield.textProperty().getValueSafe().isBlank(), inputUnitsTextfield.textProperty()));
+		plusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isFloat(plusAccuracyTextfield.textProperty().getValueSafe()), plusAccuracyTextfield.textProperty()));
+		minusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isFloat(minusAccuracyTextfield.textProperty().getValueSafe()), minusAccuracyTextfield.textProperty()));
+		ratedMaxImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				!ratedMaxTextfield.textProperty().getValueSafe().isBlank() && !App.isFloat(ratedMaxTextfield.textProperty().getValueSafe()), ratedMaxTextfield.textProperty()));
+		nominalValueImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+				!nominalValueTextfield.textProperty().getValueSafe().isBlank() && !App.isFloat(nominalValueTextfield.textProperty().getValueSafe()), nominalValueTextfield.textProperty()));
+		outputCurveImage.setVisible(false);
+		modified = false;
 	}
 }

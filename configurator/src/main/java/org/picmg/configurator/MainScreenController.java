@@ -80,10 +80,10 @@ public class MainScreenController implements Initializable {
 		public String name;
 		public boolean required;
 		public SimpleBooleanProperty error = new SimpleBooleanProperty(false);
-		
+
 		public TreeData() {
 			nodeType = "unknown";
-		}		
+		}
 
 
 		public TreeData(JsonAbstractValue parent, JsonAbstractValue leaf, String nodeType) {
@@ -92,16 +92,16 @@ public class MainScreenController implements Initializable {
 			this.nodeType = nodeType;
 		}
 	}
-	
-    private final class JsonTreeCell extends TreeCell<TreeData> {
-        private ContextMenu contextMenu;
+
+	private final class JsonTreeCell extends TreeCell<TreeData> {
+		private ContextMenu contextMenu;
 		static Image redDotImage;
 		static Image yellowDotImage;
 
 		// JsonTreeCell
-        //
-        // Constructor for the tree cell - initialize the control
-        public JsonTreeCell() {
+		//
+		// Constructor for the tree cell - initialize the control
+		public JsonTreeCell() {
 			if (redDotImage==null) {
 				ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 				InputStream is = classLoader.getResourceAsStream("red_dot.png");
@@ -114,18 +114,18 @@ public class MainScreenController implements Initializable {
 			}
 		}
 
-		
+
 		void setError(boolean errorValue,String req){
-        	if(errorValue){
-        		boolean required = true;
-        		if(req!=null){
-        			if(req.equals("false")){
+			if(errorValue){
+				boolean required = true;
+				if(req!=null){
+					if(req.equals("false")){
 						required = false;
 					}
 				}else{
-        			required = false;
+					required = false;
 				}
-        		if(required){
+				if(required){
 					ImageView iv = new ImageView(redDotImage);
 					iv.setFitWidth(12);
 					iv.setFitHeight(12);
@@ -140,47 +140,47 @@ public class MainScreenController implements Initializable {
 				}
 
 			}else{
-        		setGraphic(null);
+				setGraphic(null);
 			}
 		}
 
-        void initializeIoBindingCell() {
-        	setContextMenu(null);
+		void initializeIoBindingCell() {
+			setContextMenu(null);
 			TreeItem selectedNode = treeView.getSelectionModel().getSelectedItem();
-        	TreeItem<TreeData> it = getTreeItem();
+			TreeItem<TreeData> it = getTreeItem();
 
-        	errorCheck();
+			errorCheck();
 
 			boolean err = getItem().error.getValue();
-        	setError(err,getItem().leaf.getValue("required"));
+			setError(err,getItem().leaf.getValue("required"));
 			treeView.getSelectionModel().select(selectedNode);
 
 			getItem().error.addListener((observable, oldValue, newValue) -> {
 				boolean errorVal = getItem().error.getValue();
 				setError(errorVal,getItem().leaf.getValue("required"));
 				errorCheck();
-        	});
+			});
 
 			// set the behavior when the cell is clicked by the mouse
-        	setOnMouseClicked(new EventHandler<>() {
+			setOnMouseClicked(new EventHandler<>() {
 				public void handle(MouseEvent t) {
 					//TODO: add code to set up the context pane for the io binding
 
 				}
 			});
 
-        }        
+		}
 
-        void initializeFruRecordCell() {
-        	// set the behavior when the cell is clicked by the mouse
-    		TreeData data = getTreeItem().getValue();
+		void initializeFruRecordCell() {
+			// set the behavior when the cell is clicked by the mouse
+			TreeData data = getTreeItem().getValue();
 			contextMenu = new ContextMenu();
-   			MenuItem mi = new MenuItem("Delete Record");
-    		if (data.leaf.getBoolean("required")) {
-    			mi.setText("Restore Defaults");
-    		}
-   			contextMenu.getItems().add(mi);
-        	setContextMenu(contextMenu);
+			MenuItem mi = new MenuItem("Delete Record");
+			if (data.leaf.getBoolean("required")) {
+				mi.setText("Restore Defaults");
+			}
+			contextMenu.getItems().add(mi);
+			setContextMenu(contextMenu);
 
 			errorCheck();
 			setError(getItem().error.getValue(),getItem().leaf.getValue("required"));
@@ -192,8 +192,8 @@ public class MainScreenController implements Initializable {
 				errorCheck();
 			});
 
-        	// set the handler for the menu item
-            mi.setOnAction(new EventHandler<>() {
+			// set the handler for the menu item
+			mi.setOnAction(new EventHandler<>() {
 				@Override
 				public void handle(ActionEvent t) {
 					// get the name of the entity that was selected
@@ -211,31 +211,31 @@ public class MainScreenController implements Initializable {
 					}
 				}
 			});
-        }        
+		}
 
-        void initializeParametersCell() {
-        	setContextMenu(null);
-        	
-            // set the behavior when the cell is clicked by the mouse
-        	setOnMouseClicked(new EventHandler<>() {
+		void initializeParametersCell() {
+			setContextMenu(null);
+
+			// set the behavior when the cell is clicked by the mouse
+			setOnMouseClicked(new EventHandler<>() {
 				public void handle(MouseEvent t) {
 					//TODO: add code to set up the context pane for the parameters
 				}
 			});
-        }        
+		}
 
-        void initializeLogicalEntityCell() {
-            // initialize the menu
-    		TreeData data = getTreeItem().getValue();
-    		setText(data.leaf.getValue("name"));
-    		contextMenu = new ContextMenu();
-   			MenuItem mi = new MenuItem("Delete Entity");
-   			if (data.leaf.getBoolean("required")) {
-    			 mi.setText("Restore Defaults");    			
-    		} 
-        	contextMenu.getItems().add(mi);
-    		// set the handler for the menu item
-            mi.setOnAction(new EventHandler<>() {
+		void initializeLogicalEntityCell() {
+			// initialize the menu
+			TreeData data = getTreeItem().getValue();
+			setText(data.leaf.getValue("name"));
+			contextMenu = new ContextMenu();
+			MenuItem mi = new MenuItem("Delete Entity");
+			if (data.leaf.getBoolean("required")) {
+				mi.setText("Restore Defaults");
+			}
+			contextMenu.getItems().add(mi);
+			// set the handler for the menu item
+			mi.setOnAction(new EventHandler<>() {
 				@Override
 				public void handle(ActionEvent t) {
 					// get the name of the entity that was selected
@@ -254,27 +254,27 @@ public class MainScreenController implements Initializable {
 					}
 				}
 			});
-        	setContextMenu(contextMenu);
-        }        
+			setContextMenu(contextMenu);
+		}
 
-        void initializeLogicalEntitiesCell() {
-            // initialize the menu
-        	if (contextMenu!=null) {
-        		contextMenu.getItems().clear();
-        	} else {
-        		contextMenu = new ContextMenu();
-        	}
+		void initializeLogicalEntitiesCell() {
+			// initialize the menu
+			if (contextMenu!=null) {
+				contextMenu.getItems().clear();
+			} else {
+				contextMenu = new ContextMenu();
+			}
 
-        	// add entities that can be added to the menu
-        	ArrayList<String> possibles = device.getListOfPossibleEntities();
-        	if (possibles.size()>0) {
-            	possibles.forEach(possible->{
-            		// add the menu item
-            		MenuItem mi = new MenuItem("add entity: " + possible);
-            		contextMenu.getItems().add(mi);
+			// add entities that can be added to the menu
+			ArrayList<String> possibles = device.getListOfPossibleEntities();
+			if (possibles.size()>0) {
+				possibles.forEach(possible->{
+					// add the menu item
+					MenuItem mi = new MenuItem("add entity: " + possible);
+					contextMenu.getItems().add(mi);
 
-            		// set the handler for the menu item
-                    mi.setOnAction(new EventHandler<>() {
+					// set the handler for the menu item
+					mi.setOnAction(new EventHandler<>() {
 						@Override
 						public void handle(ActionEvent t) {
 							// get the name of the entity that was selected
@@ -287,6 +287,8 @@ public class MainScreenController implements Initializable {
 							TreeItem<TreeData> entityItem =
 									new TreeItem<>(new TreeData(data.leaf, ent, "logicalEntity"));
 							entityItem.setExpanded(true);
+							Node temp = entityItem.getGraphic();
+							entityItem.setGraphic(temp);
 							getTreeItem().getChildren().add(entityItem);
 
 							// now add bindings and parameters for the entity
@@ -301,15 +303,15 @@ public class MainScreenController implements Initializable {
 							errorCheck();
 						}
 					});
-            	});
-        	} else {
-        		MenuItem mi = new MenuItem("none");
-        		mi.setDisable(true);
-        		contextMenu.getItems().add(mi);        		
-        	}
-        	            
-        	setContextMenu(contextMenu);
-        }
+				});
+			} else {
+				MenuItem mi = new MenuItem("none");
+				mi.setDisable(true);
+				contextMenu.getItems().add(mi);
+			}
+
+			setContextMenu(contextMenu);
+		}
 
 		// this function returns a random string of alphanumeric characters with a
 		// length that matches the given length.
@@ -338,22 +340,22 @@ public class MainScreenController implements Initializable {
 		}
 
 		void initializeFruCell() {
-            // initialize the menu
-        	if (contextMenu!=null) {
-        		contextMenu.getItems().clear();
-        	} else {
-        		contextMenu = new ContextMenu();
-        	}
-        	
-        	// add entities that can be added to the menu
-       		MenuItem mi  = new MenuItem("add standard fru record");
-       		MenuItem mi2 = new MenuItem("add OEM fru record");
-            contextMenu.getItems().add(mi);
-            contextMenu.getItems().add(mi2);
-        	setContextMenu(contextMenu);
+			// initialize the menu
+			if (contextMenu!=null) {
+				contextMenu.getItems().clear();
+			} else {
+				contextMenu = new ContextMenu();
+			}
 
-    		// set the handler for the menu item
-            mi.setOnAction(new EventHandler<>() {
+			// add entities that can be added to the menu
+			MenuItem mi  = new MenuItem("add standard fru record");
+			MenuItem mi2 = new MenuItem("add OEM fru record");
+			contextMenu.getItems().add(mi);
+			contextMenu.getItems().add(mi2);
+			setContextMenu(contextMenu);
+
+			// set the handler for the menu item
+			mi.setOnAction(new EventHandler<>() {
 				@Override
 				public void handle(ActionEvent t) {
 					// create a new fru record entry
@@ -379,7 +381,7 @@ public class MainScreenController implements Initializable {
 					getTreeItem().getChildren().add(fruRecordItem);
 				}
 			});
-            mi2.setOnAction(new EventHandler<>() {
+			mi2.setOnAction(new EventHandler<>() {
 				@Override
 				public void handle(ActionEvent t) {
 					// create a new fru record entry
@@ -405,102 +407,102 @@ public class MainScreenController implements Initializable {
 					getTreeItem().getChildren().add(fruRecordItem);
 				}
 			});
-        }        
+		}
 
-        @Override
-        public void updateItem(TreeData item, boolean empty) {
-            super.updateItem(item, empty);
+		@Override
+		public void updateItem(TreeData item, boolean empty) {
+			super.updateItem(item, empty);
 
-            if (empty) {
-                setText(null);
-                setGraphic(null);
-            } else {
+			if (empty) {
+				setText(null);
+				setGraphic(null);
+			} else {
 				switch (item.nodeType) {
-            	case "logicalEntities":
-            		setText(getItem().nodeType);
-                	initializeLogicalEntitiesCell();
-            		break;
-            	case "logicalEntity":
-            		initializeLogicalEntityCell();
-            		break;
-            	case "ioBinding":
-            		setText(getItem().leaf.getValue("name"));
-            		String name = getItem().leaf.getValue("name");
-            		item.name = getItem().leaf.getValue("name");
-            		initializeIoBindingCell();
-            		break;
-            	case "fruRecord":
-            		setText(getItem().nodeType);
-            		initializeFruRecordCell();
-                	break;
-            	case "fruRecords":
-            		//TODO: add code to set up the context pane for the fru collection
-            		setText(getItem().nodeType);
-            		initializeFruCell();
-                	break;
-            	case "parameters":
-            		//TODO: add code to set up the context pane for the parameters collection
-            		setText(getItem().nodeType);
-            		initializeParametersCell();
-                	break;
-            	default:
-            		// do nothing
-            		setText(getItem().nodeType);
-                	break;	
-            	}        	
+					case "logicalEntities":
+						setText(getItem().nodeType);
+						initializeLogicalEntitiesCell();
+						break;
+					case "logicalEntity":
+						initializeLogicalEntityCell();
+						break;
+					case "ioBinding":
+						setText(getItem().leaf.getValue("name"));
+						String name = getItem().leaf.getValue("name");
+						item.name = getItem().leaf.getValue("name");
+						initializeIoBindingCell();
+						break;
+					case "fruRecord":
+						setText(getItem().nodeType);
+						initializeFruRecordCell();
+						break;
+					case "fruRecords":
+						//TODO: add code to set up the context pane for the fru collection
+						setText(getItem().nodeType);
+						initializeFruCell();
+						break;
+					case "parameters":
+						//TODO: add code to set up the context pane for the parameters collection
+						setText(getItem().nodeType);
+						initializeParametersCell();
+						break;
+					default:
+						// do nothing
+						setText(getItem().nodeType);
+						break;
+				}
 
-            }
-        }        
-    }
+			}
+		}
+	}
 
 	/**
 	 * export the configuration to the specified output file.
 	 * @param outputFile - the name of the file to output to
 	 */
 	public void exportConfiguration(File outputFile) {
-       	device.exportConfiguration(outputFile);
+		device.exportConfiguration(outputFile);
 	}
 
-	
+
 	// populate the tree with a simplified structure
 	void populateTree(TreeItem<TreeData> localRoot) {
 		// add branch for FRU
 		JsonObject configuration = (JsonObject)device.getJson().get("configuration");
-	    JsonArray fruRecords = (JsonArray)(configuration).get("fruRecords");	    
+		JsonArray fruRecords = (JsonArray)(configuration).get("fruRecords");
 		TreeItem<TreeData> fruRecordsItem = new TreeItem<>(new TreeData(configuration, fruRecords, "fruRecords"));
-	    fruRecordsItem.setExpanded(true);
+		fruRecordsItem.setExpanded(true);
 		localRoot.getChildren().add(fruRecordsItem);
 
-	    // add leaf nodes for any FRU records that already exist in the configuration
-	    fruRecords.forEach(record -> {
-            // iterate to populate the rest of the tree
+		// add leaf nodes for any FRU records that already exist in the configuration
+		fruRecords.forEach(record -> {
+			// iterate to populate the rest of the tree
 			TreeItem<TreeData> fruLeafItem = new TreeItem<>(new TreeData(fruRecords, record, "fruRecord"));
-            fruRecordsItem.getChildren().add(fruLeafItem);	    
-            fruLeafItem.setExpanded(true);
-	    });
+			fruRecordsItem.getChildren().add(fruLeafItem);
+			fruLeafItem.setExpanded(true);
+		});
 
 		// add branch for Logical Entities
-	    JsonArray logicalEntities = (JsonArray)(configuration).get("logicalEntities");	    
-	    TreeItem<TreeData> logicalEntitiesItem = new TreeItem<>(new TreeData(configuration, logicalEntities, "logicalEntities"));
-	    logicalEntitiesItem.setExpanded(true);
-	    
-	    // add leaf nodes for any logical entities records that already exist in the configuration
-	    logicalEntities.forEach(entity -> {
-            // iterate to populate the rest of the tree
-			TreeItem<TreeData> entityItem = new TreeItem<>(new TreeData(logicalEntities, entity, "logicalEntity"));
-            entityItem.setExpanded(true);
-            logicalEntitiesItem.getChildren().add(entityItem);
+		JsonArray logicalEntities = (JsonArray)(configuration).get("logicalEntities");
+		TreeItem<TreeData> logicalEntitiesItem = new TreeItem<>(new TreeData(configuration, logicalEntities, "logicalEntities"));
+		logicalEntitiesItem.setExpanded(true);
 
-        	// now add bindings and parameters for the entity
-        	JsonArray bindings = (JsonArray)((JsonObject)entity).get("ioBindings");
-        	bindings.forEach(binding -> {
-        		TreeItem<TreeData> ti = new TreeItem<>(new TreeData(bindings, binding, "ioBinding"));
+		// add leaf nodes for any logical entities records that already exist in the configuration
+		logicalEntities.forEach(entity -> {
+			// iterate to populate the rest of the tree
+			TreeItem<TreeData> entityItem = new TreeItem<>(new TreeData(logicalEntities, entity, "logicalEntity"));
+			entityItem.setExpanded(true);
+			logicalEntitiesItem.getChildren().add(entityItem);
+
+			// now add bindings and parameters for the entity
+			JsonArray bindings = (JsonArray)((JsonObject)entity).get("ioBindings");
+			bindings.forEach(binding -> {
+				TreeItem<TreeData> ti = new TreeItem<>(new TreeData(bindings, binding, "ioBinding"));
 				entityItem.getChildren().add(ti);
-        	});                     	
-        	JsonArray parameters = (JsonArray)((JsonObject)entity).get("parameters");
-    		entityItem.getChildren().add(new TreeItem<>(new TreeData(entity, parameters, "parameters")));
-	    });
-	    localRoot.getChildren().add(logicalEntitiesItem);
+			});
+			JsonArray parameters = (JsonArray)((JsonObject)entity).get("parameters");
+			entityItem.getChildren().add(new TreeItem<>(new TreeData(entity, parameters, "parameters")));
+		});
+		localRoot.getChildren().add(logicalEntitiesItem);
 	}
 
 	// addLibrariesFromResourceFolder()
@@ -512,7 +514,7 @@ public class MainScreenController implements Initializable {
 	// folder - the resource folder to load library elements from
 	void addLibrariesFromResourceFolder(JsonObject lib, String key, String folder) {
 		JsonResultFactory factory = new JsonResultFactory();
-		
+
 		// get the array within the library to add the library entries to
 		if (lib.get(key)==null) {
 			// here if the key does not yet exist - add the array object
@@ -521,7 +523,7 @@ public class MainScreenController implements Initializable {
 		}
 		JsonArray ary = (JsonArray)lib.get(key);
 
-	    ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
 		String path = System.getProperty("user.dir")+"/lib/"+folder+"/";
 		File   fileobj = new File(path);
 		File[] files = fileobj.listFiles();
@@ -531,7 +533,7 @@ public class MainScreenController implements Initializable {
 			ary.add(obj);
 		}
 	}
-	
+
 	// helper function that clears all panes
 	private void clearPanes() {
 		stateSensorContent.setVisible(false);
@@ -732,6 +734,7 @@ public class MainScreenController implements Initializable {
 		device = new Device(hardware);
 
 		// create the tree based on the device
+		treeView.setId("device");
 		TreeItem<TreeData> rootNode = treeView.getRoot();
 		rootNode = new TreeItem<>(new TreeData(null, null, "device"));
 		treeView.setRoot(rootNode);
@@ -749,24 +752,24 @@ public class MainScreenController implements Initializable {
 		configurationError.set(true);
 
 		// load the default hardware profile
-        JsonResultFactory factory = new JsonResultFactory();
-        hardware = (JsonObject)factory.buildFromResource("microsam_new2.json");
+		JsonResultFactory factory = new JsonResultFactory();
+		hardware = (JsonObject)factory.buildFromResource("microsam_new2.json");
 
-        // Load the libraries from the resource folders - these are the default
-        // picmg libraries and sensors
-        sensorLib = new JsonObject();
-        addLibrariesFromResourceFolder(sensorLib,"sensors","sensors");
-        effecterLib = new JsonObject();
-        addLibrariesFromResourceFolder(effecterLib,"effecters","effecters");
-        stateLib = new JsonObject();
-        addLibrariesFromResourceFolder(stateLib,"stateSets","state_sets");
-        deviceLib = new JsonObject();
-        addLibrariesFromResourceFolder(deviceLib,"devices","devices");
+		// Load the libraries from the resource folders - these are the default
+		// picmg libraries and sensors
+		sensorLib = new JsonObject();
+		addLibrariesFromResourceFolder(sensorLib,"sensors","sensors");
+		effecterLib = new JsonObject();
+		addLibrariesFromResourceFolder(effecterLib,"effecters","effecters");
+		stateLib = new JsonObject();
+		addLibrariesFromResourceFolder(stateLib,"stateSets","state_sets");
+		deviceLib = new JsonObject();
+		addLibrariesFromResourceFolder(deviceLib,"devices","devices");
 
 		resetDevice();
 
-        treeView.setEditable(true);
-        treeView.setCellFactory(new Callback<>() {
+		treeView.setEditable(true);
+		treeView.setCellFactory(new Callback<>() {
 			@Override
 			public TreeCell<TreeData> call(TreeView<TreeData> p) {
 				return new JsonTreeCell();
@@ -774,7 +777,7 @@ public class MainScreenController implements Initializable {
 		});
 
 		//treeview logic is contained in this event listener
-        treeView.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
+		treeView.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
 			public void handle(MouseEvent event) {
 				Node treeNode = event.getPickResult().getIntersectedNode();
 

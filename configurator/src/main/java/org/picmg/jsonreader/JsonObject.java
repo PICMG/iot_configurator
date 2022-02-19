@@ -77,7 +77,7 @@ public class JsonObject extends TreeMap<String, JsonAbstractValue> implements Js
             av.dump(indent+3);
         }
         for (int i=0;i<indent;i++) System.out.print(" ");
-        System.out.println("{");        
+        System.out.println("}");
     }
     
 
