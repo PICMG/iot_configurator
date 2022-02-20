@@ -39,6 +39,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -1017,6 +1018,36 @@ public class EffectersTabController implements Initializable {
 		});
 
 		// bind images to their input constraints
+		maxSampleRateImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
+			if (maxSampleRateTextfield.textProperty().getValueSafe().isBlank()) {
+				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
+				if (yellowDot != null) return new Image(yellowDot);
+			} else {
+				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
+				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+			}
+			return null;
+		}, maxSampleRateTextfield.textProperty()));
+		ratedMaxImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
+			if (ratedMaxTextfield.textProperty().getValueSafe().isBlank()) {
+				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
+				if (yellowDot != null) return new Image(yellowDot);
+			} else {
+				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
+				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+			}
+			return null;
+		}, ratedMaxTextfield.textProperty()));
+		nominalValueImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
+			if (nominalValueTextfield.textProperty().getValueSafe().isBlank()) {
+				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
+				if (yellowDot != null) return new Image(yellowDot);
+			} else {
+				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
+				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+			}
+			return null;
+		}, nominalValueTextfield.textProperty()));
 		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 				manufacturerTextfield.textProperty().getValueSafe().isBlank(), manufacturerTextfield.textProperty()));
 		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
@@ -1027,8 +1058,7 @@ public class EffectersTabController implements Initializable {
 						.and(pwmCheckbox.selectedProperty().not().and(rateCheckbox.selectedProperty().not()
 						.and(stepCheckbox.selectedProperty().not())))));
 		maxSampleRateImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!maxSampleRateTextfield.textProperty().getValueSafe().isBlank() && !App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
-				maxSampleRateTextfield.textProperty()));
+				!App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()), maxSampleRateTextfield.textProperty()));
 		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()), unitModifierTextField.textProperty()));
 		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
@@ -1040,9 +1070,9 @@ public class EffectersTabController implements Initializable {
 		minusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 						!App.isFloat(minusAccuracyTextfield.textProperty().getValueSafe()), minusAccuracyTextfield.textProperty()));
 		ratedMaxImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!ratedMaxTextfield.textProperty().getValueSafe().isBlank() && !App.isFloat(ratedMaxTextfield.textProperty().getValueSafe()), ratedMaxTextfield.textProperty()));
+				!App.isFloat(ratedMaxTextfield.textProperty().getValueSafe()), ratedMaxTextfield.textProperty()));
 		nominalValueImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!nominalValueTextfield.textProperty().getValueSafe().isBlank() && !App.isFloat(nominalValueTextfield.textProperty().getValueSafe()), nominalValueTextfield.textProperty()));
+				!App.isFloat(nominalValueTextfield.textProperty().getValueSafe()), nominalValueTextfield.textProperty()));
 		outputCurveImage.setVisible(false);
 		modified = false;
 	}
