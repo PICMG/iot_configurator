@@ -610,7 +610,7 @@ public class EffectersTabController implements Initializable {
 	public boolean isValid() {
 		if (manufacturerImage.isVisible()) return false;
 		if (baseUnitImage.isVisible()) return false;
-		if (maxSampleRateImage.isVisible()) return false;
+		if (maxSampleRateImage.isVisible() && maxSampleRateImage.imageProperty().getName().equals("red_dot.png")) return false;
 		if (interfacesImage.isVisible()) return false;
 		if (descriptionImage.isVisible()) return false;
 		if (modelImage.isVisible()) return false;
@@ -619,8 +619,8 @@ public class EffectersTabController implements Initializable {
 		if (outputCurveImage.isVisible()) return false;
 		if (inputUnitsImage.isVisible()) return false;
 		if (plusAccuracyImage.isVisible()) return false;
-		if (ratedMaxImage.isVisible()) return false;
-		if (nominalValueImage.isVisible()) return false;
+		if (ratedMaxImage.isVisible() && ratedMaxImage.imageProperty().getName().equals("red_dot.png")) return false;
+		if (nominalValueImage.isVisible() && nominalValueImage.imageProperty().getName().equals("red_dot.png")) return false;
 		return true;
 	}
 
