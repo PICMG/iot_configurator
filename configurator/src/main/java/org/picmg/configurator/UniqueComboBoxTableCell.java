@@ -179,7 +179,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
         setText(getValue(item.get()));
         cb.setValue(converter.get().fromString(getValue(item.get())));
         if (!cancel) {
-            clickCommit(getConverter().fromString(tf.getText()), column);
+            clickCommit(getConverter().fromString(tf.getText()));
             setValue(item.get(), converter.get().fromString(tf.getText()));
         }
         updateCellMarking();
@@ -512,21 +512,9 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
         }
     }
 
-    public void clickCommit(T var1, TableColumn column) {
-        TableView var2 = view;
-
-        if (var2 != null) {
-            TableColumn.CellEditEvent var3 = new TableColumn.CellEditEvent(view, position, column.editCommitEvent(), var1);
-            int row = var3.getTablePosition().getRow();
-            if (this.getTableColumn() != null)
-                Event.fireEvent(column, var3);
-
-        }
-
-        this.updateItem(var1, false);
-        if (var2 != null) {
-            var2.edit(-1, (TableColumn) null);
-        }
+    public void clickCommit(T event) {
+        if (view != null && column != null)
+            ListView.EditEvent.fireEvent(column, new TableColumn.CellEditEvent(view, position, column.editCommitEvent(), event));
     }
 
     /**
