@@ -36,6 +36,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.stage.StageStyle;
 
 public class App extends Application {	
 	
@@ -90,7 +91,16 @@ public class App extends Application {
 
 
 	@Override
-    public void start(Stage stage) { 
+    public void start(Stage stage) {
+		try{
+			Parent splashScreen = FXMLLoader.load(getClass().getClassLoader().getResource("splashScreen.fxml"));
+			Scene splash = new Scene(splashScreen, 500, 500);
+			stage.setScene(splash);
+			stage.show();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		/*stage.close();
 	    Parent root;
 	    try {
 			root = FXMLLoader.load(getClass().getClassLoader().getResource("topTabScene.fxml"));
@@ -102,7 +112,7 @@ public class App extends Application {
 
 		} catch (IOException e) {
 	    	System.out.println(e);
-		}
+		}*/
 	}
 
 	/**

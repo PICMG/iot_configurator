@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.image.Image?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            prefHeight="500.0" prefWidth="500.0">
+    <children>
+        <ImageView fx:id="channelIndicator" pickOnBounds="true" fitHeight="500" fitWidth="500" preserveRatio="true">
+            <image>
+                <Image url="@picmg_logo.png" backgroundLoading="true"/>
+            </image>
+        </ImageView>
+    </children>
+</AnchorPane>
