@@ -6,7 +6,7 @@ import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonResultFactory;
 
-import static org.junit.jupiter.api.Assertions.*;
+
 
 class DeviceTest {
 
