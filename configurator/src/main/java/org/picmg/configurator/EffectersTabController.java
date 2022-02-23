@@ -39,6 +39,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
@@ -608,7 +609,7 @@ public class EffectersTabController implements Initializable {
 	public boolean isValid() {
 		if (manufacturerImage.isVisible()) return false;
 		if (baseUnitImage.isVisible()) return false;
-		if (maxSampleRateImage.isVisible()) return false;
+		if (maxSampleRateImage.isVisible() && maxSampleRateImage.imageProperty().getName().equals("red_dot.png")) return false;
 		if (interfacesImage.isVisible()) return false;
 		if (descriptionImage.isVisible()) return false;
 		if (modelImage.isVisible()) return false;
@@ -617,8 +618,8 @@ public class EffectersTabController implements Initializable {
 		if (outputCurveImage.isVisible()) return false;
 		if (inputUnitsImage.isVisible()) return false;
 		if (plusAccuracyImage.isVisible()) return false;
-		if (ratedMaxImage.isVisible()) return false;
-		if (nominalValueImage.isVisible()) return false;
+		if (ratedMaxImage.isVisible() && ratedMaxImage.imageProperty().getName().equals("red_dot.png")) return false;
+		if (nominalValueImage.isVisible() && nominalValueImage.imageProperty().getName().equals("red_dot.png")) return false;
 		return true;
 	}
 
@@ -1034,6 +1035,36 @@ public class EffectersTabController implements Initializable {
 		});
 
 		// bind images to their input constraints
+		maxSampleRateImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
+			if (maxSampleRateTextfield.textProperty().getValueSafe().isBlank()) {
+				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
+				if (yellowDot != null) return new Image(yellowDot);
+			} else {
+				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
+				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+			}
+			return null;
+		}, maxSampleRateTextfield.textProperty()));
+		ratedMaxImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
+			if (ratedMaxTextfield.textProperty().getValueSafe().isBlank()) {
+				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
+				if (yellowDot != null) return new Image(yellowDot);
+			} else {
+				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
+				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+			}
+			return null;
+		}, ratedMaxTextfield.textProperty()));
+		nominalValueImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
+			if (nominalValueTextfield.textProperty().getValueSafe().isBlank()) {
+				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
+				if (yellowDot != null) return new Image(yellowDot);
+			} else {
+				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
+				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+			}
+			return null;
+		}, nominalValueTextfield.textProperty()));
 		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 				manufacturerTextfield.textProperty().getValueSafe().isBlank(),
 				manufacturerTextfield.textProperty()));
@@ -1049,8 +1080,7 @@ public class EffectersTabController implements Initializable {
 								.and(rateCheckbox.selectedProperty().not()
 										.and(stepCheckbox.selectedProperty().not())))));
 		maxSampleRateImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!maxSampleRateTextfield.textProperty().getValueSafe().isBlank()
-						&& !App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
+				!App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
 				maxSampleRateTextfield.textProperty()));
 		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
@@ -1068,13 +1098,12 @@ public class EffectersTabController implements Initializable {
 						!App.isFloat(minusAccuracyTextfield.textProperty().getValueSafe()),
 				minusAccuracyTextfield.textProperty()));
 		ratedMaxImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!ratedMaxTextfield.textProperty().getValueSafe().isBlank() && !App.isFloat(ratedMaxTextfield.textProperty().getValueSafe()),
+				!App.isFloat(ratedMaxTextfield.textProperty().getValueSafe()),
 				ratedMaxTextfield.textProperty()));
 		nominalValueImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!nominalValueTextfield.textProperty().getValueSafe().isBlank()
-						&& !App.isFloat(nominalValueTextfield.textProperty().getValueSafe()),
+				!App.isFloat(nominalValueTextfield.textProperty().getValueSafe()),
 				nominalValueTextfield.textProperty()));
-        outputCurveImage.setVisible(false);
+		outputCurveImage.setVisible(false);
 		modified = false;
 	}
 }
