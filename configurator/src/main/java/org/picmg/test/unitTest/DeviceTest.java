@@ -18,6 +18,7 @@ public class DeviceTest {
     public void mockDevice() {
         JsonObject ioBinding = new JsonObject();
         ioBinding.put("boundChannel", new JsonValue("Channel 1"));
+        ioBinding.put("name", new JsonValue("I/O Binding 1"));
 
         JsonArray ioBindings = new JsonArray();
         ioBindings.add(ioBinding);
@@ -58,5 +59,12 @@ public class DeviceTest {
         JsonObject returnedLogicalEntity = device.getLogicalEntityCapabilityByName("My Logical Entity");
         assertEquals("My Logical Entity", returnedLogicalEntity.getValue("name"));
         assertEquals("true", returnedLogicalEntity.getValue("required"));
+    }
+
+    @Test
+    public void testGetBindingValueFromKey() {
+        assertNull(device.getBindingValueFromKey("Not a Binding", "boundChannel"));
+        assertNull(device.getBindingValueFromKey("I/O Binding 1", "Not a Binding Key"));
+        assertEquals("Channel 1", device.getBindingValueFromKey("I/O Binding 1", "boundChannel"));
     }
 }
