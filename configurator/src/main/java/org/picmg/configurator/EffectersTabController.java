@@ -100,7 +100,6 @@ public class EffectersTabController implements Initializable {
 	@FXML private ImageView plusAccuracyImage;
 	@FXML private ImageView ratedMaxImage;
 	@FXML private ImageView nominalValueImage;
-	@FXML private HBox auxFields;
 
 	// choice box choices
 	final String[] unitsChoices = {
@@ -852,6 +851,7 @@ public class EffectersTabController implements Initializable {
 		inputUnitsTextfield.setText(data.getOutputUnits());
 		ratedMaxTextfield.setText(data.getRatedMax());
 		nominalValueTextfield.setText(data.getNominalValue());
+		refreshAuxState(data.getRel());
 	}
 
 	private void selectDefaultEffecter() {
@@ -862,6 +862,22 @@ public class EffectersTabController implements Initializable {
 		setEffecterData(selecteddata);
 		modified = false;
 		saveChangesButton.setDisable(true);
+	}
+
+	private void refreshAuxState(String status) {
+		if (status.equals(relChoices[0])) {
+			// if no aux, disable and default aux inputs
+			auxUnitChoicebox.getSelectionModel().select(0);
+			auxUnitModifierTextfield.setText("0");
+			auxRateChoicebox.getSelectionModel().select(0);
+			auxUnitChoicebox.setDisable(true);
+			auxUnitModifierTextfield.setDisable(true);
+			auxRateChoicebox.setDisable(true);
+		} else {
+			auxUnitChoicebox.setDisable(false);
+			auxUnitModifierTextfield.setDisable(false);
+			auxRateChoicebox.setDisable(false);
+		}
 	}
 
 	@Override
@@ -921,6 +937,7 @@ public class EffectersTabController implements Initializable {
 				if (data==null) return;
 				workingData.set(data);
 				setEffecterData(workingData);
+
 				modified = false;
 				saveChangesButton.setDisable(true);
 			}
@@ -969,8 +986,8 @@ public class EffectersTabController implements Initializable {
 				workingData.setRel(newString);
 				updateName();
 				modified = true;
-				auxFields.setDisable(relChoices[0].equals(newString));
 				saveChangesButton.setDisable(!isValid());
+				refreshAuxState(newString);
 			}
 		});
 
@@ -1018,32 +1035,46 @@ public class EffectersTabController implements Initializable {
 
 		// bind images to their input constraints
 		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				manufacturerTextfield.textProperty().getValueSafe().isBlank(), manufacturerTextfield.textProperty()));
+				manufacturerTextfield.textProperty().getValueSafe().isBlank(),
+				manufacturerTextfield.textProperty()));
 		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				partNumberTextField.textProperty().getValueSafe().isBlank(), partNumberTextField.textProperty()));
+				partNumberTextField.textProperty().getValueSafe().isBlank(),
+				partNumberTextField.textProperty()));
 		descriptionImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				descriptionTextArea.textProperty().getValueSafe().isBlank(), descriptionTextArea.textProperty()));
-		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not().and(analogCheckbox.selectedProperty().not()
-						.and(pwmCheckbox.selectedProperty().not().and(rateCheckbox.selectedProperty().not()
-						.and(stepCheckbox.selectedProperty().not())))));
+				descriptionTextArea.textProperty().getValueSafe().isBlank(),
+				descriptionTextArea.textProperty()));
+		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not()
+				.and(analogCheckbox.selectedProperty().not()
+						.and(pwmCheckbox.selectedProperty().not()
+								.and(rateCheckbox.selectedProperty().not()
+										.and(stepCheckbox.selectedProperty().not())))));
 		maxSampleRateImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!maxSampleRateTextfield.textProperty().getValueSafe().isBlank() && !App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
+				!maxSampleRateTextfield.textProperty().getValueSafe().isBlank()
+						&& !App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
 				maxSampleRateTextfield.textProperty()));
 		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()), unitModifierTextField.textProperty()));
+						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
+				unitModifierTextField.textProperty()));
 		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()), auxUnitModifierTextfield.textProperty()));
+						!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
+				auxUnitModifierTextfield.textProperty()));
 		inputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				inputUnitsTextfield.textProperty().getValueSafe().isBlank(), inputUnitsTextfield.textProperty()));
+				inputUnitsTextfield.textProperty().getValueSafe().isBlank(),
+				inputUnitsTextfield.textProperty()));
 		plusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isFloat(plusAccuracyTextfield.textProperty().getValueSafe()), plusAccuracyTextfield.textProperty()));
+						!App.isFloat(plusAccuracyTextfield.textProperty().getValueSafe()),
+				plusAccuracyTextfield.textProperty()));
 		minusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isFloat(minusAccuracyTextfield.textProperty().getValueSafe()), minusAccuracyTextfield.textProperty()));
+						!App.isFloat(minusAccuracyTextfield.textProperty().getValueSafe()),
+				minusAccuracyTextfield.textProperty()));
 		ratedMaxImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!ratedMaxTextfield.textProperty().getValueSafe().isBlank() && !App.isFloat(ratedMaxTextfield.textProperty().getValueSafe()), ratedMaxTextfield.textProperty()));
+				!ratedMaxTextfield.textProperty().getValueSafe().isBlank() && !App.isFloat(ratedMaxTextfield.textProperty().getValueSafe()),
+				ratedMaxTextfield.textProperty()));
 		nominalValueImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!nominalValueTextfield.textProperty().getValueSafe().isBlank() && !App.isFloat(nominalValueTextfield.textProperty().getValueSafe()), nominalValueTextfield.textProperty()));
-		outputCurveImage.setVisible(false);
+				!nominalValueTextfield.textProperty().getValueSafe().isBlank()
+						&& !App.isFloat(nominalValueTextfield.textProperty().getValueSafe()),
+				nominalValueTextfield.textProperty()));
+        outputCurveImage.setVisible(false);
 		modified = false;
 	}
 }
