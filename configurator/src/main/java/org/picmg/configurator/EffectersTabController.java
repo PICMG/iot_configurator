@@ -42,7 +42,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -121,11 +120,12 @@ public class EffectersTabController implements Initializable {
 		"None","Per_MicroSecond","Per_MilliSecond","Per_Second","Per_Minute","Per_Hour",
 		"Per_Day","Per_Week","Per_Month","Per_Year"
 	};
+
+	private final static String NO_AUX = "(No Aux)";
 	final String[] relChoices = {
-		"(No Aux)", "dividedBy","multipliedBy"
+		NO_AUX, "dividedBy","multipliedBy"
 	};
 	boolean modified;
-	boolean valid;
 	EffecterTableData workingData = new EffecterTableData();
 
 	/**
@@ -858,7 +858,10 @@ public class EffectersTabController implements Initializable {
 	private void selectDefaultEffecter() {
 		EffecterTableView.getSelectionModel().select(0);
 		EffecterTableData selecteddata = EffecterTableView.getSelectionModel().getSelectedItem();
-		if (selecteddata == null) return;
+		if (selecteddata == null) {
+			refreshAuxState(NO_AUX);
+			return;
+		}
 		workingData.set(selecteddata);
 		setEffecterData(selecteddata);
 		modified = false;
@@ -866,7 +869,7 @@ public class EffectersTabController implements Initializable {
 	}
 
 	private void refreshAuxState(String status) {
-		if (status.equals(relChoices[0])) {
+		if (status.equals(NO_AUX)) {
 			// if no aux, disable and default aux inputs
 			auxUnitChoicebox.getSelectionModel().select(0);
 			auxUnitModifierTextfield.setText("0");
@@ -896,7 +899,7 @@ public class EffectersTabController implements Initializable {
 		for (String choice:rateChoices) rateUnitChoicebox.getItems().add(choice);
 		for (String choice:rateChoices) auxRateChoicebox.getItems().add(choice);
 		for (String choice:relChoices) relChoicebox.getItems().add(choice);
-		relChoicebox.setValue(relChoices[0]);
+		relChoicebox.setValue(NO_AUX);
 
 		// set up parameters for other controls
 		descriptionTextArea.setWrapText(true);
