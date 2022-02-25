@@ -347,7 +347,11 @@ public class EffectersTabController implements Initializable {
 			rateUnit.set(rateChoices[json.getInteger("rateUnit")]);
 			auxUnit.set(unitsChoices[json.getInteger("auxUnit")]);
 			auxModifier.set(json.getValue("auxUnitModifier"));
-			rel.set(json.getValue("rel"));
+			if ("0".equals(json.getValue("auxUnit")) && "0".equals(json.getValue("auxRateUnit")) && "0".equals(json.getValue("auxUnitModifier"))) {
+				rel.set(NO_AUX);
+			} else {
+				rel.set(json.getValue("rel"));
+			}
 			auxRateUnit.set(rateChoices[json.getInteger("auxRateUnit")]);
 			plusAccuracy.set(json.getValue("plusAccuracy"));
 			minusAccuracy.set(json.getValue("minusAccuracy"));
@@ -447,7 +451,13 @@ public class EffectersTabController implements Initializable {
 				json.put("auxUnit", new JsonValue(str));
 			}
 			json.put("auxUnitModifier", new JsonValue(auxModifier.get()));
-			json.put("rel", new JsonValue(rel.get()));
+			if (NO_AUX.equals(rel.get())) {
+				System.out.println("saving NO AUX");
+				json.put("rel", new JsonValue("multipliedBy"));
+			} else {
+				json.put("rel", new JsonValue(rel.get()));
+				System.out.println("saving " + rel.get());
+			}
 			{
 				String str = "0";
 				for (int i=0;i<rateChoices.length;i++) {
@@ -1024,7 +1034,7 @@ public class EffectersTabController implements Initializable {
 		nominalValueTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { nominalValueTextfield.fireEvent(new ActionEvent()); }}});
-		inputUnitsImage.focusedProperty().addListener(new ChangeListener<Boolean>() {
+		inputUnitsTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { inputUnitsTextfield.fireEvent(new ActionEvent()); }}});
 		descriptionTextArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -1037,7 +1047,7 @@ public class EffectersTabController implements Initializable {
 			}
 		});
 
-		// bind images to their input constraints
+		// set yellow image for nullable values
 		maxSampleRateImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
 			if (maxSampleRateTextfield.textProperty().getValueSafe().isBlank()) {
 				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
@@ -1068,6 +1078,8 @@ public class EffectersTabController implements Initializable {
 			}
 			return null;
 		}, nominalValueTextfield.textProperty()));
+		
+		// bind images to their input constraints
 		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 				manufacturerTextfield.textProperty().getValueSafe().isBlank(),
 				manufacturerTextfield.textProperty()));
