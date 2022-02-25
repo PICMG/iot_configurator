@@ -9,7 +9,8 @@ import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonResultFactory;
 
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class DeviceTest {
 
@@ -30,9 +31,25 @@ public class DeviceTest {
 
     @Test
     public void testGetCapabilitiesFruRecordByName() {
+        assertNull(device.getCapabilitiesFruRecordByName("Not a Capability"));
+
         JsonObject fruRecord = device.getCapabilitiesFruRecordByName("test");
-        Assert.assertEquals("412",fruRecord.getValue("vendorIANA"));
+        assertEquals("412", fruRecord.getValue("vendorIANA"));
         JsonArray jsonArray = (JsonArray) fruRecord.get("fields");
-        Assert.assertEquals(6, jsonArray.size());
+        assertEquals(6, jsonArray.size());
+    }
+
+    @Test
+    public void testGetLogicalEntityCapabilityByName() {
+        assertNull(device.getLogicalEntityCapabilityByName("Not a Logical Entity"));
+
+        JsonObject returnedLogicalEntity = device.getLogicalEntityCapabilityByName("simple1");
+        assertEquals("simple1", returnedLogicalEntity.getValue("name"));
+        assertEquals("false", returnedLogicalEntity.getValue("required"));
+    }
+
+    @Test
+    public void testGetConfiguredBindingValueFromKey() {
+        assertNull(device.getConfiguredBindingValueFromKey("Not a Binding", ""));
     }
 }
