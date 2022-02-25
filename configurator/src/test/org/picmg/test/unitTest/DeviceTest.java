@@ -57,13 +57,15 @@ public class DeviceTest {
 
     @Test
     public void testGetPinsUsedByChannel() {
-        ArrayList pins = device.getPinsUsedByChannel("Channel 1");
-        assertEquals(pins.size(), 0);
-        pins = device.getPinsUsedByChannel("Channel 2");
+        ArrayList pins = device.getPinsUsedByChannel("digital_in3");
+        assertEquals(pins.size(), 1);
+        pins = device.getPinsUsedByChannel("step_dir_out1");
         assertEquals(pins.size(), 3);
         for (int i = 0; i < 3; i++) {
-            String value = "J1." + (i + 1);
+            String value = "J1." + (i + 6);
             assertEquals(value, pins.get(i));
         }
+        pins = device.getPinsUsedByChannel("adigital_in3");
+        assertEquals(pins.size(), 0);
     }
 }
