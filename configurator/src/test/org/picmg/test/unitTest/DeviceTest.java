@@ -1,4 +1,4 @@
-package unitTest;
+package org.picmg.test.unitTest;
 
 import org.junit.After;
 import org.junit.Assert;
