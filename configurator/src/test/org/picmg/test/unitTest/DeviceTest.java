@@ -52,4 +52,11 @@ public class DeviceTest {
     public void testGetConfiguredBindingValueFromKey() {
         assertNull(device.getConfiguredBindingValueFromKey("Not a Binding", ""));
     }
+
+    @Test
+    public void testGetBindingValueFromKey() {
+        assertNull(device.getBindingValueFromKey("Not a Binding", "boundChannel"));
+        assertNull(device.getBindingValueFromKey("GlobalInterlockSensor", "Not a Binding Key"));
+        assertEquals("interlock_in", device.getBindingValueFromKey("GlobalInterlockSensor", "boundChannel"));
+    }
 }
