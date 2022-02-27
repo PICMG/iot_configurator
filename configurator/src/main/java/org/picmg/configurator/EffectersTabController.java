@@ -42,7 +42,6 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -101,7 +100,6 @@ public class EffectersTabController implements Initializable {
 	@FXML private ImageView plusAccuracyImage;
 	@FXML private ImageView ratedMaxImage;
 	@FXML private ImageView nominalValueImage;
-	@FXML private HBox auxFields;
 
 	// choice box choices
 	final String[] unitsChoices = {
@@ -122,11 +120,12 @@ public class EffectersTabController implements Initializable {
 		"None","Per_MicroSecond","Per_MilliSecond","Per_Second","Per_Minute","Per_Hour",
 		"Per_Day","Per_Week","Per_Month","Per_Year"
 	};
+
+	private final static String NO_AUX = "(No Aux)";
 	final String[] relChoices = {
-		"(No Aux)", "dividedBy","multipliedBy"
+		NO_AUX, "dividedBy","multipliedBy"
 	};
 	boolean modified;
-	boolean valid;
 	EffecterTableData workingData = new EffecterTableData();
 
 	/**
@@ -348,7 +347,11 @@ public class EffectersTabController implements Initializable {
 			rateUnit.set(rateChoices[json.getInteger("rateUnit")]);
 			auxUnit.set(unitsChoices[json.getInteger("auxUnit")]);
 			auxModifier.set(json.getValue("auxUnitModifier"));
-			rel.set(json.getValue("rel"));
+			if ("0".equals(json.getValue("auxUnit")) && "0".equals(json.getValue("auxRateUnit")) && "0".equals(json.getValue("auxUnitModifier"))) {
+				rel.set(NO_AUX);
+			} else {
+				rel.set(json.getValue("rel"));
+			}
 			auxRateUnit.set(rateChoices[json.getInteger("auxRateUnit")]);
 			plusAccuracy.set(json.getValue("plusAccuracy"));
 			minusAccuracy.set(json.getValue("minusAccuracy"));
@@ -448,7 +451,13 @@ public class EffectersTabController implements Initializable {
 				json.put("auxUnit", new JsonValue(str));
 			}
 			json.put("auxUnitModifier", new JsonValue(auxModifier.get()));
-			json.put("rel", new JsonValue(rel.get()));
+			if (NO_AUX.equals(rel.get())) {
+				System.out.println("saving NO AUX");
+				json.put("rel", new JsonValue("multipliedBy"));
+			} else {
+				json.put("rel", new JsonValue(rel.get()));
+				System.out.println("saving " + rel.get());
+			}
 			{
 				String str = "0";
 				for (int i=0;i<rateChoices.length;i++) {
@@ -853,16 +862,36 @@ public class EffectersTabController implements Initializable {
 		inputUnitsTextfield.setText(data.getOutputUnits());
 		ratedMaxTextfield.setText(data.getRatedMax());
 		nominalValueTextfield.setText(data.getNominalValue());
+		refreshAuxState(data.getRel());
 	}
 
 	private void selectDefaultEffecter() {
 		EffecterTableView.getSelectionModel().select(0);
 		EffecterTableData selecteddata = EffecterTableView.getSelectionModel().getSelectedItem();
-		if (selecteddata == null) return;
+		if (selecteddata == null) {
+			refreshAuxState(NO_AUX);
+			return;
+		}
 		workingData.set(selecteddata);
 		setEffecterData(selecteddata);
 		modified = false;
 		saveChangesButton.setDisable(true);
+	}
+
+	private void refreshAuxState(String status) {
+		if (status.equals(NO_AUX)) {
+			// if no aux, disable and default aux inputs
+			auxUnitChoicebox.getSelectionModel().select(0);
+			auxUnitModifierTextfield.setText("0");
+			auxRateChoicebox.getSelectionModel().select(0);
+			auxUnitChoicebox.setDisable(true);
+			auxUnitModifierTextfield.setDisable(true);
+			auxRateChoicebox.setDisable(true);
+		} else {
+			auxUnitChoicebox.setDisable(false);
+			auxUnitModifierTextfield.setDisable(false);
+			auxRateChoicebox.setDisable(false);
+		}
 	}
 
 	@Override
@@ -880,7 +909,7 @@ public class EffectersTabController implements Initializable {
 		for (String choice:rateChoices) rateUnitChoicebox.getItems().add(choice);
 		for (String choice:rateChoices) auxRateChoicebox.getItems().add(choice);
 		for (String choice:relChoices) relChoicebox.getItems().add(choice);
-		relChoicebox.setValue(relChoices[0]);
+		relChoicebox.setValue(NO_AUX);
 
 		// set up parameters for other controls
 		descriptionTextArea.setWrapText(true);
@@ -922,6 +951,7 @@ public class EffectersTabController implements Initializable {
 				if (data==null) return;
 				workingData.set(data);
 				setEffecterData(workingData);
+
 				modified = false;
 				saveChangesButton.setDisable(true);
 			}
@@ -970,8 +1000,8 @@ public class EffectersTabController implements Initializable {
 				workingData.setRel(newString);
 				updateName();
 				modified = true;
-				auxFields.setDisable(relChoices[0].equals(newString));
 				saveChangesButton.setDisable(!isValid());
+				refreshAuxState(newString);
 			}
 		});
 
@@ -1004,7 +1034,7 @@ public class EffectersTabController implements Initializable {
 		nominalValueTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { nominalValueTextfield.fireEvent(new ActionEvent()); }}});
-		inputUnitsImage.focusedProperty().addListener(new ChangeListener<Boolean>() {
+		inputUnitsTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { inputUnitsTextfield.fireEvent(new ActionEvent()); }}});
 		descriptionTextArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -1017,7 +1047,7 @@ public class EffectersTabController implements Initializable {
 			}
 		});
 
-		// bind images to their input constraints
+		// set yellow image for nullable values
 		maxSampleRateImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
 			if (maxSampleRateTextfield.textProperty().getValueSafe().isBlank()) {
 				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
@@ -1048,31 +1078,46 @@ public class EffectersTabController implements Initializable {
 			}
 			return null;
 		}, nominalValueTextfield.textProperty()));
+		
+		// bind images to their input constraints
 		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				manufacturerTextfield.textProperty().getValueSafe().isBlank(), manufacturerTextfield.textProperty()));
+				manufacturerTextfield.textProperty().getValueSafe().isBlank(),
+				manufacturerTextfield.textProperty()));
 		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				partNumberTextField.textProperty().getValueSafe().isBlank(), partNumberTextField.textProperty()));
+				partNumberTextField.textProperty().getValueSafe().isBlank(),
+				partNumberTextField.textProperty()));
 		descriptionImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				descriptionTextArea.textProperty().getValueSafe().isBlank(), descriptionTextArea.textProperty()));
-		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not().and(analogCheckbox.selectedProperty().not()
-						.and(pwmCheckbox.selectedProperty().not().and(rateCheckbox.selectedProperty().not()
-						.and(stepCheckbox.selectedProperty().not())))));
+				descriptionTextArea.textProperty().getValueSafe().isBlank(),
+				descriptionTextArea.textProperty()));
+		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not()
+				.and(analogCheckbox.selectedProperty().not()
+						.and(pwmCheckbox.selectedProperty().not()
+								.and(rateCheckbox.selectedProperty().not()
+										.and(stepCheckbox.selectedProperty().not())))));
 		maxSampleRateImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()), maxSampleRateTextfield.textProperty()));
+				!App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
+				maxSampleRateTextfield.textProperty()));
 		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()), unitModifierTextField.textProperty()));
+						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
+				unitModifierTextField.textProperty()));
 		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()), auxUnitModifierTextfield.textProperty()));
+						!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
+				auxUnitModifierTextfield.textProperty()));
 		inputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				inputUnitsTextfield.textProperty().getValueSafe().isBlank(), inputUnitsTextfield.textProperty()));
+				inputUnitsTextfield.textProperty().getValueSafe().isBlank(),
+				inputUnitsTextfield.textProperty()));
 		plusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isFloat(plusAccuracyTextfield.textProperty().getValueSafe()), plusAccuracyTextfield.textProperty()));
+						!App.isFloat(plusAccuracyTextfield.textProperty().getValueSafe()),
+				plusAccuracyTextfield.textProperty()));
 		minusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isFloat(minusAccuracyTextfield.textProperty().getValueSafe()), minusAccuracyTextfield.textProperty()));
+						!App.isFloat(minusAccuracyTextfield.textProperty().getValueSafe()),
+				minusAccuracyTextfield.textProperty()));
 		ratedMaxImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!App.isFloat(ratedMaxTextfield.textProperty().getValueSafe()), ratedMaxTextfield.textProperty()));
+				!App.isFloat(ratedMaxTextfield.textProperty().getValueSafe()),
+				ratedMaxTextfield.textProperty()));
 		nominalValueImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				!App.isFloat(nominalValueTextfield.textProperty().getValueSafe()), nominalValueTextfield.textProperty()));
+				!App.isFloat(nominalValueTextfield.textProperty().getValueSafe()),
+				nominalValueTextfield.textProperty()));
 		outputCurveImage.setVisible(false);
 		modified = false;
 	}

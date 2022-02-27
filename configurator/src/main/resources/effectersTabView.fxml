@@ -188,7 +188,7 @@
                               <ChoiceBox fx:id="rateUnitChoicebox" prefWidth="150.0" />
                            </children>
                         </HBox>
-                        <HBox fx:id="auxFields" alignment="CENTER" disable="true" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                        <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
                            <children>
                               <ChoiceBox fx:id="auxUnitChoicebox" prefWidth="100.0" />
                               <Label alignment="CENTER" minWidth="40.0" text=" x 10 ^ ">
