@@ -20,8 +20,7 @@ public class DeviceTest {
     public void setUp() {
         // load the default hardware profile
         JsonResultFactory factory = new JsonResultFactory();
-        JsonObject hardware = (JsonObject) factory.buildFromResource("microsam_new2.json");
-
+        JsonObject hardware = (JsonObject) factory.buildFromResource("microsam_new2_test.json");
         device = new Device(hardware);
     }
 
@@ -45,11 +44,13 @@ public class DeviceTest {
 
         JsonObject returnedLogicalEntity = device.getLogicalEntityCapabilityByName("simple1");
         assertEquals("simple1", returnedLogicalEntity.getValue("name"));
-        assertEquals("false", returnedLogicalEntity.getValue("required"));
+        assertEquals("true", returnedLogicalEntity.getValue("required"));
     }
 
     @Test
     public void testGetConfiguredBindingValueFromKey() {
         assertNull(device.getConfiguredBindingValueFromKey("Not a Binding", ""));
+        assertEquals("412", device.getConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSetVendorIANA"));
+        assertEquals("96", device.getConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSet"));
     }
 }
