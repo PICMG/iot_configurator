@@ -9,6 +9,8 @@ import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonResultFactory;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 
 public class DeviceTest {
@@ -34,5 +36,12 @@ public class DeviceTest {
         Assert.assertEquals("412",fruRecord.getValue("vendorIANA"));
         JsonArray jsonArray = (JsonArray) fruRecord.get("fields");
         Assert.assertEquals(6, jsonArray.size());
+    }
+
+    @Test
+    public void testGetBindingValueFromKey() {
+        assertNull(device.getBindingValueFromKey("Not a Binding", "boundChannel"));
+        assertNull(device.getBindingValueFromKey("GlobalInterlockSensor", "Not a Binding Key"));
+        assertEquals("interlock_in", device.getBindingValueFromKey("GlobalInterlockSensor", "boundChannel"));
     }
 }
