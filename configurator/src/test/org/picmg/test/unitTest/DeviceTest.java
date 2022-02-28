@@ -53,4 +53,12 @@ public class DeviceTest {
         assertEquals("412", device.getConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSetVendorIANA"));
         assertEquals("96", device.getConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSet"));
     }
+
+    @Test
+    public void  testGetConfiguredBindingFromName(){
+        assertNull(device.getConfiguredBindingFromName("Not a Binding"));
+        JsonObject binding = device.getConfiguredBindingFromName("GlobalInterlockSensor");
+        assertEquals("412", binding.getValue("stateSetVendorIANA"));
+        assertEquals("96", binding.getValue("stateSet"));
+    }
 }
