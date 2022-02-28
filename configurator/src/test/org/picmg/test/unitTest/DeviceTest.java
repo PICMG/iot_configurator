@@ -9,6 +9,8 @@ import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonResultFactory;
 
+import java.util.ArrayList;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -74,5 +76,19 @@ public class DeviceTest {
         assertNull(device.getInterfaceTypeFromName("Not a Channel Name"));
         assertEquals("digital_in", device.getInterfaceTypeFromName("digital_in1"));
         assertEquals("count_in", device.getInterfaceTypeFromName("count_in2"));
+    }
+
+    @Test
+    public void testGetPinsUsedByChannel() {
+        ArrayList pins = device.getPinsUsedByChannel("digital_in3");
+        assertEquals(pins.size(), 1);
+        pins = device.getPinsUsedByChannel("step_dir_out1");
+        assertEquals(pins.size(), 3);
+        for (int i = 0; i < 3; i++) {
+            String value = "J1." + (i + 6);
+            assertEquals(value, pins.get(i));
+        }
+        pins = device.getPinsUsedByChannel("adigital_in3");
+        assertEquals(pins.size(), 0);
     }
 }

@@ -24,22 +24,32 @@ package org.picmg.configurator;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.application.Application;
+import javafx.application.Platform;
+import javafx.geometry.Point2D;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.image.Image;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.stage.StageStyle;
+import javafx.stage.Window;
 
 public class App extends Application {	
 	
 	private static Scene scene;
-
+	private static boolean splash = true;
 	/**
 	 * isInteger()
 	 * A helper that returns true if the string parameter represents
@@ -89,19 +99,55 @@ public class App extends Application {
 
 
 	@Override
-    public void start(Stage stage) { 
-	    Parent root;
-	    try {
-			root = FXMLLoader.load(getClass().getClassLoader().getResource("topTabScene.fxml"));
-			Scene scene = new Scene(root, 1024, 768);
-
-			stage.setTitle("PICMG Configurator");
-			stage.setScene(scene);
-			stage.show();
-
-		} catch (IOException e) {
-	    	System.out.println(e);
+    public void start(Stage stage) {
+		Stage temp = new Stage();
+		if(splash == true){
+			try{
+				Parent root = FXMLLoader.load(getClass().getClassLoader().getResource("topTabScene.fxml"));
+				Scene scene = new Scene(root, 1024, 768);
+				stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("picmg_logo.png")));
+				stage.setTitle("PICMG Configurator");
+				stage.setScene(scene);
+				Parent splashScreen = FXMLLoader.load(getClass().getClassLoader().getResource("splashScreen.fxml"));
+				Scene splash = new Scene(splashScreen, 500, 500);
+				temp.initStyle(StageStyle.TRANSPARENT);
+				temp.setScene(splash);
+				temp.show();
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			Thread thread = new Thread(()->{
+				try {
+					Thread.sleep(3000);
+					Platform.runLater(()->{
+						temp.close();
+						try {
+							stage.show();
+							stage.setAlwaysOnTop(true);
+						} catch (Exception e) {
+							System.out.println(e);
+						}
+					});
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			});
+			thread.start();
+		}else{
+			Parent root;
+			try {
+				root = FXMLLoader.load(getClass().getClassLoader().getResource("topTabScene.fxml"));
+				Scene scene = new Scene(root, 1024, 768);
+				stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("picmg_logo.png")));
+				stage.setTitle("PICMG Configurator");
+				stage.setScene(scene);
+				stage.show();
+			} catch (IOException e) {
+				System.out.println(e);
+			}
 		}
+
+
 	}
 
 	/**
