@@ -11,6 +11,10 @@ import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonResultFactory;
 
 import static org.junit.Assert.*;
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class DeviceTest {
 
@@ -20,8 +24,7 @@ public class DeviceTest {
     public void setUp() {
         // load the default hardware profile
         JsonResultFactory factory = new JsonResultFactory();
-        JsonObject hardware = (JsonObject) factory.buildFromResource("microsam_new2.json");
-
+        JsonObject hardware = (JsonObject) factory.buildFromResource("microsam_new2_test.json");
         device = new Device(hardware);
     }
 
@@ -45,12 +48,50 @@ public class DeviceTest {
 
         JsonObject returnedLogicalEntity = device.getLogicalEntityCapabilityByName("simple1");
         assertEquals("simple1", returnedLogicalEntity.getValue("name"));
-        assertEquals("false", returnedLogicalEntity.getValue("required"));
+        assertEquals("true", returnedLogicalEntity.getValue("required"));
     }
 
     @Test
     public void testGetConfiguredBindingValueFromKey() {
         assertNull(device.getConfiguredBindingValueFromKey("Not a Binding", ""));
+        assertEquals("412", device.getConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSetVendorIANA"));
+        assertEquals("96", device.getConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSet"));
+    }
+
+    @Test
+    public void  testGetConfiguredBindingFromName(){
+        assertNull(device.getConfiguredBindingFromName("Not a Binding"));
+        JsonObject binding = device.getConfiguredBindingFromName("GlobalInterlockSensor");
+        assertEquals("412", binding.getValue("stateSetVendorIANA"));
+        assertEquals("96", binding.getValue("stateSet"));
+    }
+
+    @Test
+    public void testGetBindingValueFromKey() {
+        assertNull(device.getBindingValueFromKey("Not a Binding", "boundChannel"));
+        assertNull(device.getBindingValueFromKey("GlobalInterlockSensor", "Not a Binding Key"));
+        assertEquals("interlock_in", device.getBindingValueFromKey("GlobalInterlockSensor", "boundChannel"));
+    }
+
+    @Test
+    public void testGetInterfaceTypeFromName() {
+        assertNull(device.getInterfaceTypeFromName("Not a Channel Name"));
+        assertEquals("digital_in", device.getInterfaceTypeFromName("digital_in1"));
+        assertEquals("count_in", device.getInterfaceTypeFromName("count_in2"));
+    }
+
+    @Test
+    public void testGetPinsUsedByChannel() {
+        ArrayList pins = device.getPinsUsedByChannel("digital_in3");
+        assertEquals(pins.size(), 1);
+        pins = device.getPinsUsedByChannel("step_dir_out1");
+        assertEquals(pins.size(), 3);
+        for (int i = 0; i < 3; i++) {
+            String value = "J1." + (i + 6);
+            assertEquals(value, pins.get(i));
+        }
+        pins = device.getPinsUsedByChannel("adigital_in3");
+        assertEquals(pins.size(), 0);
     }
 
     @Test
