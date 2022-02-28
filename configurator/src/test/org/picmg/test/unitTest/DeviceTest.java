@@ -5,10 +5,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.picmg.configurator.Device;
+import org.picmg.jsonreader.JsonAbstractValue;
 import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonResultFactory;
 
+import static org.junit.Assert.*;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
@@ -90,5 +92,19 @@ public class DeviceTest {
         }
         pins = device.getPinsUsedByChannel("adigital_in3");
         assertEquals(pins.size(), 0);
+    }
+
+    @Test
+    public void testAddRecordConfigurationByName()
+    {
+        // Check for null
+        JsonAbstractValue fru = device.addFruRecordConfigurationByName("temp");
+        assertNull(fru);
+        fru = device.addFruRecordConfigurationByName("test");
+        assertNotNull(fru);
+        assertEquals("412", fru.getValue("vendorIANA"));
+        assertEquals("true", fru.getValue("required"));
+        assertEquals("test", fru.getValue("name"));
+        assertEquals(null, fru.getValue("description"));
     }
 }
