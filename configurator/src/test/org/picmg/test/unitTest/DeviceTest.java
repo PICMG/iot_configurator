@@ -68,4 +68,11 @@ public class DeviceTest {
         assertNull(device.getBindingValueFromKey("GlobalInterlockSensor", "Not a Binding Key"));
         assertEquals("interlock_in", device.getBindingValueFromKey("GlobalInterlockSensor", "boundChannel"));
     }
+
+    @Test
+    public void testGetInterfaceTypeFromName() {
+        assertNull(device.getInterfaceTypeFromName("Not a Channel Name"));
+        assertEquals("digital_in", device.getInterfaceTypeFromName("digital_in1"));
+        assertEquals("count_in", device.getInterfaceTypeFromName("count_in2"));
+    }
 }
