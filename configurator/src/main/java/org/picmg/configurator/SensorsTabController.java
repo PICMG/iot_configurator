@@ -197,22 +197,22 @@ public class SensorsTabController implements Initializable {
 
 		public String getType() {
 			StringBuilder sb = new StringBuilder();
-			sb.append(baseUnit.get());
-			if ((!auxUnit.get().equals("None"))&&(!auxUnit.get().equals("Unspecified"))) {
-				if (rel.get().equals("multipliedBy")) {
+			sb.append(baseUnit.getValueSafe());
+			if ((!"None".equals(auxUnit.getValueSafe()))&&(!"Unspecified".equals(auxUnit.getValueSafe()))) {
+				if ("multipliedBy".equals(rel.getValueSafe())) {
 					sb.append("_");
 				} else {
 					sb.append("_per_");
 				}
-				sb.append(auxUnit.get());
+				sb.append(auxUnit.getValueSafe());
 			}
-			if (!rateUnit.get().equals("None")) {
+			if (!"None".equals(rateUnit.getValueSafe())) {
 				sb.append("_");
-				sb.append(rateUnit.get());
+				sb.append(rateUnit.getValueSafe());
 			}
-			if (!auxRateUnit.get().equals("None")) {
+			if (!"None".equals(auxRateUnit.getValueSafe())) {
 				sb.append("_");
-				sb.append(auxRateUnit.get());
+				sb.append(auxRateUnit.getValueSafe());
 			}
 			// remove any special characters from the string
 			String type = sb.toString();
@@ -419,7 +419,11 @@ public class SensorsTabController implements Initializable {
 				json.put("auxUnit", new JsonValue(str));
 			}
 			json.put("auxUnitModifier", new JsonValue(auxModifier.get()));
-			json.put("rel", new JsonValue(rel.get()));
+			if (NO_AUX.equals(rel.getValueSafe())) {
+				json.put("rel", new JsonValue("multipliedBy"));
+			} else {
+				json.put("rel", new JsonValue(rel.get()));
+			}
 			{
 				String str = "0";
 				for (int i=0;i<rateChoices.length;i++) {
@@ -566,7 +570,7 @@ public class SensorsTabController implements Initializable {
 	public boolean isValid() {
 		if (manufacturerImage.isVisible()) return false;
 		if (baseUnitImage.isVisible()) return false;
-		if (maxSampleRateImage.isVisible()) return false;
+		if (maxSampleRateImage.isVisible() && maxSampleRateImage.imageProperty().getName().equals("red_dot.png")) return false;
 		if (interfacesImage.isVisible()) return false;
 		if (descriptionImage.isVisible()) return false;
 		if (modelImage.isVisible()) return false;
@@ -681,8 +685,8 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
-//		if (!App.isUnsignedInteger(unitModifierTextField.getText())) unitModifierImage.setVisible(true);
-//		else unitModifierImage.setVisible(false);
+		if (!App.isUnsignedInteger(unitModifierTextField.getText())) baseUnitImage.setVisible(true);
+		else baseUnitImage.setVisible(false);
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -690,8 +694,8 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
-//		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitModifierImage.setVisible(true);
-//		else auxUnitModifierImage.setVisible(false);
+		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitImage.setVisible(true);
+		else auxUnitImage.setVisible(false);
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -841,6 +845,7 @@ public class SensorsTabController implements Initializable {
 		plusAccuracyTextfield.setText(data.getPlusAccuracy());
 		minusAccuracyTextfield.setText(data.getMinusAccuracy());
 		outputUnitsTextfield.setText(data.getOutputUnits());
+		refreshAuxState(data.getRel());
 	}
 
 	public void clearIndicators() {
@@ -861,10 +866,30 @@ public class SensorsTabController implements Initializable {
 	private void selectDefaultSensor() {
 		SensorTableView.getSelectionModel().select(0);
 		SensorTableData selecteddata = SensorTableView.getSelectionModel().getSelectedItem();
+		if (selecteddata == null) {
+			refreshAuxState(NO_AUX);
+			return;
+		}
 		workingData.set(selecteddata);
 		setSensorData(selecteddata);
 		modified = false;
 		saveChangesButton.setDisable(true);
+	}
+
+	private void refreshAuxState(String status) {
+		if (status.equals(NO_AUX)) {
+			// if no aux, disable and default aux inputs
+			auxUnitChoicebox.getSelectionModel().select(0);
+			auxUnitModifierTextfield.setText("0");
+			auxRateChoicebox.getSelectionModel().select(0);
+			auxUnitChoicebox.setDisable(true);
+			auxUnitModifierTextfield.setDisable(true);
+			auxRateChoicebox.setDisable(true);
+		} else {
+			auxUnitChoicebox.setDisable(false);
+			auxUnitModifierTextfield.setDisable(false);
+			auxRateChoicebox.setDisable(false);
+		}
 	}
 
 	@Override
@@ -882,6 +907,7 @@ public class SensorsTabController implements Initializable {
 		for (String choice:rateChoices) rateUnitChoicebox.getItems().add(choice);
 		for (String choice:rateChoices) auxRateChoicebox.getItems().add(choice);
 		for (String choice:relChoices) relChoicebox.getItems().add(choice);
+		relChoicebox.setValue(NO_AUX);
 
 		// set up parameters for other controls
 		descriptionTextArea.setWrapText(true);
@@ -976,6 +1002,7 @@ public class SensorsTabController implements Initializable {
 				updateName();
 				modified = true;
 				saveChangesButton.setDisable(!isValid());
+				refreshAuxState(newString);
 			}
 		});
 

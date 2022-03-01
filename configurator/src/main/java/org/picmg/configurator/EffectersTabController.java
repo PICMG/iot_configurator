@@ -208,7 +208,7 @@ public class EffectersTabController implements Initializable {
 		public String getType() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(parseName(baseUnit.get()));
-			if ((!"none".equals(auxUnit.get()))&&(!"Unspecified".equals(auxUnit.get()))) {
+			if ((!"None".equals(auxUnit.get()))&&(!"Unspecified".equals(auxUnit.get()))) {
 				if ("multipliedBy".equals(rel.get())) {
 					sb.append("_");
 				} else {
@@ -452,11 +452,9 @@ public class EffectersTabController implements Initializable {
 			}
 			json.put("auxUnitModifier", new JsonValue(auxModifier.get()));
 			if (NO_AUX.equals(rel.get())) {
-				System.out.println("saving NO AUX");
 				json.put("rel", new JsonValue("multipliedBy"));
 			} else {
 				json.put("rel", new JsonValue(rel.get()));
-				System.out.println("saving " + rel.get());
 			}
 			{
 				String str = "0";
