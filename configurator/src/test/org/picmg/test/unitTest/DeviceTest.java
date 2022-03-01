@@ -33,6 +33,13 @@ public class DeviceTest {
     }
 
     @Test
+    public void testGetJson() {
+        JsonObject json = device.getJson();
+        assertTrue(json != null);
+        assertTrue(!json.isEmpty());
+    }
+
+    @Test
     public void testGetCapabilitiesFruRecordByName() {
         assertNull(device.getCapabilitiesFruRecordByName("Not a Capability"));
 
