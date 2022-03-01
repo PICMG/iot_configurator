@@ -119,8 +119,10 @@ public class SensorsTabController implements Initializable {
 		"None","Per_MicroSecond","Per_MilliSecond","Per_Second","Per_Minute","Per_Hour",
 		"Per_Day","Per_Week","Per_Month","Per_Year"
 	};
+
+	private final static String NO_AUX = "(No Aux)";
 	final String[] relChoices = {
-		"dividedBy","multipliedBy"
+		NO_AUX, "dividedBy","multipliedBy"
 	};
 	boolean modified;
 	boolean valid;
