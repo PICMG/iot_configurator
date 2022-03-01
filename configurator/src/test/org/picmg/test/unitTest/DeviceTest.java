@@ -37,7 +37,7 @@ public class DeviceTest {
         JsonObject json = device.getJson();
         assertTrue(json != null);
         assertTrue(!json.isEmpty());
-        assertNotEquals(json.getValue("capabilities"), null);
+        assertNotNull(json.getValue("capabilities"));
     }
 
     @Test
