@@ -84,21 +84,17 @@ public class SensorsTabController implements Initializable {
 	@FXML private Button viewCurveButton;
 	@FXML private Button saveChangesButton;
 	@FXML private ImageView manufacturerImage;
-	@FXML private ImageView unitModifierImage;
 	@FXML private ImageView baseUnitImage;
 	@FXML private ImageView maxSampleRateImage;
 	@FXML private ImageView interfacesImage;
 	@FXML private ImageView descriptionImage;
 	@FXML private ImageView modelImage;
-	@FXML private ImageView rateUnitImage;
 	@FXML private ImageView relImage;
-	@FXML private ImageView auxUnitModifierImage;
 	@FXML private ImageView auxUnitImage;
 	@FXML private ImageView minusAccuracyImage;
 	@FXML private ImageView outputCurveImage;
 	@FXML private ImageView outputUnitsImage;
 	@FXML private ImageView plusAccuracyImage;
-	@FXML private ImageView auxRateUnitImage;
 
 	// choice box choices
 	final String[] unitsChoices = {
@@ -569,21 +565,17 @@ public class SensorsTabController implements Initializable {
 	 */
 	public boolean isValid() {
 		if (manufacturerImage.isVisible()) return false;
-		if (unitModifierImage.isVisible()) return false;
 		if (baseUnitImage.isVisible()) return false;
 		if (maxSampleRateImage.isVisible()) return false;
 		if (interfacesImage.isVisible()) return false;
 		if (descriptionImage.isVisible()) return false;
 		if (modelImage.isVisible()) return false;
-		if (rateUnitImage.isVisible()) return false;
 		if (relImage.isVisible()) return false;
-		if (auxUnitModifierImage.isVisible()) return false;
 		if (auxUnitImage.isVisible()) return false;
 		if (minusAccuracyImage.isVisible()) return false;
 		if (outputCurveImage.isVisible()) return false;
 		if (outputUnitsImage.isVisible()) return false;
 		if (plusAccuracyImage.isVisible()) return false;
-		if (auxRateUnitImage.isVisible()) return false;
 		return true;
 	}
 	
@@ -689,8 +681,8 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(unitModifierTextField.getText())) unitModifierImage.setVisible(true);
-		else unitModifierImage.setVisible(false);
+//		if (!App.isUnsignedInteger(unitModifierTextField.getText())) unitModifierImage.setVisible(true);
+//		else unitModifierImage.setVisible(false);
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -698,8 +690,8 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitModifierImage.setVisible(true);
-		else auxUnitModifierImage.setVisible(false);
+//		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitModifierImage.setVisible(true);
+//		else auxUnitModifierImage.setVisible(false);
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -853,21 +845,17 @@ public class SensorsTabController implements Initializable {
 
 	public void clearIndicators() {
 		manufacturerImage.setVisible(false);
-		unitModifierImage.setVisible(false);
 		baseUnitImage.setVisible(false);
 		maxSampleRateImage.setVisible(false);
 		interfacesImage.setVisible(false);
 		descriptionImage.setVisible(false);
 		modelImage.setVisible(false);
-		rateUnitImage.setVisible(false);
 		relImage.setVisible(false);
-		auxUnitModifierImage.setVisible(false);
 		auxUnitImage.setVisible(false);
 		minusAccuracyImage.setVisible(false);
 		outputCurveImage.setVisible(false);
 		outputUnitsImage.setVisible(false);
 		plusAccuracyImage.setVisible(false);
-		auxRateUnitImage.setVisible(false);
 	}
 
 	private void selectDefaultSensor() {
