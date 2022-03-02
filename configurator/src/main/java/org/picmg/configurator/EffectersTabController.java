@@ -1052,7 +1052,7 @@ public class EffectersTabController implements Initializable {
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
 				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
-				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+				if (redDot != null) return new Image(redDot);
 			}
 			return null;
 		}, maxSampleRateTextfield.textProperty()));
@@ -1062,7 +1062,7 @@ public class EffectersTabController implements Initializable {
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
 				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
-				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+				if (redDot != null) return new Image(redDot);
 			}
 			return null;
 		}, ratedMaxTextfield.textProperty()));
@@ -1072,7 +1072,7 @@ public class EffectersTabController implements Initializable {
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
 				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
-				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+				if (redDot != null) return new Image(redDot);
 			}
 			return null;
 		}, nominalValueTextfield.textProperty()));

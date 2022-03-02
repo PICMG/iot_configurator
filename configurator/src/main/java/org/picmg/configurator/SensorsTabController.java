@@ -22,6 +22,7 @@
 //
 package org.picmg.configurator;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -38,6 +39,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
@@ -589,8 +591,6 @@ public class SensorsTabController implements Initializable {
 	
 	@FXML
 	void onManufacturerAction(ActionEvent event) {
-		if (manufacturerTextfield.getText().isBlank()) manufacturerImage.setVisible(true);
-		else manufacturerImage.setVisible(false);
 		workingData.setManufacturer(manufacturerTextfield.getText());
 		modified = true;
 		updateName();
@@ -599,8 +599,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onPartNumberAction(ActionEvent event) {
-		if (partNumberTextField.getText().isBlank()) modelImage.setVisible(true);
-		else modelImage.setVisible(false);
 		workingData.setModel(partNumberTextField.getText());
 		modified = true;
 		updateName();
@@ -609,13 +607,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onAnalogAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setAnalog(analogCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -623,13 +614,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onDigitalAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-			&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-			&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setDigital(digitalCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -637,13 +621,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onCountAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setCount(countCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -651,13 +628,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onRateAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setRate(rateCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -665,13 +635,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onQuadratureAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setQuadrature(quadratureCheckbox.isSelected());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -679,9 +642,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onMaxSampleRateAction(ActionEvent event) {
-		if ((!maxSampleRateTextfield.getText().isBlank())&&
-		   (!App.isUnsignedInteger(maxSampleRateTextfield.getText()))) maxSampleRateImage.setVisible(true);
-		else maxSampleRateImage.setVisible(false);
 		workingData.setMaxSampleRate(maxSampleRateTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -689,8 +649,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(unitModifierTextField.getText())) baseUnitImage.setVisible(true);
-		else baseUnitImage.setVisible(false);
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -698,8 +656,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitImage.setVisible(true);
-		else auxUnitImage.setVisible(false);
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -707,8 +663,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onPlusAccuractyAction(ActionEvent event) {
-		if (!App.isFloat(plusAccuracyTextfield.getText())) plusAccuracyImage.setVisible(true);
-		else plusAccuracyImage.setVisible(false);
 		workingData.setPlusAccuracy(plusAccuracyTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -716,8 +670,6 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onMinusAccuracyAction(ActionEvent event) {
-		if (!App.isFloat(minusAccuracyTextfield.getText())) minusAccuracyImage.setVisible(true);
-		else minusAccuracyImage.setVisible(false);
 		workingData.setMinusAccuracy(minusAccuracyTextfield.getText());
 		modified = true;
 		saveChangesButton.setDisable(!isValid());
@@ -1039,14 +991,59 @@ public class SensorsTabController implements Initializable {
 		descriptionTextArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) {
-					if (descriptionTextArea.getText().isBlank()) descriptionImage.setVisible(true);
-					else descriptionImage.setVisible(false);
 					workingData.setDescription(descriptionTextArea.getText());
 					saveChangesButton.setDisable(!isValid());
 					modified = true;
 				}
 			}
 		});
+
+		// set yellow image for nullable values
+		maxSampleRateImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
+			if (maxSampleRateTextfield.textProperty().getValueSafe().isBlank()) {
+				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
+				if (yellowDot != null) return new Image(yellowDot);
+			} else {
+				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
+				if (redDot != null) return new Image(redDot);
+			}
+			return null;
+		}, maxSampleRateTextfield.textProperty()));
+
+		// bind images to their input constraints
+		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						manufacturerTextfield.textProperty().getValueSafe().isBlank(),
+				manufacturerTextfield.textProperty()));
+		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						partNumberTextField.textProperty().getValueSafe().isBlank(),
+				partNumberTextField.textProperty()));
+		descriptionImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						descriptionTextArea.textProperty().getValueSafe().isBlank(),
+				descriptionTextArea.textProperty()));
+		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not()
+				.and(analogCheckbox.selectedProperty().not()
+						.and(countCheckbox.selectedProperty().not()
+								.and(rateCheckbox.selectedProperty().not()
+										.and(quadratureCheckbox.selectedProperty().not())))));
+		maxSampleRateImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
+				maxSampleRateTextfield.textProperty()));
+		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
+				unitModifierTextField.textProperty()));
+		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
+				auxUnitModifierTextfield.textProperty()));
+		outputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						outputUnitsTextfield.textProperty().getValueSafe().isBlank(),
+				outputUnitsTextfield.textProperty()));
+		plusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isFloat(plusAccuracyTextfield.textProperty().getValueSafe()),
+				plusAccuracyTextfield.textProperty()));
+		minusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isFloat(minusAccuracyTextfield.textProperty().getValueSafe()),
+				minusAccuracyTextfield.textProperty()));
+		outputCurveImage.setVisible(false);
 		modified = false;
 
 	}
