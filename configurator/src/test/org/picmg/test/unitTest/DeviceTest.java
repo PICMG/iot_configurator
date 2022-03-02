@@ -1,7 +1,6 @@
 package org.picmg.test.unitTest;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.picmg.configurator.Device;
@@ -10,8 +9,6 @@ import org.picmg.jsonreader.*;
 import static org.junit.Assert.*;
 import java.util.ArrayList;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 public class DeviceTest {
 
@@ -106,11 +103,22 @@ public class DeviceTest {
     }
 
     @Test
+    public void testSetConfiguredBindingFromKey() {
+        device.setConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSetVendorIANA", "422");
+        JsonObject binding = device.getConfiguredBindingFromName("GlobalInterlockSensor");
+        assertNotEquals("412", binding.getValue("stateSetVendorIANA"));
+        assertEquals("422", binding.getValue("stateSetVendorIANA"));
+        // changing the configuration back to original value
+        device.setConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSetVendorIANA", "412");
+        assertEquals("412", binding.getValue("stateSetVendorIANA"));
+    }
+
+    @Test
     public void testGetCapabilitiesBindingFromName() {
         assertNull(device.getCapabilitiesBindingFromName("simple1", "Not a Binding"));
         assertNull(device.getCapabilitiesBindingFromName("Not a Logical Entity", "GlobalInterlockSensor"));
 
-        JsonObject binding =  device.getCapabilitiesBindingFromName("simple1", "GlobalInterlockSensor");
+        JsonObject binding = device.getCapabilitiesBindingFromName("simple1", "GlobalInterlockSensor");
         assertEquals("stateSensor", binding.getValue("bindingType"));
         assertEquals("GlobalInterlockSensor", binding.getValue("name"));
         assertEquals("true", binding.getValue("includeInPdr"));
