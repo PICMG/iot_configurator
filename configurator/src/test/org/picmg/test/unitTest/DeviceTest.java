@@ -4,10 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.picmg.configurator.Device;
-import org.picmg.jsonreader.JsonAbstractValue;
-import org.picmg.jsonreader.JsonArray;
-import org.picmg.jsonreader.JsonObject;
-import org.picmg.jsonreader.JsonResultFactory;
+import org.picmg.jsonreader.*;
 
 import static org.junit.Assert.*;
 import java.util.ArrayList;
@@ -106,13 +103,33 @@ public class DeviceTest {
     }
 
     @Test
-    public void testSetConfiguredBindingFromKey(){
-        device.setConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSetVendorIANA", "422" );
+    public void testSetConfiguredBindingFromKey() {
+        device.setConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSetVendorIANA", "422");
         JsonObject binding = device.getConfiguredBindingFromName("GlobalInterlockSensor");
         assertNotEquals("412", binding.getValue("stateSetVendorIANA"));
         assertEquals("422", binding.getValue("stateSetVendorIANA"));
         // changing the configuration back to original value
-        device.setConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSetVendorIANA", "412" );
+        device.setConfiguredBindingValueFromKey("GlobalInterlockSensor", "stateSetVendorIANA", "412");
         assertEquals("412", binding.getValue("stateSetVendorIANA"));
+    }
+
+    @Test
+    public void testGetCapabilitiesBindingFromName() {
+        assertNull(device.getCapabilitiesBindingFromName("simple1", "Not a Binding"));
+        assertNull(device.getCapabilitiesBindingFromName("Not a Logical Entity", "GlobalInterlockSensor"));
+
+        JsonObject binding = device.getCapabilitiesBindingFromName("simple1", "GlobalInterlockSensor");
+        assertEquals("stateSensor", binding.getValue("bindingType"));
+        assertEquals("GlobalInterlockSensor", binding.getValue("name"));
+        assertEquals("true", binding.getValue("includeInPdr"));
+        assertEquals("true", binding.getValue("required"));
+        assertEquals("false", binding.getValue("isVirtual"));
+        assertEquals("Global interlock input binding", binding.getValue("description"));
+        assertEquals("interlock_in", binding.getValue("boundChannel"));
+        assertEquals("412", binding.getValue("stateSetVendorIANA"));
+        assertEquals("96", binding.getValue("stateSet"));
+        assertEquals("1", binding.getValue("stateWhenLow"));
+        assertEquals("2", binding.getValue("stateWhenHigh"));
+        assertEquals("6", binding.getValue("usedStates"));
     }
 }
