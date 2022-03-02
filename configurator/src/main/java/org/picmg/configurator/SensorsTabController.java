@@ -319,7 +319,11 @@ public class SensorsTabController implements Initializable {
 			rateUnit.set(rateChoices[json.getInteger("rateUnit")]);
 			auxUnit.set(unitsChoices[json.getInteger("auxUnit")]);
 			auxModifier.set(json.getValue("auxUnitModifier"));
-			rel.set(json.getValue("rel"));
+			if ("0".equals(json.getValue("auxUnit")) && "0".equals(json.getValue("auxRateUnit")) && "0".equals(json.getValue("auxUnitModifier"))) {
+				rel.set(NO_AUX);
+			} else {
+				rel.set(json.getValue("rel"));
+			}
 			auxRateUnit.set(rateChoices[json.getInteger("auxRateUnit")]);
 			plusAccuracy.set(json.getValue("plusAccuracy"));
 			minusAccuracy.set(json.getValue("minusAccuracy"));
