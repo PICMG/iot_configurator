@@ -31,7 +31,7 @@
 	<build>
 		<!-- Unit test -->
 		<testSourceDirectory>
-			src/test
+			src/main/java/org/picmg/test
 		</testSourceDirectory>
 
 		<plugins>

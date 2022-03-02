@@ -1,4 +1,4 @@
-package org.picmg.test.integrationTest;
+package org.picmg.test.unitTest;
 
 import javafx.application.Platform;
 import javafx.geometry.Point2D;

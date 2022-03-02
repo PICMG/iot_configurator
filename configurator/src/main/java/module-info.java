@@ -5,7 +5,9 @@ module configurator {
 
     opens org.picmg.configurator to javafx.fxml;
     exports org.picmg.configurator;
-    opens unitTest to junit;
-    exports unitTest;
     exports org.picmg.jsonreader;
+    exports org.picmg.test.unitTest;
+    opens org.picmg.test.unitTest to javafx.fxml;
+    exports org.picmg.test.integrationTest;
+    opens org.picmg.test.integrationTest to javafx.fxml;
 }
