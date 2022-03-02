@@ -31,7 +31,7 @@
                   <Font size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="boundChannelCBox" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="boundChannelCBox" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <Label prefHeight="35.0" prefWidth="518.0" text="  State Set">
                <font>
                   <Font size="13.0" />
@@ -43,19 +43,19 @@
                   <Font size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="lowOutputCBox" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="lowOutputCBox" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <Label prefHeight="32.0" prefWidth="518.0" text="  State With High Output">
                <font>
                   <Font size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="highOutputCBox" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="highOutputCBox" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <Label prefHeight="32.0" prefWidth="518.0" text="Default State">
                <font>
                   <Font size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="defaultStateCBox" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="defaultStateCBox" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
          </children>
       </VBox>
    </children>
