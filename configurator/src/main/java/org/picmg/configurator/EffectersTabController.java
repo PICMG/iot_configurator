@@ -208,7 +208,7 @@ public class EffectersTabController implements Initializable {
 		public String getType() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(parseName(baseUnit.get()));
-			if ((!"none".equals(auxUnit.get()))&&(!"Unspecified".equals(auxUnit.get()))) {
+			if ((!"None".equals(auxUnit.get()))&&(!"Unspecified".equals(auxUnit.get()))) {
 				if ("multipliedBy".equals(rel.get())) {
 					sb.append("_");
 				} else {
@@ -452,11 +452,9 @@ public class EffectersTabController implements Initializable {
 			}
 			json.put("auxUnitModifier", new JsonValue(auxModifier.get()));
 			if (NO_AUX.equals(rel.get())) {
-				System.out.println("saving NO AUX");
 				json.put("rel", new JsonValue("multipliedBy"));
 			} else {
 				json.put("rel", new JsonValue(rel.get()));
-				System.out.println("saving " + rel.get());
 			}
 			{
 				String str = "0";
@@ -1054,7 +1052,7 @@ public class EffectersTabController implements Initializable {
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
 				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
-				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+				if (redDot != null) return new Image(redDot);
 			}
 			return null;
 		}, maxSampleRateTextfield.textProperty()));
@@ -1064,7 +1062,7 @@ public class EffectersTabController implements Initializable {
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
 				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
-				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+				if (redDot != null) return new Image(redDot);
 			}
 			return null;
 		}, ratedMaxTextfield.textProperty()));
@@ -1074,7 +1072,7 @@ public class EffectersTabController implements Initializable {
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
 				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
-				if (redDot != null) return new Image(getClass().getClassLoader().getResourceAsStream("red_dot.png"));
+				if (redDot != null) return new Image(redDot);
 			}
 			return null;
 		}, nominalValueTextfield.textProperty()));
@@ -1098,11 +1096,23 @@ public class EffectersTabController implements Initializable {
 				!App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
 				maxSampleRateTextfield.textProperty()));
 		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
-				unitModifierTextField.textProperty()));
+								!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
+						unitModifierTextField.textProperty())
+				.or(Bindings.createBooleanBinding(() ->
+										baseUnitChoicebox.getSelectionModel().isEmpty(),
+								baseUnitChoicebox.getSelectionModel().selectedItemProperty())
+						.or(Bindings.createBooleanBinding(() ->
+										rateUnitChoicebox.getSelectionModel().isEmpty(),
+								rateUnitChoicebox.getSelectionModel().selectedItemProperty()))));
 		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
-				auxUnitModifierTextfield.textProperty()));
+								!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
+						auxUnitModifierTextfield.textProperty())
+				.or(Bindings.createBooleanBinding(() ->
+										auxUnitChoicebox.getSelectionModel().isEmpty(),
+								auxUnitChoicebox.getSelectionModel().selectedItemProperty())
+						.or(Bindings.createBooleanBinding(() ->
+										auxRateChoicebox.getSelectionModel().isEmpty(),
+								auxRateChoicebox.getSelectionModel().selectedItemProperty()))));
 		inputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 				inputUnitsTextfield.textProperty().getValueSafe().isBlank(),
 				inputUnitsTextfield.textProperty()));
