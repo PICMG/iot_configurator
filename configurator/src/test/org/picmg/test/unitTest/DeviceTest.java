@@ -7,6 +7,8 @@ import org.picmg.configurator.Device;
 import org.picmg.jsonreader.*;
 
 import static org.junit.Assert.*;
+
+import java.io.File;
 import java.util.ArrayList;
 
 
@@ -139,5 +141,22 @@ public class DeviceTest {
         assertEquals("1", binding.getValue("stateWhenLow"));
         assertEquals("2", binding.getValue("stateWhenHigh"));
         assertEquals("6", binding.getValue("usedStates"));
+    }
+
+    @Test
+    public void testAddLogicalEntityConfigurationByName(){
+
+        JsonAbstractValue newEntity = device.addLogicalEntityConfigurationByName("simple1");
+        JsonObject hardware = device.getJson();
+        JsonObject cfg = (JsonObject) hardware.get("configuration");
+        JsonArray cfgEntities = (JsonArray) cfg.get("logicalEntities");
+        boolean isExists = false;
+        for (JsonAbstractValue logicalEntity : cfgEntities) {
+            JsonObject edef = (JsonObject) logicalEntity;
+            if (edef.getValue("name").equals("simple1")) {
+                    isExists = true;
+            }
+        }
+        assertTrue(isExists);
     }
 }
