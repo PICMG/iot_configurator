@@ -1,9 +1,9 @@
 .button{
-    -fx-background-color: rgb(16,20,126);
-    -fx-text-fill: #ffffff;
+    -fx-background-color: rgb(215, 222, 230);
+    -fx-text-fill: #000000
 }
 .button:hover{
-    -fx-background-color: rgb(30,80,253);
+    -fx-background-color: rgb(190,190,215);
     -fx-text-fill: #ffffff;
 }
 .button:pressed{
@@ -11,13 +11,13 @@
     -fx-text-fill: #ffffff;
 }
 .choiceBox{
-    -fx-background-color: rgb(16,20,126);
+    -fx-background-color: rgb(215,222,230);
     -fx-control-inner-background: rgb(16,20,126);
-    -fx-mark-color: #ffffff;
-    -fx-text-fill: #ffffff;
+    -fx-mark-color: #000000;
+    -fx-text-fill: #000000;
 }
 .choiceBox .label{
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #000000;
 }
 .choiceBox:hover{
     -fx-background-color: rgb(30,80,253);
