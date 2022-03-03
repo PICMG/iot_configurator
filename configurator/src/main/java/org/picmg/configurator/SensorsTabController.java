@@ -22,6 +22,7 @@
 //
 package org.picmg.configurator;
 
+import javafx.beans.binding.Binding;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -91,7 +92,6 @@ public class SensorsTabController implements Initializable {
 	@FXML private ImageView interfacesImage;
 	@FXML private ImageView descriptionImage;
 	@FXML private ImageView modelImage;
-	@FXML private ImageView relImage;
 	@FXML private ImageView auxUnitImage;
 	@FXML private ImageView minusAccuracyImage;
 	@FXML private ImageView outputCurveImage;
@@ -580,7 +580,6 @@ public class SensorsTabController implements Initializable {
 		if (interfacesImage.isVisible()) return false;
 		if (descriptionImage.isVisible()) return false;
 		if (modelImage.isVisible()) return false;
-		if (relImage.isVisible()) return false;
 		if (auxUnitImage.isVisible()) return false;
 		if (minusAccuracyImage.isVisible()) return false;
 		if (outputCurveImage.isVisible()) return false;
@@ -804,21 +803,6 @@ public class SensorsTabController implements Initializable {
 		refreshAuxState(data.getRel());
 	}
 
-	public void clearIndicators() {
-		manufacturerImage.setVisible(false);
-		baseUnitImage.setVisible(false);
-		maxSampleRateImage.setVisible(false);
-		interfacesImage.setVisible(false);
-		descriptionImage.setVisible(false);
-		modelImage.setVisible(false);
-		relImage.setVisible(false);
-		auxUnitImage.setVisible(false);
-		minusAccuracyImage.setVisible(false);
-		outputCurveImage.setVisible(false);
-		outputUnitsImage.setVisible(false);
-		plusAccuracyImage.setVisible(false);
-	}
-
 	private void selectDefaultSensor() {
 		SensorTableView.getSelectionModel().select(0);
 		SensorTableData selecteddata = SensorTableView.getSelectionModel().getSelectedItem();
@@ -871,9 +855,6 @@ public class SensorsTabController implements Initializable {
 		// set up the sensor configuration with default data
 		selectDefaultSensor();
 
-		// clear error indicators
-		clearIndicators();
-
 		// set tooltips for each control
 		setTooltips();
 
@@ -889,6 +870,7 @@ public class SensorsTabController implements Initializable {
 							Alert alert = new Alert(Alert.AlertType.WARNING,
 									"If you select a new sensor now, unsaved work on the existing sensor will be lost.",
 									ButtonType.OK, ButtonType.CANCEL);
+							((Stage)alert.getDialogPane().getScene().getWindow()).setAlwaysOnTop(true);
 							alert.setTitle("Loss of Data Warning");
 							Optional<ButtonType> result = alert.showAndWait();
 							if (result.get() != ButtonType.OK) {
@@ -908,7 +890,6 @@ public class SensorsTabController implements Initializable {
 				if (data==null) return;
 				workingData.set(data);
 				setSensorData(workingData);
-				clearIndicators();
 				modified = false;
 				saveChangesButton.setDisable(true);
 			}
@@ -1029,11 +1010,23 @@ public class SensorsTabController implements Initializable {
 						!App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
 				maxSampleRateTextfield.textProperty()));
 		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
-				unitModifierTextField.textProperty()));
+								!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
+						unitModifierTextField.textProperty())
+				.or(Bindings.createBooleanBinding(() ->
+										baseUnitChoicebox.getSelectionModel().isEmpty(),
+								baseUnitChoicebox.getSelectionModel().selectedItemProperty())
+						.or(Bindings.createBooleanBinding(() ->
+										rateUnitChoicebox.getSelectionModel().isEmpty(),
+								rateUnitChoicebox.getSelectionModel().selectedItemProperty()))));
 		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
-				auxUnitModifierTextfield.textProperty()));
+								!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
+						auxUnitModifierTextfield.textProperty())
+				.or(Bindings.createBooleanBinding(() ->
+										auxUnitChoicebox.getSelectionModel().isEmpty(),
+								auxUnitChoicebox.getSelectionModel().selectedItemProperty())
+						.or(Bindings.createBooleanBinding(() ->
+										auxRateChoicebox.getSelectionModel().isEmpty(),
+								auxRateChoicebox.getSelectionModel().selectedItemProperty()))));
 		outputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 						outputUnitsTextfield.textProperty().getValueSafe().isBlank(),
 				outputUnitsTextfield.textProperty()));

@@ -1096,11 +1096,23 @@ public class EffectersTabController implements Initializable {
 				!App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
 				maxSampleRateTextfield.textProperty()));
 		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
-				unitModifierTextField.textProperty()));
+								!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
+						unitModifierTextField.textProperty())
+				.or(Bindings.createBooleanBinding(() ->
+										baseUnitChoicebox.getSelectionModel().isEmpty(),
+								baseUnitChoicebox.getSelectionModel().selectedItemProperty())
+						.or(Bindings.createBooleanBinding(() ->
+										rateUnitChoicebox.getSelectionModel().isEmpty(),
+								rateUnitChoicebox.getSelectionModel().selectedItemProperty()))));
 		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
-				auxUnitModifierTextfield.textProperty()));
+								!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
+						auxUnitModifierTextfield.textProperty())
+				.or(Bindings.createBooleanBinding(() ->
+										auxUnitChoicebox.getSelectionModel().isEmpty(),
+								auxUnitChoicebox.getSelectionModel().selectedItemProperty())
+						.or(Bindings.createBooleanBinding(() ->
+										auxRateChoicebox.getSelectionModel().isEmpty(),
+								auxRateChoicebox.getSelectionModel().selectedItemProperty()))));
 		inputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 				inputUnitsTextfield.textProperty().getValueSafe().isBlank(),
 				inputUnitsTextfield.textProperty()));

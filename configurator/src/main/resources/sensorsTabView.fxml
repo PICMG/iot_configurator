@@ -131,11 +131,6 @@
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="relImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7">
-                           <image>
-                              <Image url="@red_dot.png" />
-                           </image>
-                        </ImageView>
                         <ImageView fx:id="auxUnitImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="9">
                            <image>
                               <Image url="@red_dot.png" />
