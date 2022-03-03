@@ -4,7 +4,7 @@
 }
 .button:hover{
     -fx-background-color: rgb(190,190,215);
-    -fx-text-fill: #ffffff;
+    -fx-text-fill: #000000;
 }
 .button:pressed{
     -fx-background-color: rgb(2,51,219);
@@ -12,15 +12,15 @@
 }
 .choiceBox{
     -fx-background-color: rgb(215,222,230);
-    -fx-control-inner-background: rgb(16,20,126);
+    -fx-control-inner-background: rgb(190,190,215);
     -fx-mark-color: #000000;
-    -fx-text-fill: #000000;
+    -fx-text-fill: #ffffff;
 }
 .choiceBox .label{
     -fx-text-fill: #000000;
 }
 .choiceBox:hover{
-    -fx-background-color: rgb(30,80,253);
+    -fx-background-color:  rgb(190,190,215);
     -fx-text-fill: #ffffff;
 }
 .choiceBox .list-cell{
