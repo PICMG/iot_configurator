@@ -310,6 +310,8 @@
 						"required": true,
 						"isVirtual": false,
 						"description": "Global interlock input binding",
+						"inputCurve": null,
+						"outputCurve" : null,
 						"allowedInterfaceTypes": ["digital_in"],
 						"boundChannel": "interlock_in",
 						"stateSetVendorIANA": 412,

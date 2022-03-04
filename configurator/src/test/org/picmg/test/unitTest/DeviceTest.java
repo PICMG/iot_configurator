@@ -151,12 +151,39 @@ public class DeviceTest {
         JsonObject cfg = (JsonObject) hardware.get("configuration");
         JsonArray cfgEntities = (JsonArray) cfg.get("logicalEntities");
         boolean isExists = false;
+        JsonObject edef = null;
         for (JsonAbstractValue logicalEntity : cfgEntities) {
-            JsonObject edef = (JsonObject) logicalEntity;
+           edef  = (JsonObject) logicalEntity;
             if (edef.getValue("name").equals("simple1")) {
                     isExists = true;
             }
         }
         assertTrue(isExists);
+        JsonArray bindings = (JsonArray)edef.get("ioBindings");
+        JsonArray result = new JsonArray();
+        JsonObject point1 = new JsonObject();
+        JsonObject point2 = new JsonObject();
+        point1.put("in",new JsonValue("0"));
+        point1.put("out",new JsonValue("0"));
+        point2.put("in",new JsonValue("1000"));
+        point2.put("out",new JsonValue("1000"));
+        result.add(0,point1);
+        result.add(1,point2);
+        for (JsonAbstractValue val : bindings) {
+            JsonObject binding = (JsonObject) val;
+            // if the binding has an input curve that is null, set it to a default
+            // linear response.
+            if ((binding.containsKey("inputCurve"))) {
+                JsonArray inputCurveActual = (JsonArray)binding.get("inputCurve");
+                assertTrue(inputCurveActual.containsAny(result));
+            }
+            if ((binding.containsKey("outputCurve"))) {
+                JsonArray inputCurveActual = (JsonArray)binding.get("outputCurve");
+                assertTrue(inputCurveActual.containsAny(result));
+            }
+        }
+
+
+
     }
 }
