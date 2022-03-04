@@ -159,6 +159,8 @@ public class DeviceTest {
             }
         }
         assertTrue(isExists);
+        JsonAbstractValue newEntity1 = device.addLogicalEntityConfigurationByName("simple");
+        assertNull(newEntity1);
         JsonArray bindings = (JsonArray)edef.get("ioBindings");
         JsonArray result = new JsonArray();
         JsonObject point1 = new JsonObject();
