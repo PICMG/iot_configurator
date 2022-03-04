@@ -178,8 +178,8 @@ public class DeviceTest {
                 assertTrue(inputCurveActual.containsAny(result));
             }
             if ((binding.containsKey("outputCurve"))) {
-                JsonArray inputCurveActual = (JsonArray)binding.get("outputCurve");
-                assertTrue(inputCurveActual.containsAny(result));
+                JsonArray outputCurveActual = (JsonArray)binding.get("outputCurve");
+                assertTrue(outputCurveActual.containsAny(result));
             }
         }
 
