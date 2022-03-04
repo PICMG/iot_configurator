@@ -22,7 +22,7 @@
                         <AnchorPane prefHeight="141.0" prefWidth="200.0" />
                         <Label prefHeight="18.0" prefWidth="174.0" text=" Search:" textAlignment="CENTER" />
                         <TextField fx:id="searchField" />
-                        <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="24.0" text="🔍">
+                        <Button fx:id="searchButton" mnemonicParsing="false" prefHeight="26.0" prefWidth="24.0" text="🔍" stylesheets="ButtonDecor.css" styleClass="button">
                            <font>
                               <Font size="10.0" />
                            </font></Button>
@@ -44,7 +44,7 @@
       </SplitPane>
       <AnchorPane fx:id="searchWindow" prefHeight="35.0" prefWidth="600.0">
          <children>
-            <Button fx:id="cancelButton" layoutX="274.0" layoutY="8.0" mnemonicParsing="false" text="Cancel" />
+            <Button fx:id="cancelButton" layoutX="274.0" layoutY="8.0" mnemonicParsing="false" text="Cancel" stylesheets="ButtonDecor.css" styleClass="button"/>
          </children>
       </AnchorPane>
    </children>

@@ -43,7 +43,7 @@
                   </Label>
                </children>
             </FlowPane>
-            <ComboBox fx:id="boundChannelCBox" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="boundChannelCBox" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <FlowPane prefHeight="33.0" prefWidth="518.0">
                <children>
                   <ImageView fx:id="setIndicator" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
@@ -73,7 +73,7 @@
                   </Label>
                </children>
             </FlowPane>
-            <ComboBox fx:id="lowInputCBox" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="lowInputCBox" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <FlowPane prefHeight="33.0" prefWidth="518.0">
                <children>
                   <ImageView fx:id="highIndicator" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true">
@@ -88,7 +88,7 @@
                   </Label>
                </children>
             </FlowPane>
-            <ComboBox fx:id="highInputCBox" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="highInputCBox" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
          </children>
       </VBox>
    </children>

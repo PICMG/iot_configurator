@@ -31,7 +31,7 @@
                   <Font size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="boundChannelCBox" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="boundChannelCBox" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <Label prefHeight="35.0" prefWidth="518.0" text="  Physical Effecter">
                <font>
                   <Font size="13.0" />
@@ -55,7 +55,7 @@
                   <Font size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="physicalBaseUnit" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="physicalBaseUnit" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <Label prefHeight="35.0" prefWidth="518.0" text="  Physical Unit Modifier">
                <font>
                   <Font size="13.0" />
@@ -67,19 +67,19 @@
                   <Font size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="physicalRate" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="physicalRate" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <Label prefHeight="32.0" prefWidth="518.0" text="  Physical Aux">
                <font>
                   <Font size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="physicalAux" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="physicalAux" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <Label prefHeight="32.0" prefWidth="518.0" text="  Physical Aux Rate">
                <font>
                   <Font size="13.0" />
                </font>
             </Label>
-            <ComboBox fx:id="physicalAuxRate" prefHeight="26.0" prefWidth="525.0" />
+            <ComboBox fx:id="physicalAuxRate" prefHeight="26.0" prefWidth="525.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
             <Label prefHeight="35.0" prefWidth="518.0" text="  Physical Aux Unit Modifier">
                <font>
                   <Font size="13.0" />
