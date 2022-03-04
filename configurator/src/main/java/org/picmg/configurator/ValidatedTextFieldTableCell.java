@@ -24,12 +24,10 @@ package org.picmg.configurator;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
-import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.text.Text;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import javafx.util.converter.DefaultStringConverter;
@@ -124,8 +122,9 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
         super.cancelEdit();
         setText(getValue(getTableRow().getItem()));
         if (cancel) {
-            clickCommit(getConverter().fromString(tf.getText()), column);
+            clickCommit(getConverter().fromString(tf.getText()));
             setValue(getTableRow().getItem(), tf.getText());
+            cancel = false;
         }
         cancel = true;
     }
@@ -172,7 +171,6 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
                             column = this.getTableColumn();
                             position = this.getTableView().getEditingCell();
                             view = this.getTableView();
-
                         }
                     });
 
@@ -180,22 +178,9 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
 
     }
 
-    public void clickCommit(T var1, TableColumn column) {
-        TableView var2 = view;
-
-        if (var2 != null) {
-            TableColumn.CellEditEvent var3 = new TableColumn.CellEditEvent(view, position, column.editCommitEvent(), var1);
-            int row = var3.getTablePosition().getRow();
-            if (this.getTableColumn() != null)
-                Event.fireEvent(column, var3);
-
-        }
-
-        this.updateItem(var1, false);
-        if (var2 != null) {
-            var2.edit(-1, (TableColumn) null);
-        }
+    public void clickCommit(T event) {
+        if (view != null && column != null)
+            ListView.EditEvent.fireEvent(column, new TableColumn.CellEditEvent(view, position, column.editCommitEvent(), event));
     }
-
 
 }

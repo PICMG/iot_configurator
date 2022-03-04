@@ -1,15 +1,16 @@
-package org.picmg.configurator;
+package org.picmg.test.integrationTest;
 
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.picmg.test.unitTest.RobotUtils;
+import org.picmg.configurator.App;
+
 
 import java.io.IOException;
 
-public class TestApp extends App{
+public class TestApp extends App {
 
     @Override
     public void start(Stage stage) {
