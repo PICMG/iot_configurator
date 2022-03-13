@@ -772,10 +772,22 @@ public class EffectersTabController implements Initializable {
 		saveChangesButton.setDisable(!isValid());
 	}
 
+	private File saveAs(File initialDir) {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
+		fileChooser.setTitle("Save Changes");
+		fileChooser.setInitialDirectory(initialDir);
+		fileChooser.setInitialFileName(workingData.getName() + ".json");
+		return fileChooser.showSaveDialog(saveChangesButton.getScene().getWindow());
+	}
+
 	@FXML
 	void onSaveChangesAction(ActionEvent event) {
-		String path = System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json";
-		workingData.SaveToFile(path);
+		File path = new File(System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json");
+		if (!path.exists()) {
+			path = saveAs(path.getParentFile());
+		}
+		workingData.SaveToFile(path.toString());
 		modified = false;
 		saveChangesButton.setDisable(true);
 		initializeTable();

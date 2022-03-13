@@ -68,7 +68,7 @@
                         <Label text="Name" />
                         <Label text="Manufacturer" GridPane.rowIndex="1" />
                         <Label text="Part Number" GridPane.rowIndex="2" />
-                        <TextField fx:id="nameTextField" editable="false" GridPane.columnIndex="2" />
+                        <TextField fx:id="nameTextField" editable="false" GridPane.columnIndex="2"  />
                         <TextField fx:id="manufacturerTextfield" onAction="#onManufacturerAction" GridPane.columnIndex="2" GridPane.rowIndex="1" />
                         <TextField fx:id="partNumberTextField" onAction="#onPartNumberAction" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <Label text="Description" GridPane.rowIndex="3" />
