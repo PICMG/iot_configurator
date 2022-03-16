@@ -189,7 +189,17 @@ public class DeviceTest {
 
     @Test
     public void testRemoveLogicalEntityConfigurationByName() {
+        assertNotNull(device.getLogicalEntityConfigurationByName("simple1"));
         device.removeLogicalEntityConfigurationByName("simple1");
+        assertNull(device.getLogicalEntityConfigurationByName("simple1"));
+
+        assertNull(device.getLogicalEntityConfigurationByName("notALogicalEntity"));
         device.removeLogicalEntityConfigurationByName("notALogicalEntity");
+        assertNull(device.getLogicalEntityConfigurationByName("notALogicalEntity"));
+    }
+
+    @Test
+    public void testGetLogicalEntityConfigurationByName() {
+
     }
 }
