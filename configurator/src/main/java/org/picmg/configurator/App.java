@@ -45,6 +45,8 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.StageStyle;
 import javafx.stage.Window;
+import org.picmg.test.TestMaker.Test;
+import org.picmg.test.TestMaker.TestWriter;
 
 public class App extends Application {	
 	
@@ -155,6 +157,9 @@ public class App extends Application {
 	 * @param args - the command line arguments for the program
 	 */
 	public static void main(String[] args) {
+		Test temp = new Test();
+		temp.setName("Testing");
+		TestWriter.getInstance().createTest(temp);
 		launch();
     }
 }

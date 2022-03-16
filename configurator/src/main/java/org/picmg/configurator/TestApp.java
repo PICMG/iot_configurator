@@ -5,9 +5,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import org.junit.Test;
 import org.picmg.test.unitTest.RobotUtils;
 
 import java.io.IOException;
+
+
 
 public class TestApp extends App{
 
@@ -32,6 +35,8 @@ public class TestApp extends App{
         RobotUtils.clickEffecters(scene);
         RobotUtils.clickDevice(scene);
         RobotUtils.clickReset(scene);
+
         //RobotUtils.close();
     }
+
 }

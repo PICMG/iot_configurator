@@ -35,6 +35,10 @@ public class Test {
     {
         this.name = name;
     }
+    public String getName()
+    {
+        return name;
+    }
     public void addStep(String type, String id, String data)
     {
         Step newStep = new Step(type,id,data);
