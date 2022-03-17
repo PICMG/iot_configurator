@@ -4,19 +4,19 @@ public class TestWriter {
 
 
     private static TestWriter writer;
-    private Test currentTest;
+    private TestContainer currentTestContainer;
     private TestWriter()
     {
 
     }
 
-    public void createTest(Test test)
+    public void createTest(TestContainer test)
     {
-        currentTest = test;
+        currentTestContainer = test;
         writeHeader();
         writeImports();
         writeClass();
-        currentTest =  null;
+        currentTestContainer =  null;
     }
     private void writeHeader()
     {
@@ -25,10 +25,18 @@ public class TestWriter {
 
     private void writeClass()
     {
-        System.out.println("public class " + currentTest.getName() + "\n{\n");
+        System.out.println("public class " + currentTestContainer.getTestContainerName() + "\n{\n");
         // Write test calls
-        wrtieTest();
+        writeTests();
         System.out.println("}");
+    }
+
+    private void writeTests()
+    {
+        for(Test t : currentTestContainer.getTest())
+        {
+            writeTest(t);
+        }
     }
     private void writeImports()
     {
@@ -47,9 +55,10 @@ public class TestWriter {
         }
     }
 
-    public void wrtieTest()
+    private void writeTest(Test t)
     {
-        System.out.println("\t@Test\n\tpublic void test\n\t{\n\n\t}\n");
+        System.out.println("\t@Test\n\tpublic void " + t.getName() +"\n\t{\n\n\t}\n");
+
     }
     public static TestWriter getInstance()
     {

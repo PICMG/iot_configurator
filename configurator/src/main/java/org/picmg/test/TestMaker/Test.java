@@ -12,6 +12,7 @@ public class Test {
         public String id;
         public String data;
         public String type;
+        public String name;
 
         public Step(String type, String id, String data)
         {
@@ -53,20 +54,6 @@ public class Test {
         {
             s.print();
         }
-    }
-
-    private void wrtieClick() {
-
-    }
-
-    private  void writeType()
-    {
-
-    }
-
-    private void wrtieTest()
-    {
-
     }
 
 }

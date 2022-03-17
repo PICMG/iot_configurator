@@ -10,38 +10,58 @@ import java.io.File;
 public class TestReader {
 
     int index;
-    Test test;
-
-    public TestReader()
+    TestContainer container;
+    static TestReader reader;
+    private TestReader()
     {
-        test = new Test();
-        index = 0;
+        reset();
     }
 
-    public boolean read(String Test)
+    private void reset()
     {
+        container = new TestContainer();
+        index = 0;
+    }
+    public static TestReader getInstance()
+    {
+        if(reader == null)
+            reader = new TestReader();
+        return reader;
+    }
+
+    public boolean read(String Test) throws Exception {
         String[] testValues = Test.split(":");
         readFileName(testValues);
-        readSteps(testValues);
-        test.print();
+        for(int i = index; i < testValues.length; i++) {
+            if(testValues[i].contains("Steps,Start"))
+                readSteps(testValues);
+        }
+        container.print();
+        TestWriter.getInstance().createTest(container);
+        reset();
         return true;
     }
 
     private void readFileName(String[] testValues)
     {
         String[] nameValues = testValues[index].split(",");
-        test.setName(nameValues[1]);
+        container.setTestContainerName(nameValues[1]);
         index++;
     }
 
-    private void readSteps(String[] testValues)
-    {
-        if(testValues[index].contains("Steps,Start"))
-        {
+    private void readSteps(String[] testValues) throws Exception {
+
             index++;
+            Test test = new Test();
+            System.out.println("HERE in steps");
             while(!testValues[index].contains("Steps,End"))
             {
-                if(testValues[index].contains("Click"))
+                if(testValues[index].contains("Name"))
+                {
+                    String[] nameValues = testValues[index].split(",");
+                    test.setName(nameValues[1]);
+                }
+                else if(testValues[index].contains("Click"))
                 {
                     String[] clickValues = testValues[index].split(",");
                     test.addStep(clickValues[0],clickValues[1], "");
@@ -59,11 +79,12 @@ public class TestReader {
                 }
                 else
                 {
-                    System.out.println("NOPE");
+                    System.out.println(testValues[index]);
+                    throw new Exception("Invalid option");
                 }
                 index++;
             }
+            index++;
+            container.addTest(test);
         }
-    }
-
 }
