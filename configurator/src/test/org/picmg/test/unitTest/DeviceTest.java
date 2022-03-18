@@ -155,7 +155,6 @@ public class DeviceTest {
 
     @Test
     public void testAddLogicalEntityConfigurationByName() {
-
         JsonAbstractValue newEntity = device.addLogicalEntityConfigurationByName("simple1");
         JsonObject hardware = device.getJson();
         JsonObject cfg = (JsonObject) hardware.get("configuration");
@@ -225,5 +224,30 @@ public class DeviceTest {
         assertFalse(device.canEntityBeAdded("notAnEntity"));
         assertFalse(device.canEntityBeAdded("simple1"));
         assertFalse(device.canEntityBeAdded("pid1"));
+    }
+
+    @Test
+    public void testGetPossibleChannelsForBinding() {
+        JsonObject binding = new JsonObject();
+        binding.put("bindingType", new JsonValue("stateSensor"));
+        binding.put("boundChannel", new JsonValue("interlock_in"));
+
+        JsonArray interfaceTypes = new JsonArray();
+        interfaceTypes.add(new JsonValue("digital_in"));
+
+        binding.put("allowedInterfaceTypes", interfaceTypes);
+
+        ArrayList<String> channels = device.getPossibleChannelsForBinding(binding);
+        assertEquals(channels.get(0), "interlock_in");
+        assertEquals(channels.get(1), "digital_in1");
+        assertEquals(channels.get(2), "digital_in2");
+        assertEquals(channels.get(3), "digital_in3");
+        assertEquals(channels.get(4), "digital_in4");
+        assertEquals(channels.get(5), "digital_in5");
+    }
+
+    @Test
+    public void testChannelBinding() {
+
     }
 }
