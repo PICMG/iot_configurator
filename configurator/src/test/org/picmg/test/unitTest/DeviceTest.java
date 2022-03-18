@@ -247,7 +247,23 @@ public class DeviceTest {
     }
 
     @Test
-    public void testChannelBinding() {
+    public void testGetPossibleChannelsTypesForBinding() {
+        JsonObject binding = new JsonObject();
+        binding.put("bindingType", new JsonValue("stateSensor"));
+        binding.put("boundChannel", new JsonValue("interlock_in"));
 
+        JsonArray interfaceTypes = new JsonArray();
+        interfaceTypes.add(new JsonValue("digital_in"));
+
+        binding.put("allowedInterfaceTypes", interfaceTypes);
+
+        ArrayList<String> usedPins = new ArrayList<>();
+        ArrayList<String> channelTypes = device.getPossibleChannelsTypesForBinding(binding, usedPins);
+        assertEquals(channelTypes.get(0), "digital_in");
+        assertEquals(channelTypes.get(1), "digital_in");
+        assertEquals(channelTypes.get(2), "digital_in");
+        assertEquals(channelTypes.get(3), "digital_in");
+        assertEquals(channelTypes.get(4), "digital_in");
+        assertEquals(channelTypes.get(5), "digital_in");
     }
 }
