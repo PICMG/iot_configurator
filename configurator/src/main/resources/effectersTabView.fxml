@@ -97,11 +97,11 @@
                         <TextField fx:id="inputUnitsTextfield" onAction="#onInputUnitsAction" GridPane.columnIndex="2" GridPane.rowIndex="13" />
                         <HBox prefHeight="100.0" prefWidth="200.0" spacing="15.0" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.rowIndex="14">
                            <children>
-                              <Button fx:id="selectCurveButton" mnemonicParsing="false" onAction="#onOutputCurveSelectAction" text="Select From File" />
-                              <Button fx:id="viewCurveButton" mnemonicParsing="false" onAction="#onOutputCurveViewAction" text="View" />
+                              <Button fx:id="selectCurveButton" mnemonicParsing="false" onAction="#onOutputCurveSelectAction" text="Select From File" stylesheets="ButtonDecor.css" styleClass="button"/>
+                              <Button fx:id="viewCurveButton" mnemonicParsing="false" onAction="#onOutputCurveViewAction" text="View" stylesheets="ButtonDecor.css" styleClass="button"/>
                            </children>
                         </HBox>
-                        <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#onSaveChangesAction" text="Save Changes" GridPane.columnIndex="2" GridPane.rowIndex="17" />
+                        <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#onSaveChangesAction" text="Save Changes" GridPane.columnIndex="2" GridPane.rowIndex="17" stylesheets="ButtonDecor.css" styleClass="button"/>
                         <ImageView fx:id="manufacturerImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                            <image>
                               <Image url="@red_dot.png" />
@@ -169,7 +169,7 @@
                         </ImageView>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.hgrow="SOMETIMES" GridPane.rowIndex="8" GridPane.valignment="CENTER">
                            <children>
-                              <ChoiceBox fx:id="baseUnitChoicebox" prefHeight="25.0" prefWidth="100.0" />
+                              <ChoiceBox fx:id="baseUnitChoicebox" prefHeight="25.0" prefWidth="100.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                               <Label alignment="CENTER" minWidth="40.0" text=" x 10 ^ ">
                                  <HBox.margin>
                                     <Insets />
@@ -185,12 +185,12 @@
                                     <Insets />
                                  </HBox.margin>
                               </Label>
-                              <ChoiceBox fx:id="rateUnitChoicebox" prefWidth="150.0" />
+                              <ChoiceBox fx:id="rateUnitChoicebox" prefWidth="150.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                            </children>
                         </HBox>
                         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="9">
                            <children>
-                              <ChoiceBox fx:id="auxUnitChoicebox" prefWidth="100.0" />
+                              <ChoiceBox fx:id="auxUnitChoicebox" prefWidth="100.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                               <Label alignment="CENTER" minWidth="40.0" text=" x 10 ^ ">
                                  <HBox.margin>
                                     <Insets />
@@ -202,12 +202,12 @@
                                     <Insets />
                                  </HBox.margin>
                               </Label>
-                              <ChoiceBox fx:id="auxRateChoicebox" prefWidth="150.0" />
+                              <ChoiceBox fx:id="auxRateChoicebox" prefWidth="150.0" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                            </children>
                         </HBox>
                         <Label text="Rated Max" GridPane.rowIndex="15" />
                         <Label text="Nominal Value" GridPane.rowIndex="16" />
-                        <ChoiceBox fx:id="relChoicebox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="7" />
+                        <ChoiceBox fx:id="relChoicebox" prefWidth="150.0" GridPane.columnIndex="2" GridPane.halignment="LEFT" GridPane.rowIndex="7" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                         <TextField fx:id="ratedMaxTextfield" GridPane.columnIndex="2" GridPane.rowIndex="15" onAction="#onRatedMaxAction" />
                         <TextField fx:id="nominalValueTextfield" GridPane.columnIndex="2" GridPane.rowIndex="16" onAction="#onNominalValueAction" />
                      </children>

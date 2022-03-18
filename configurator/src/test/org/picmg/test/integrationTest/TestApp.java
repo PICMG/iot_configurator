@@ -1,4 +1,4 @@
-package org.picmg.configurator;
+package org.picmg.test.integrationTest;
 
 
 import javafx.fxml.FXMLLoader;
@@ -6,13 +6,15 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.Test;
-import org.picmg.test.unitTest.RobotUtils;
+import org.picmg.configurator.App;
+import org.picmg.test.integrationTest.RobotUtils;
 
 import java.io.IOException;
 
 
+import java.io.IOException;
 
-public class TestApp extends App{
+public class TestApp extends App {
 
     @Override
     public void start(Stage stage) {
@@ -35,7 +37,6 @@ public class TestApp extends App{
         RobotUtils.clickEffecters(scene);
         RobotUtils.clickDevice(scene);
         RobotUtils.clickReset(scene);
-
         //RobotUtils.close();
     }
 
