@@ -30,6 +30,16 @@ public class DeviceTest {
     }
 
     @Test
+    public void testConstructor() {
+        JsonResultFactory factory = new JsonResultFactory();
+        JsonObject hardware = (JsonObject) factory.buildFromResource("microsam_new2_test.json");
+        Device testDevice = new Device(hardware);
+
+        assertEquals("412", testDevice.getCapabilitiesFruRecordByName("test").getValue("vendorIANA"));
+        assertEquals("simple1", testDevice.getLogicalEntityCapabilityByName("simple1").getValue("name"));
+    }
+
+    @Test
     public void testGetJson() {
         JsonObject json = device.getJson();
         assertTrue(json != null);
@@ -215,10 +225,5 @@ public class DeviceTest {
         assertFalse(device.canEntityBeAdded("notAnEntity"));
         assertFalse(device.canEntityBeAdded("simple1"));
         assertFalse(device.canEntityBeAdded("pid1"));
-    }
-
-    @Test
-    public void testExportConfiguration() {
-
     }
 }
