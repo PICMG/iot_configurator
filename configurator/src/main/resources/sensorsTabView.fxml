@@ -100,7 +100,10 @@
                               <Button fx:id="viewCurveButton" mnemonicParsing="false" onAction="#onOutputCurveViewAction" text="View" stylesheets="ButtonDecor.css" styleClass="button"/>
                            </children>
                         </HBox>
-                        <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#onSaveChangesAction" text="Save Changes" GridPane.columnIndex="2" GridPane.rowIndex="15" stylesheets="ButtonDecor.css" styleClass="button"/>
+                        <HBox alignment="CENTER_LEFT" spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="15">
+                           <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#onSaveChangesAction" styleClass="button" stylesheets="ButtonDecor.css" text="Save" />
+                           <Button fx:id="saveAsChangesButton" mnemonicParsing="false" onAction="#onSaveAsChangesAction" styleClass="button" stylesheets="ButtonDecor.css" text="Save As" />
+                        </HBox>
                         <ImageView fx:id="manufacturerImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
                            <image>
                               <Image url="@red_dot.png" />
