@@ -266,4 +266,20 @@ public class DeviceTest {
         assertEquals(channelTypes.get(4), "digital_in");
         assertEquals(channelTypes.get(5), "digital_in");
     }
+
+    @Test
+    public void testRemoveChannelBinding() {
+        JsonObject virtualIOBinding = new JsonObject();
+        virtualIOBinding.put("isVirtual", new JsonValue("true"));
+        assertFalse(device.removeChannelBinding(virtualIOBinding));
+
+        JsonObject unboundIOBinding = new JsonObject();
+        unboundIOBinding.put("isVirtual", new JsonValue("false"));
+        assertTrue(device.removeChannelBinding(unboundIOBinding));
+
+        JsonObject boundIOBinding = new JsonObject();
+        boundIOBinding.put("isVirtual", new JsonValue("false"));
+        boundIOBinding.put("boundChannel", new JsonValue("interlock_in"));
+        assertTrue(device.removeChannelBinding(boundIOBinding));
+    }
 }
