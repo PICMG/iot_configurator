@@ -87,6 +87,7 @@ public class EffectersTabController implements Initializable {
 	@FXML private Button selectCurveButton;
 	@FXML private Button viewCurveButton;
 	@FXML private Button saveChangesButton;
+	@FXML private Button saveAsChangesButton;
 	@FXML private ImageView manufacturerImage;
 	@FXML private ImageView baseUnitImage;
 	@FXML private ImageView maxSampleRateImage;
@@ -156,6 +157,7 @@ public class EffectersTabController implements Initializable {
 		ArrayList<Point2D> outputCurve = new ArrayList<>();
 		SimpleStringProperty ratedMax = new SimpleStringProperty();
 		SimpleStringProperty nominalValue = new SimpleStringProperty();
+		Path savePath = null;
 		boolean valid;
 
 		// getters and setters
@@ -204,6 +206,8 @@ public class EffectersTabController implements Initializable {
 		public String getNominalValue() {return nominalValue.get();}
 		public void setNominalValue(String nominalValue) {this.nominalValue.set(nominalValue);}
 		public ArrayList<Point2D> getOutputCurve() {return outputCurve;}
+		public Path getSavePath() {return savePath;}
+		public void setSavePath(Path savePath) {this.savePath = savePath;}
 
 		public String getType() {
 			StringBuilder sb = new StringBuilder();
@@ -239,6 +243,7 @@ public class EffectersTabController implements Initializable {
 		 */
 		public EffecterTableData(Path path) {
 			valid = false;
+			savePath = path;
 
 			// attempt to load the json
 			JsonResultFactory factory = new JsonResultFactory();
@@ -608,6 +613,11 @@ public class EffectersTabController implements Initializable {
 		return name == null || name.isBlank() ? "none" : name;
 	}
 
+	private void setSavable(boolean b) {
+		saveChangesButton.setDisable(b);
+		saveAsChangesButton.setDisable(b);
+	}
+
 	/**
 	 * isValid()
 	 * return true if the current working data set is valid.  This check is performed by
@@ -636,7 +646,7 @@ public class EffectersTabController implements Initializable {
 		workingData.setManufacturer(manufacturerTextfield.getText());
 		modified = true;
 		updateName();
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
@@ -644,84 +654,84 @@ public class EffectersTabController implements Initializable {
 		workingData.setModel(partNumberTextField.getText());
 		modified = true;
 		updateName();
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onAnalogAction(ActionEvent event) {
 		workingData.setAnalog(analogCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onDigitalAction(ActionEvent event) {
 		workingData.setDigital(digitalCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onPwmAction(ActionEvent event) {
 		workingData.setPwm(pwmCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onRateAction(ActionEvent event) {
 		workingData.setRate(rateCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onStepAction(ActionEvent event) {
 		workingData.setStep(stepCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onMaxSampleRateAction(ActionEvent event) {
 		workingData.setMaxSampleRate(maxSampleRateTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onPlusAccuractyAction(ActionEvent event) {
 		workingData.setPlusAccuracy(plusAccuracyTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onMinusAccuracyAction(ActionEvent event) {
 		workingData.setMinusAccuracy(minusAccuracyTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onInputUnitsAction(ActionEvent event) {
 		workingData.setOutputUnits(inputUnitsTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
@@ -732,7 +742,7 @@ public class EffectersTabController implements Initializable {
 		boolean result = workingData.loadPointsFromCsvFile(datafile);
 		outputCurveImage.setVisible(!result);
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
@@ -762,22 +772,58 @@ public class EffectersTabController implements Initializable {
 	void onRatedMaxAction(ActionEvent event) {
 		workingData.setRatedMax(ratedMaxTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
 	}
 
 	@FXML
 	void onNominalValueAction(ActionEvent event) {
 		workingData.setNominalValue(nominalValueTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSavable(!isValid());
+	}
+
+	private File promptSavePath() {
+		File defaultPath = (workingData.getSavePath() != null)
+				? workingData.getSavePath().toFile()
+				: new File(System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json");
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
+		fileChooser.setTitle("Save As");
+		fileChooser.setInitialDirectory(defaultPath.getParentFile());
+		fileChooser.setInitialFileName(workingData.getName() + ".json");
+		File result = fileChooser.showSaveDialog(saveChangesButton.getScene().getWindow());
+		if (result == null) {
+			return null;
+		}
+		if (result.canWrite()) {
+			System.out.println("Unable to save to readonly file.");
+			return null;
+		}
+		return result;
 	}
 
 	@FXML
 	void onSaveChangesAction(ActionEvent event) {
-		String path = System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json";
-		workingData.SaveToFile(path);
+		File defaultPath = (workingData.getSavePath() != null)
+				? workingData.getSavePath().toFile()
+				: new File(System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json");
+		workingData.SaveToFile(defaultPath.toString());
 		modified = false;
-		saveChangesButton.setDisable(true);
+		setSavable(true);
+		initializeTable();
+		selectDefaultEffecter();
+	}
+
+	@FXML
+	void onSaveAsChangesAction(ActionEvent event) {
+		File path = promptSavePath();
+		if (path == null) {
+			return;
+		}
+		workingData.setSavePath(path.toPath());
+		workingData.SaveToFile(path.toString());
+		modified = false;
+		setSavable(true);
 		initializeTable();
 		selectDefaultEffecter();
 	}
@@ -865,15 +911,15 @@ public class EffectersTabController implements Initializable {
 
 	private void selectDefaultEffecter() {
 		EffecterTableView.getSelectionModel().select(0);
-		EffecterTableData selecteddata = EffecterTableView.getSelectionModel().getSelectedItem();
-		if (selecteddata == null) {
+		EffecterTableData selectedData = EffecterTableView.getSelectionModel().getSelectedItem();
+		if (selectedData == null) {
 			refreshAuxState(NO_AUX);
 			return;
 		}
-		workingData.set(selecteddata);
-		setEffecterData(selecteddata);
+		workingData.set(selectedData);
+		setEffecterData(selectedData);
 		modified = false;
-		saveChangesButton.setDisable(true);
+		setSavable(true);
 	}
 
 	private void refreshAuxState(String status) {
@@ -951,7 +997,7 @@ public class EffectersTabController implements Initializable {
 				setEffecterData(workingData);
 
 				modified = false;
-				saveChangesButton.setDisable(true);
+				setSavable(true);
 			}
 		});
 
@@ -962,7 +1008,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setBaseUnit(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSavable(!isValid());
 			}
 		});
 		auxUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -971,7 +1017,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setAuxUnit(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSavable(!isValid());
 			}
 		});
 		rateUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -980,7 +1026,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setRateUnit(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSavable(!isValid());
 			}
 		});
 		auxRateChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -989,7 +1035,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setAuxRateUnit(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSavable(!isValid());
 			}
 		});
 		relChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -998,7 +1044,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setRel(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSavable(!isValid());
 				refreshAuxState(newString);
 			}
 		});
@@ -1039,7 +1085,7 @@ public class EffectersTabController implements Initializable {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) {
 					workingData.setDescription(descriptionTextArea.getText());
-					saveChangesButton.setDisable(!isValid());
+					setSavable(!isValid());
 					modified = true;
 				}
 			}
