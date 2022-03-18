@@ -8,7 +8,6 @@ import org.picmg.jsonreader.*;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.util.ArrayList;
 
 
@@ -203,5 +202,23 @@ public class DeviceTest {
         assertNotNull(device.getLogicalEntityConfigurationByName("simple1"));
         assertEquals("PICMG Simple Sensor/Effecter", device.getLogicalEntityConfigurationByName("simple1").getValue("description"));
         assertNull(device.getLogicalEntityConfigurationByName("notALogicalEntity"));
+    }
+
+    @Test
+    public void testIsConfigurationBindingFieldEditable() {
+        assertFalse(device.isConfigurationBindingFieldEditable("notABindingName", "notAField"));
+        assertTrue(device.isConfigurationBindingFieldEditable("GlobalInterlockSensor", "notAField"));
+    }
+
+    @Test
+    public void testCanEntityBeAdded() {
+        assertFalse(device.canEntityBeAdded("notAnEntity"));
+        assertFalse(device.canEntityBeAdded("simple1"));
+        assertFalse(device.canEntityBeAdded("pid1"));
+    }
+
+    @Test
+    public void testExportConfiguration() {
+
     }
 }
