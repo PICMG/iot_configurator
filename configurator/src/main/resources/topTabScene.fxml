@@ -18,15 +18,10 @@
           <Menu fx:id="exportMenu" mnemonicParsing="false" onHiding="#notifyExport" onShowing="#notifyExport" />
         </menus>
       </MenuBar>
-       <FlowPane alignment="TOP_RIGHT" style="-fx-background-color: white">
+       <FlowPane alignment="TOP_LEFT" style="-fx-background-color: white">
            <ImageView fx:id="picmgLogo" pickOnBounds="true" fitHeight="50" fitWidth="50" preserveRatio="true">
                <image>
                    <Image url="@picmg_logo.png" backgroundLoading="true"/>
-               </image>
-           </ImageView>
-           <ImageView fx:id="smartSensor" pickOnBounds="true" fitHeight="100" fitWidth="100" preserveRatio="true">
-               <image>
-                   <Image url="@SmartSensorLogo.png" backgroundLoading="true"/>
                </image>
            </ImageView>
        </FlowPane>
