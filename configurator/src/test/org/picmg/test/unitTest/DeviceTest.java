@@ -8,7 +8,6 @@ import org.picmg.jsonreader.*;
 
 import static org.junit.Assert.*;
 
-import java.io.File;
 import java.util.ArrayList;
 
 
@@ -16,9 +15,11 @@ public class DeviceTest {
 
     Device device;
 
+    /**
+     * Loads the default hardware profile for testing purposes
+     */
     @Before
     public void setUp() {
-        // load the default hardware profile
         JsonResultFactory factory = new JsonResultFactory();
         JsonObject hardware = (JsonObject) factory.buildFromResource("microsam_new2_test.json");
         device = new Device(hardware);
@@ -26,6 +27,16 @@ public class DeviceTest {
 
     @After
     public void tearDown() {
+    }
+
+    @Test
+    public void testConstructor() {
+        JsonResultFactory factory = new JsonResultFactory();
+        JsonObject hardware = (JsonObject) factory.buildFromResource("microsam_new2_test.json");
+        Device testDevice = new Device(hardware);
+
+        assertEquals("412", testDevice.getCapabilitiesFruRecordByName("test").getValue("vendorIANA"));
+        assertEquals("simple1", testDevice.getLogicalEntityCapabilityByName("simple1").getValue("name"));
     }
 
     @Test
@@ -63,7 +74,7 @@ public class DeviceTest {
     }
 
     @Test
-    public void  testGetConfiguredBindingFromName(){
+    public void testGetConfiguredBindingFromName() {
         assertNull(device.getConfiguredBindingFromName("Not a Binding"));
         JsonObject binding = device.getConfiguredBindingFromName("GlobalInterlockSensor");
         assertEquals("412", binding.getValue("stateSetVendorIANA"));
@@ -99,8 +110,7 @@ public class DeviceTest {
     }
 
     @Test
-    public void testAddRecordConfigurationByName()
-    {
+    public void testFruAddRecordConfigurationByName() {
         // Check for null
         JsonAbstractValue fru = device.addFruRecordConfigurationByName("temp");
         assertNull(fru);
@@ -144,8 +154,7 @@ public class DeviceTest {
     }
 
     @Test
-    public void testAddLogicalEntityConfigurationByName(){
-
+    public void testAddLogicalEntityConfigurationByName() {
         JsonAbstractValue newEntity = device.addLogicalEntityConfigurationByName("simple1");
         JsonObject hardware = device.getJson();
         JsonObject cfg = (JsonObject) hardware.get("configuration");
@@ -153,39 +162,140 @@ public class DeviceTest {
         boolean isExists = false;
         JsonObject edef = null;
         for (JsonAbstractValue logicalEntity : cfgEntities) {
-           edef  = (JsonObject) logicalEntity;
+            edef = (JsonObject) logicalEntity;
             if (edef.getValue("name").equals("simple1")) {
-                    isExists = true;
+                isExists = true;
             }
         }
         assertTrue(isExists);
         JsonAbstractValue newEntity1 = device.addLogicalEntityConfigurationByName("simple");
         assertNull(newEntity1);
-        JsonArray bindings = (JsonArray)edef.get("ioBindings");
+        JsonArray bindings = (JsonArray) edef.get("ioBindings");
         JsonArray result = new JsonArray();
         JsonObject point1 = new JsonObject();
         JsonObject point2 = new JsonObject();
-        point1.put("in",new JsonValue("0"));
-        point1.put("out",new JsonValue("0"));
-        point2.put("in",new JsonValue("1000"));
-        point2.put("out",new JsonValue("1000"));
-        result.add(0,point1);
-        result.add(1,point2);
+        point1.put("in", new JsonValue("0"));
+        point1.put("out", new JsonValue("0"));
+        point2.put("in", new JsonValue("1000"));
+        point2.put("out", new JsonValue("1000"));
+        result.add(0, point1);
+        result.add(1, point2);
         for (JsonAbstractValue val : bindings) {
             JsonObject binding = (JsonObject) val;
             // if the binding has an input curve that is null, set it to a default
             // linear response.
             if ((binding.containsKey("inputCurve"))) {
-                JsonArray inputCurveActual = (JsonArray)binding.get("inputCurve");
+                JsonArray inputCurveActual = (JsonArray) binding.get("inputCurve");
                 assertTrue(inputCurveActual.containsAny(result));
             }
             if ((binding.containsKey("outputCurve"))) {
-                JsonArray outputCurveActual = (JsonArray)binding.get("outputCurve");
+                JsonArray outputCurveActual = (JsonArray) binding.get("outputCurve");
                 assertTrue(outputCurveActual.containsAny(result));
             }
         }
+    }
 
+    @Test
+    public void testRemoveLogicalEntityConfigurationByName() {
+        assertNotNull(device.getLogicalEntityConfigurationByName("simple1"));
+        device.removeLogicalEntityConfigurationByName("simple1");
+        assertNull(device.getLogicalEntityConfigurationByName("simple1"));
 
+        assertNull(device.getLogicalEntityConfigurationByName("notALogicalEntity"));
+        device.removeLogicalEntityConfigurationByName("notALogicalEntity");
+        assertNull(device.getLogicalEntityConfigurationByName("notALogicalEntity"));
+    }
 
+    @Test
+    public void testGetLogicalEntityConfigurationByName() {
+        assertNotNull(device.getLogicalEntityConfigurationByName("simple1"));
+        assertEquals("PICMG Simple Sensor/Effecter", device.getLogicalEntityConfigurationByName("simple1").getValue("description"));
+        assertNull(device.getLogicalEntityConfigurationByName("notALogicalEntity"));
+    }
+
+    @Test
+    public void testIsConfigurationBindingFieldEditable() {
+        assertFalse(device.isConfigurationBindingFieldEditable("notABindingName", "notAField"));
+        assertTrue(device.isConfigurationBindingFieldEditable("GlobalInterlockSensor", "notAField"));
+    }
+
+    @Test
+    public void testCanEntityBeAdded() {
+        assertFalse(device.canEntityBeAdded("notAnEntity"));
+        assertFalse(device.canEntityBeAdded("simple1"));
+        assertFalse(device.canEntityBeAdded("pid1"));
+    }
+
+    @Test
+    public void testGetPossibleChannelsForBinding() {
+        JsonObject binding = new JsonObject();
+        binding.put("bindingType", new JsonValue("stateSensor"));
+        binding.put("boundChannel", new JsonValue("interlock_in"));
+
+        JsonArray interfaceTypes = new JsonArray();
+        interfaceTypes.add(new JsonValue("digital_in"));
+
+        binding.put("allowedInterfaceTypes", interfaceTypes);
+
+        ArrayList<String> channels = device.getPossibleChannelsForBinding(binding);
+        assertEquals(channels.get(0), "interlock_in");
+        assertEquals(channels.get(1), "digital_in1");
+        assertEquals(channels.get(2), "digital_in2");
+        assertEquals(channels.get(3), "digital_in3");
+        assertEquals(channels.get(4), "digital_in4");
+        assertEquals(channels.get(5), "digital_in5");
+    }
+
+    @Test
+    public void testGetPossibleChannelsTypesForBinding() {
+        JsonObject binding = new JsonObject();
+        binding.put("bindingType", new JsonValue("stateSensor"));
+        binding.put("boundChannel", new JsonValue("interlock_in"));
+
+        JsonArray interfaceTypes = new JsonArray();
+        interfaceTypes.add(new JsonValue("digital_in"));
+
+        binding.put("allowedInterfaceTypes", interfaceTypes);
+
+        ArrayList<String> usedPins = new ArrayList<>();
+        ArrayList<String> channelTypes = device.getPossibleChannelsTypesForBinding(binding, usedPins);
+        assertEquals(channelTypes.get(0), "digital_in");
+        assertEquals(channelTypes.get(1), "digital_in");
+        assertEquals(channelTypes.get(2), "digital_in");
+        assertEquals(channelTypes.get(3), "digital_in");
+        assertEquals(channelTypes.get(4), "digital_in");
+        assertEquals(channelTypes.get(5), "digital_in");
+    }
+
+    @Test
+    public void testRemoveChannelBinding() {
+        JsonObject virtualIOBinding = new JsonObject();
+        virtualIOBinding.put("isVirtual", new JsonValue("true"));
+        assertFalse(device.removeChannelBinding(virtualIOBinding));
+
+        JsonObject unboundIOBinding = new JsonObject();
+        unboundIOBinding.put("isVirtual", new JsonValue("false"));
+        assertTrue(device.removeChannelBinding(unboundIOBinding));
+
+        JsonObject boundIOBinding = new JsonObject();
+        boundIOBinding.put("isVirtual", new JsonValue("false"));
+        boundIOBinding.put("boundChannel", new JsonValue("interlock_in"));
+        assertTrue(device.removeChannelBinding(boundIOBinding));
+    }
+
+    @Test
+    public void testSetChannelBinding() {
+        JsonObject virtualIOBinding = new JsonObject();
+        virtualIOBinding.put("isVirtual", new JsonValue("true"));
+        assertFalse(device.setChannelBinding(virtualIOBinding, ""));
+
+        JsonObject unboundIOBinding = new JsonObject();
+        unboundIOBinding.put("isVirtual", new JsonValue("false"));
+        assertFalse(device.setChannelBinding(unboundIOBinding, "interlock_in"));
+
+        JsonObject boundIOBinding = new JsonObject();
+        boundIOBinding.put("isVirtual", new JsonValue("false"));
+        boundIOBinding.put("boundChannel", new JsonValue("interlock_in"));
+        assertTrue(device.setChannelBinding(boundIOBinding, "interlock_in"));
     }
 }
