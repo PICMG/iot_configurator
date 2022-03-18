@@ -200,6 +200,8 @@ public class DeviceTest {
 
     @Test
     public void testGetLogicalEntityConfigurationByName() {
-
+        assertNotNull(device.getLogicalEntityConfigurationByName("simple1"));
+        assertEquals("PICMG Simple Sensor/Effecter", device.getLogicalEntityConfigurationByName("simple1").getValue("description"));
+        assertNull(device.getLogicalEntityConfigurationByName("notALogicalEntity"));
     }
 }
