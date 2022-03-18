@@ -282,4 +282,20 @@ public class DeviceTest {
         boundIOBinding.put("boundChannel", new JsonValue("interlock_in"));
         assertTrue(device.removeChannelBinding(boundIOBinding));
     }
+
+    @Test
+    public void testSetChannelBinding() {
+        JsonObject virtualIOBinding = new JsonObject();
+        virtualIOBinding.put("isVirtual", new JsonValue("true"));
+        assertFalse(device.setChannelBinding(virtualIOBinding, ""));
+
+        JsonObject unboundIOBinding = new JsonObject();
+        unboundIOBinding.put("isVirtual", new JsonValue("false"));
+        assertFalse(device.setChannelBinding(unboundIOBinding, "interlock_in"));
+
+        JsonObject boundIOBinding = new JsonObject();
+        boundIOBinding.put("isVirtual", new JsonValue("false"));
+        boundIOBinding.put("boundChannel", new JsonValue("interlock_in"));
+        assertTrue(device.setChannelBinding(boundIOBinding, "interlock_in"));
+    }
 }
