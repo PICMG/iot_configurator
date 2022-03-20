@@ -102,6 +102,19 @@ public class RobotUtils {
         }
     }
 
+
+    public static void click(Scene scene, String value)
+    {
+        Window area = scene.getWindow();
+        Node node = scene.lookup(value);
+        Point2D point = node.localToScene(0,0);
+        if(debug)
+            System.out.println(scene.getX()+" "+scene.getY());
+        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
+        robot.mousePress(MouseButton.PRIMARY);
+        robot.mouseRelease(MouseButton.PRIMARY);
+    }
+
     public static void close()
     {
         Platform.exit();
