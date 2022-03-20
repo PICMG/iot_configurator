@@ -120,8 +120,8 @@ public class App extends Application {
 	 * Launch the app
 	 * @param args - the command line arguments for the program
 	 */
-	public static void main(String[] args)  {
-		//TestReader.getInstance().read("Name,Test1:Steps,Start:Name,Test Box Test:Click,ID:Type,Temp:Check,ID,Data:Steps,End:Steps,Start:Name,Test Box BRO:Click,ID:Type,Temp:Check,ID,Data:Steps,End");
+	public static void main(String[] args) throws Exception {
+		TestReader.getInstance().read("Name,Test1:File,topTabScene.fxml:Steps,Start:Name,Test Box Test:Click,ID:Type,Temp:Check,ID,Data:Steps,End:Steps,Start:Name,Test Box BRO:Click,ID:Type,Temp:Check,ID,Data:Steps,End");
 		launch();
     }
 }
