@@ -340,4 +340,15 @@ public class DeviceTest {
             }
         }
     }
+
+    @Test
+    public void testSetSensorFromFile(){
+        device.setSensorFromFile("GlobalInterlockSensor","Calt_DYLY_103_Ounces");
+        JsonObject binding = device.getConfiguredBindingFromName("GlobalInterlockSensor");
+        assertEquals("41", binding.get("sensor").getValue("baseUnit"));
+        assertEquals("0", binding.get("sensor").getValue("auxUnit"));
+        assertEquals("Pull Pressure Force S-type Load Cell Sensor with Cable 10KG ", binding.get("sensor").getValue("description"));
+        assertEquals("Calt_DYLY_103_Ounces", binding.get("sensor").getValue("name"));
+        assertEquals("Amps", binding.get("sensor").getValue("outputUnits"));
+    }
 }
