@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
@@ -113,6 +114,11 @@ public class RobotUtils {
         robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
+    }
+    
+    public static void type(String message) {
+        for (char c : message.toCharArray())
+            robot.keyType(KeyCode.getKeyCode(Character.toString(c)));
     }
 
     public static void close()
