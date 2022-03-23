@@ -196,6 +196,14 @@ public class FruPaneController implements Initializable {
 	}
 
 	/**
+	 * loadDevice()
+	 * Called when the load device button is pressed.
+	 */
+	@FXML private void loadDevice() {
+		System.out.println("Load Device pressed");
+	}
+
+	/**
 	 * deleteRow()
 	 * This function is called when the delete row button is depressed.
 	 * The function deletes the selected row from the table.
