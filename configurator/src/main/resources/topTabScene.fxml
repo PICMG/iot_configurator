@@ -12,8 +12,8 @@
 <?import javafx.scene.layout.FlowPane?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.picmg.configurator.MenuController">
    <children>
-       <FlowPane alignment="TOP_LEFT" style="-fx-background-color: #ffffff">
-           <ImageView fx:id="picmgLogo" pickOnBounds="true" fitHeight="50" fitWidth="50" preserveRatio="true">
+       <FlowPane alignment="TOP_LEFT" style="-fx-background-color: #808080">
+           <ImageView fx:id="picmgLogo" pickOnBounds="true" fitHeight="50" fitWidth="50" preserveRatio="true" style="-fx-padding: 20px">
                <image>
                    <Image url="@picmg_logo.png" backgroundLoading="true"/>
                </image>
