@@ -8,6 +8,8 @@ import org.picmg.jsonreader.*;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 
@@ -350,5 +352,29 @@ public class DeviceTest {
         assertEquals("Pull Pressure Force S-type Load Cell Sensor with Cable 10KG ", binding.get("sensor").getValue("description"));
         assertEquals("Calt_DYLY_103_Ounces", binding.get("sensor").getValue("name"));
         assertEquals("Amps", binding.get("sensor").getValue("outputUnits"));
+    }
+
+    @Test
+    public void testExportConfiguration(){
+        //exprot the file
+        File outputFile  = new File("exportConfigurationTestOutput.json");
+        device.exportConfiguration(outputFile);
+        //read the exported file
+        JsonResultFactory factory = new JsonResultFactory();
+        JsonObject hardware = (JsonObject) factory.buildFromFile(Path.of("exportConfigurationTestOutput.json"));
+        Device deviceCopy = new Device(hardware);
+
+        JsonObject capabilitiesFruRecordByName = device.getCapabilitiesFruRecordByName("test");
+        JsonObject copyCapabilitiesFruRecordByName = deviceCopy.getCapabilitiesFruRecordByName("test");
+        assertEquals(capabilitiesFruRecordByName.getValue("vendorIANA"), copyCapabilitiesFruRecordByName.getValue("vendorIANA"));
+
+        JsonObject returnedLogicalEntity = device.getLogicalEntityCapabilityByName("simple1");
+        JsonObject copyReturnedLogicalEntity = deviceCopy.getLogicalEntityCapabilityByName("simple1");
+        assertEquals(returnedLogicalEntity.getValue("entityVendorIANA"), copyReturnedLogicalEntity.getValue("entityVendorIANA"));
+
+        JsonObject binding = device.getConfiguredBindingFromName("GlobalInterlockSensor");
+        JsonObject copyBinding = deviceCopy.getConfiguredBindingFromName("GlobalInterlockSensor");
+        assertEquals(binding.getValue("stateSet"), copyBinding.getValue("stateSet"));
+
     }
 }
