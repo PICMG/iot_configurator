@@ -6,9 +6,27 @@ public class TestContainer {
 
     ArrayList<Test> tests;
     private String testContainerName;
+    String fileToLoad = "";
     public TestContainer()
     {
         tests = new ArrayList<Test>();
+    }
+
+    /**
+     * This method returns the file we want to read from
+     * @return
+     */
+    public String getFileToLoad()
+    {
+        return fileToLoad;
+    }
+    /**
+     * This method sets the file to load
+     * @param fileToLoad
+     */
+    public void setFileToLoad(String fileToLoad)
+    {
+        this.fileToLoad = fileToLoad;
     }
 
     /**
