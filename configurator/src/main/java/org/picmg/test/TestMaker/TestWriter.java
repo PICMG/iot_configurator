@@ -98,7 +98,7 @@ public class TestWriter {
                     outputWriter.write("\t\tRobotUtils.dummyClick(" + "\"" + s.id + "\"" + ");\n");
                     break;
                 case "Type":
-                    outputWriter.write("\t\tRobotUtils.dummyType(" + "\"" +s.data + "\"" +");\n");
+                    outputWriter.write("\t\tRobotUtils.type(" + "\"" +s.data + "\"" +");\n");
                     break;
                 case "Check":
                     outputWriter.write("\t\tRobotUtils.dummyCheck(" + "\"" +s.id + "\"" + "," + "\"" +s.data + "\"" + ");\n");

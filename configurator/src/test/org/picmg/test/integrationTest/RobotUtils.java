@@ -11,7 +11,6 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.awt.event.KeyEvent;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -170,6 +169,20 @@ public class RobotUtils {
                 robot.keyType(KeyCode.X);
             }
         }
+    }
+
+    public static Scene switchScene(int sceneNum) {
+        int counter = 0;
+        List<Scene> scenes = Stage.getWindows().stream().map(Window::getScene).collect(Collectors.toList());
+        if (counter > scenes.size()) return scenes.get(0);
+        if (scenes.iterator().hasNext()) {
+            scenes.iterator().next();
+            if (sceneNum == counter) {
+                return scenes.get(counter);
+            }
+            counter++;
+        }
+        return scenes.get(0);
     }
 
     public static void close()
