@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class RobotUtils {
     private static Robot robot = new Robot();
-    public static final boolean debug = false;
+    public static final boolean debug = true;
     private static final int OFFSET = 10;
 
     /**
@@ -51,7 +51,7 @@ public class RobotUtils {
     public static void clickReset() {
         try {
             click("#resetMenu");
-            runLater(3000, ()->click("#resetOk"));
+            RobotThread.build(3000, ()->click("#resetOk")).run();
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -70,6 +70,7 @@ public class RobotUtils {
             Node newNode = scene.lookup(value);
             if (newNode != null) foundNode = newNode;
         }
+        if (debug) System.out.println("Node=" + foundNode);
         return Optional.ofNullable(foundNode);
     }
 
@@ -84,48 +85,13 @@ public class RobotUtils {
         Scene scene = node.getScene();
         Window window = scene.getWindow();
         Point2D point = node.localToScene(0,0);
+        if (debug) System.out.println(OFFSET+point.getX()+scene.getX()+window.getX() + "\t\t" + OFFSET+point.getY()+scene.getY()+window.getY());
         robot.mouseMove(OFFSET+point.getX()+scene.getX()+window.getX(),OFFSET+point.getY()+scene.getY()+window.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
     }
 
-    /**
-     * Run the given function with FX threading after delaying on a generic Java thread. This threading hot potato
-     * gives the FX threads processing time so UI components can catch up before the function is added to the FX thread
-     * queue.
-     * @param delay The wait time in milliseconds (e.g. delay of 1000 equals 1 second)
-     * @param runnable A runnable object to execute on the FX thread after some delay
-     */
-    public static void runLater(int delay, Runnable runnable) {
-        Thread t = new Thread(() -> {
-            try {
-                Thread.sleep(delay);
-            } catch (InterruptedException e) {
-                System.out.println("Exception in wait queue. "); e.printStackTrace();
-            }
-            Platform.runLater(runnable);
-        });
-        t.start();
-    }
 
-    /**
-     * Run one or many runnables with equivalent, non-FX delay time between sequential deployment to FX thread queue.
-     * @param delay The wait time between each thread in milliseconds (e.g. delay of 1000 is 1 second)
-     * @param runnables A list of runnable objects to execute on the FX thread after some delay
-     */
-    public static void runLater(int delay, Runnable... runnables) {
-        Thread t = new Thread(() -> {
-            for (Runnable runnable : runnables) {
-                try {
-                    Thread.sleep(delay);
-                } catch (InterruptedException e) {
-                    System.out.println("Exception in wait queue. "); e.printStackTrace();
-                }
-                Platform.runLater(runnable);
-            }
-        });
-        t.start();
-    }
     
     public static void type(String message) {
         for (char c : message.toCharArray()) {

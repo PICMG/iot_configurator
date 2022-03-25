@@ -28,31 +28,31 @@ public class TestApp extends App {
     }
 
     private void evalTest() {
-        RobotUtils.runLater(500,
-                () -> RobotUtils.clickEffecters(),
-                () -> RobotUtils.click("#stepCheckbox"),
-                () -> RobotUtils.check("#stepCheckbox", "true"),
-                () -> RobotUtils.click("#stepCheckbox"),
-                () -> RobotUtils.check("#stepCheckbox", "false"),
-                () -> RobotUtils.click("#descriptionTextArea"),
-                () -> RobotUtils.type("auto desc"),
-                () -> RobotUtils.check("#descriptionTextArea", "auto desc"),
-                () -> RobotUtils.click("#manufacturerTextfield"),
-                () -> RobotUtils.type("manufacturer 1"),
-                () -> RobotUtils.check("#manufacturerTextfield", "manufacturer 1"),
-                RobotUtils::close
-        );
+        RobotThread.build(500, () -> RobotUtils.clickEffecters())
+                .then(500,  () -> RobotUtils.click("#stepCheckbox"))
+                .then(50,   () -> RobotUtils.check("#stepCheckbox", "true"))
+                .then(20,   () -> RobotUtils.click("#stepCheckbox"))
+                .then(50,   () -> RobotUtils.check("#stepCheckbox", "false"))
+                .then(400,  () -> RobotUtils.click("#descriptionTextArea"))
+                .then(50,   () -> RobotUtils.type("auto desc"))
+                .then(400,  () -> RobotUtils.check("#descriptionTextArea", "auto desc"))
+                .then(() -> RobotUtils.click("#manufacturerTextfield"))
+                .then(20,   () -> RobotUtils.type("manufacturer 1"))
+                .then(20,   () -> RobotUtils.check("#manufacturerTextfield", "manufacturer 1"))
+                .wait(5000)
+                .then(RobotUtils::close)
+                .run();
     }
 
     private void typeTest() {
-        RobotUtils.runLater(1000,
+        RobotThread.build(700,
                 () -> RobotUtils.clickEffecters(),
                 () -> RobotUtils.click("#manufacturerTextfield"),
                 () -> RobotUtils.type("This is Sample Text!!"),
                 () -> RobotUtils.click("#partNumberTextField"),
                 () -> RobotUtils.type("MORE Sample Text..."),
                 RobotUtils::close
-       );
+       ).run();
     }
 
     public void clicks() {
