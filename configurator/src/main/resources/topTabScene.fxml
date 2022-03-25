@@ -21,6 +21,7 @@
        </FlowPane>
        <MenuBar fx:id="mainMenubar">
           <menus>
+            <Menu fx:id="loadDeviceMenu" mnemonicParsing="false" />
             <Menu fx:id="resetMenu" mnemonicParsing="false" />
             <Menu fx:id="exportMenu" mnemonicParsing="false" onHiding="#notifyExport" onShowing="#notifyExport" />
         </menus>

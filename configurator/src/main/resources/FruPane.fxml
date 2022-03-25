@@ -55,7 +55,6 @@
                         <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#deleteRow" text=" - " stylesheets="ButtonDecor.css" styleClass="button"/>
                      </children>
                   </FlowPane>
-                   <Button fx:id="buttonLoad" mnemonicParsing="false" onAction="#loadDevice" text="Load Device..." stylesheets="ButtonDecor.css" styleClass="button"/>
                </children>
             </GridPane>
             <ScrollPane prefHeight="637.0" prefWidth="518.0">
