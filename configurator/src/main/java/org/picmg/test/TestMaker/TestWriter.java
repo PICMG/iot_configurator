@@ -95,13 +95,13 @@ public class TestWriter {
             switch(s.type)
             {
                 case "Click":
-                    outputWriter.write("\t\tRobotUtils.dummyClick(" + "\"" + s.id + "\"" + ");\n");
+                    outputWriter.write("\t\tRobotUtils.click(" + "\"" + s.id + "\"" + ");\n");
                     break;
                 case "Type":
                     outputWriter.write("\t\tRobotUtils.type(" + "\"" +s.data + "\"" +");\n");
                     break;
                 case "Check":
-                    outputWriter.write("\t\tRobotUtils.dummyCheck(" + "\"" +s.id + "\"" + "," + "\"" +s.data + "\"" + ");\n");
+                    outputWriter.write("\t\tRobotUtils.check(" + "\"" +s.id + "\"" + "," + "\"" +s.data + "\"" + ");\n");
                     break;
             }
         }
