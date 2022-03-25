@@ -35,6 +35,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -53,6 +54,7 @@ import java.util.ResourceBundle;
 public class MenuController implements Initializable {
 	@FXML Menu resetMenu;
 	@FXML Menu exportMenu;
+	@FXML Menu loadDeviceMenu;
 	@FXML MenuBar mainMenubar;
 	@FXML AnchorPane deviceTabAnchorPane;
 	@FXML AnchorPane sensorsTabAnchorPane;
@@ -146,5 +148,14 @@ public class MenuController implements Initializable {
 			}
 		});
 		exportMenu.setGraphic(exportLabel);
+
+		Label loadDeviceLabel = new Label("Load");
+		loadDeviceLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+
+			}
+		});
+		loadDeviceMenu.setGraphic(loadDeviceLabel);
 	}
 }
