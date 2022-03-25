@@ -5,12 +5,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-import org.junit.Test;
 import org.picmg.configurator.App;
-import org.picmg.test.integrationTest.RobotUtils;
-
-import java.io.IOException;
-
 
 import java.io.IOException;
 

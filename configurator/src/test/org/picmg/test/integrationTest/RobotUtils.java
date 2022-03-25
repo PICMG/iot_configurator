@@ -14,7 +14,6 @@ import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Optional;
@@ -22,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class RobotUtils {
     private static Robot robot = new Robot();
-    public static final boolean debug = true;
+    public static final boolean debug = false;
     private static final int OFFSET = 10;
 
     /**
@@ -81,11 +80,10 @@ public class RobotUtils {
             return;
         }
         Node node = lookup.get();
-        double offH = OFFSET, offW = OFFSET;
         Scene scene = node.getScene();
         Window window = scene.getWindow();
         Point2D point = node.localToScene(0,0);
-        robot.mouseMove(offH+point.getX()+scene.getX()+window.getX(),offW+point.getY()+scene.getY()+window.getY());
+        robot.mouseMove(OFFSET+point.getX()+scene.getX()+window.getX(),OFFSET+point.getY()+scene.getY()+window.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
     }
@@ -137,8 +135,6 @@ public class RobotUtils {
             }
             if (keyCode != null) {
                 robot.keyType(keyCode);
-            } else {
-                robot.keyType(KeyCode.X);
             }
         }
     }
@@ -151,10 +147,10 @@ public class RobotUtils {
         Node node = lookup.get();
         String text = getText(node);
         if (value.equals(text)) {
-            System.out.println("Success: " + fxId + " successfully evaluated to " + value);
+            System.out.println("Success: " + fxId + " successfully evaluated to '''" + value + "'''");
         } else {
-            System.out.println("TEST ERROR: Could not evaluate FXID " + fxId + " value '"
-                    + text + "' to expected value '" + value + "'");
+            System.out.println("TEST ERROR: Could not evaluate FXID " + fxId + " value '''"
+                    + text + "''' to expected value '''" + value + "'''");
         }
     }
 
@@ -168,22 +164,7 @@ public class RobotUtils {
         } else if (node instanceof ChoiceBox<?>) {
             return String.valueOf(((ChoiceBox)node).getValue());
         }
-
         return null;
-    }
-
-    public static Scene getScene(int sceneNum) {
-        int counter = 0;
-        List<Scene> scenes = Stage.getWindows().stream().map(Window::getScene).collect(Collectors.toList());
-        if (counter > scenes.size()) return scenes.get(0);
-        if (scenes.iterator().hasNext()) {
-            scenes.iterator().next();
-            if (sceneNum == counter) {
-                return scenes.get(counter);
-            }
-            counter++;
-        }
-        return scenes.get(0);
     }
 
     public static void close()
