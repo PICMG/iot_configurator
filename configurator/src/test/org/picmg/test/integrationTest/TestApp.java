@@ -25,29 +25,29 @@ public class TestApp extends App {
             stage.setTitle("PICMG Configurator");
             stage.setScene(scene);
             stage.show();
-            typeTest(scene);
+            typeTest();
             System.out.println("Here is where the test would go");
         } catch (IOException e) {
             System.out.println(e);
         }
     }
 
-    private void typeTest(Scene scene) {
-        RobotUtils.runLater(new Runnable[] {
-                () -> RobotUtils.clickEffecters(scene),
-                () -> RobotUtils.click(scene, "#manufacturerTextfield"),
+    private void typeTest() {
+        RobotUtils.runLater(1000,
+                () -> RobotUtils.clickEffecters(),
+                () -> RobotUtils.click("#manufacturerTextfield"),
                 () -> RobotUtils.type("This is Sample Text!!"),
-                () -> RobotUtils.click(scene, "#partNumberTextField"),
+                () -> RobotUtils.click("#partNumberTextField"),
                 () -> RobotUtils.type("MORE Sample Text..."),
                 RobotUtils::close
-        }, 1000);
+       );
     }
 
-    public void clicks(Scene scene) {
-        RobotUtils.clickSensors(scene);
-        RobotUtils.clickEffecters(scene);
-        RobotUtils.clickDevice(scene);
-        RobotUtils.clickReset(scene);
+    public void clicks() {
+        RobotUtils.clickSensors();
+        RobotUtils.clickEffecters();
+        RobotUtils.clickDevice();
+        RobotUtils.clickReset();
         //RobotUtils.close();
     }
 

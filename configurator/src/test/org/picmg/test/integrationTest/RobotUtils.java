@@ -12,108 +12,77 @@ import javafx.stage.Window;
 
 import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RobotUtils {
-
-
-    private static final int offset = 5;
-    public static boolean debug = true;
     private static Robot robot = new Robot();
+    public static final boolean debug = true;
+    private static final int OFFSET = 10;
+
     /**
-     * This method clicks the component with the #sensorTab id on the scene passed in
-     * @param scene
+     * Click and open the sensor tab
      */
-    public static void clickSensors(Scene scene)
-    {
-        Window area = scene.getWindow();
-        Node sensorTab = scene.lookup("#sensorTab");
-        Point2D point = sensorTab.localToScene(0,0);
-        if(debug)
-            System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(offset+point.getX()+scene.getX()+area.getX(),offset+point.getY()+scene.getY()+area.getY());
-        robot.mousePress(MouseButton.PRIMARY);
-        robot.mouseRelease(MouseButton.PRIMARY);
+    public static void clickSensors() {
+        click("#sensorTab");
     }
 
     /**
-     * ClickEffecters
-     * This method would click the effecters tab using robot. Similar to the other click methods
-     * @param scene - main scene being shown on the screen
+     * Click and open the effecters tab
      */
-    public static void clickEffecters(Scene scene)
+    public static void clickEffecters()
     {
-        Window area = scene.getWindow();
-        Node effecterTab = scene.lookup("#effectersTab");
-        Point2D point = effecterTab.localToScene(0,0);
-        if(debug)
-            System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(offset+point.getX()+scene.getX()+area.getX(),offset+point.getY()+scene.getY()+area.getY());
-        robot.mousePress(MouseButton.PRIMARY);
-        robot.mouseRelease(MouseButton.PRIMARY);
+        click("#effectersTab");
     }
 
     /**
-     * This method clicks on the device configuration tab
-     * @param scene
+     * Click and open the device configuration tab
      */
-    public static void clickDevice(Scene scene)
-    {
-        Window area = scene.getWindow();
-        Node deviceTab = scene.lookup("#deviceTab");
-        Point2D point = deviceTab.localToScene(0,0);
-        if(debug)
-            System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
-        robot.mousePress(MouseButton.PRIMARY);
-        robot.mouseRelease(MouseButton.PRIMARY);
-    }
+    public static void clickDevice() { click("#effectersTab"); }
 
     /**
-     * This method clicks the reset button
-     * @param scene
+     * Manually call reset from menu option
      */
-    public static void clickReset(Scene scene) {
+    public static void clickReset() {
         try {
-
-            Window area = scene.getWindow();
-            Node resetButton = scene.lookup("#resetMenu");
-            Robot robot = new Robot();
-            Point2D point = resetButton.localToScene(0, 0);
-            robot.mouseMove(point.getX() + scene.getX() + area.getX()+10, point.getY() + scene.getY() + area.getY()+10);
-            robot.mouseClick(MouseButton.PRIMARY);
-            Thread thread = new Thread(()->{
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Platform.runLater(()->{
-                    List<Window> temp = Stage.getWindows().stream().collect(Collectors.toList());
-                    Window resetOk = temp.get(1);
-                    Node ok = resetOk.getScene().lookup("#resetOk");
-                    Point2D okArea = ok.localToScene(0,0);robot.mouseMove((double)(okArea.getX() + resetOk.getX() + resetOk.getScene().getX()), (double)( okArea.getY()+ resetOk.getY() + resetOk.getScene().getY()));
-                    robot.mousePress(MouseButton.PRIMARY);
-                    robot.mouseRelease(MouseButton.PRIMARY);
-
-                });
-
-            });
-            thread.start();
-        }catch(Exception e){
+            click("#resetMenu");
+            runLater(3000, ()->click("#resetOk"));
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Find a node given in any scene given its FXML ID. If multiple results are found, this returns the component in
+     * the higher indexed stage.
+     * @param value FXID of desired node
+     * @return Optional of result node if any is found. Otherwise, returns an empty optional.
+     */
+    public static Optional<Node> lookup(String value) {
+        List<Scene> scenes = Stage.getWindows().stream().map(Window::getScene).collect(Collectors.toList());
+        Node foundNode = null;
+        for (Scene scene : scenes) {
+            Node newNode = scene.lookup(value);
+            if (newNode != null) foundNode = newNode;
+        }
+        return foundNode == null
+                ? Optional.empty()
+                : Optional.of(foundNode);
+    }
 
-    public static void click(Scene scene, String value)
-    {
-        Window area = scene.getWindow();
-        Node node = scene.lookup(value);
+
+    public static void click(String value) {
+        Optional<Node> lookupResult = lookup(value);
+        if (lookupResult.isEmpty()) {
+            System.out.println("Error: Unable to locate FXID " + value + " in any existing stage.");
+            return;
+        }
+        Node node = lookupResult.get();
+        double offH = OFFSET, offW = OFFSET;
+        Scene scene = node.getScene();
+        Window window = scene.getWindow();
         Point2D point = node.localToScene(0,0);
-        if(debug)
-            System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(offset+point.getX()+scene.getX()+area.getX(),offset+point.getY()+scene.getY()+area.getY());
+        robot.mouseMove(offH+point.getX()+scene.getX()+window.getX(),offW+point.getY()+scene.getY()+window.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
     }
@@ -122,10 +91,10 @@ public class RobotUtils {
      * Run the given function with FX threading after delaying on a generic Java thread. This threading hot potato
      * gives the FX threads processing time so UI components can catch up before the function is added to the FX thread
      * queue.
+     * @param delay The wait time in milliseconds (e.g. delay of 1000 equals 1 second)
      * @param runnable A runnable object to execute on the FX thread after some delay
-     * @param delay The wait time in milliseconds (e.g. delay of 1000 is 1 second)
      */
-    public static void runLater(Runnable runnable, int delay) {
+    public static void runLater(int delay, Runnable runnable) {
         Thread t = new Thread(() -> {
             try {
                 Thread.sleep(delay);
@@ -139,18 +108,18 @@ public class RobotUtils {
 
     /**
      * Run one or many runnables with equivalent, non-FX delay time between sequential deployment to FX thread queue.
-     * @param runnables A list of runnable objects to execute on the FX thread after some delay
      * @param delay The wait time between each thread in milliseconds (e.g. delay of 1000 is 1 second)
+     * @param runnables A list of runnable objects to execute on the FX thread after some delay
      */
-    public static void runLater(Runnable[] runnables, int delay) {
+    public static void runLater(int delay, Runnable... runnables) {
         Thread t = new Thread(() -> {
-            for (Runnable r : runnables) {
+            for (Runnable runnable : runnables) {
                 try {
                     Thread.sleep(delay);
                 } catch (InterruptedException e) {
                     System.out.println("Exception in wait queue. "); e.printStackTrace();
                 }
-                Platform.runLater(r);
+                Platform.runLater(runnable);
             }
         });
         t.start();
