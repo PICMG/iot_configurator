@@ -729,19 +729,42 @@ public class MainScreenController implements Initializable {
 
 	public void resetDevice() {
 		configurationError.set(true);
-
 		// create a copy of the hardware file to be configured
-		device = new Device(hardware);
+		newDevice();
+		clearPanes();
+	}
 
+	public void loadDevice(File filePath)
+	{
+		if(filePath != null)
+		{
+			JsonResultFactory factory = new JsonResultFactory();
+			hardware = (JsonObject)factory.buildFromFile(filePath.toPath());
+			System.out.println(hardware);
+			newDevice();
+			showTree();
+		}
+			System.out.println(filePath);
+	}
+	public void showTree()
+	{
+		treeView.setVisible(true);
+	}
+	/**
+	 * This method loads the tree with a device node as the root.
+	 */
+	public void newDevice()
+	{
 		// create the tree based on the device
+		treeView.setVisible(false);
+		configurationError.set(true);
+		device = new Device(hardware);
 		treeView.setId("device");
 		TreeItem<TreeData> rootNode = treeView.getRoot();
 		rootNode = new TreeItem<>(new TreeData(null, null, "device"));
 		treeView.setRoot(rootNode);
 		rootNode.setExpanded(true);
 		populateTree(rootNode);
-
-		clearPanes();
 	}
 
 	@Override
@@ -765,10 +788,8 @@ public class MainScreenController implements Initializable {
 		addLibrariesFromResourceFolder(stateLib,"stateSets","state_sets");
 		deviceLib = new JsonObject();
 		addLibrariesFromResourceFolder(deviceLib,"devices","devices");
-
-		resetDevice();
-
 		treeView.setEditable(true);
+		newDevice();
 		treeView.setCellFactory(new Callback<>() {
 			@Override
 			public TreeCell<TreeData> call(TreeView<TreeData> p) {
