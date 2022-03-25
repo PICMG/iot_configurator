@@ -4,12 +4,17 @@ import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Optional;
@@ -65,19 +70,17 @@ public class RobotUtils {
             Node newNode = scene.lookup(value);
             if (newNode != null) foundNode = newNode;
         }
-        return foundNode == null
-                ? Optional.empty()
-                : Optional.of(foundNode);
+        return Optional.ofNullable(foundNode);
     }
 
 
     public static void click(String value) {
-        Optional<Node> lookupResult = lookup(value);
-        if (lookupResult.isEmpty()) {
+        Optional<Node> lookup = lookup(value);
+        if (lookup.isEmpty()) {
             System.out.println("Error: Unable to locate FXID " + value + " in any existing stage.");
             return;
         }
-        Node node = lookupResult.get();
+        Node node = lookup.get();
         double offH = OFFSET, offW = OFFSET;
         Scene scene = node.getScene();
         Window window = scene.getWindow();
@@ -140,7 +143,36 @@ public class RobotUtils {
         }
     }
 
-    public static Scene switchScene(int sceneNum) {
+    public static void check(String fxId, String value) {
+        Optional<Node> lookup = lookup(fxId);
+        if (lookup.isEmpty()) {
+            return;
+        }
+        Node node = lookup.get();
+        String text = getText(node);
+        if (value.equals(text)) {
+            System.out.println("Success: " + fxId + " successfully evaluated to " + value);
+        } else {
+            System.out.println("TEST ERROR: Could not evaluate FXID " + fxId + " value '"
+                    + text + "' to expected value '" + value + "'");
+        }
+    }
+
+    private static String getText(Node node) {
+        if (node instanceof TextField) {
+            return ((TextField)node).getText();
+        } else if (node instanceof TextArea) {
+            return ((TextArea)node).getText();
+        } else if (node instanceof CheckBox) {
+            return ((CheckBox)node).isSelected() ? "true" : "false";
+        } else if (node instanceof ChoiceBox<?>) {
+            return String.valueOf(((ChoiceBox)node).getValue());
+        }
+
+        return null;
+    }
+
+    public static Scene getScene(int sceneNum) {
         int counter = 0;
         List<Scene> scenes = Stage.getWindows().stream().map(Window::getScene).collect(Collectors.toList());
         if (counter > scenes.size()) return scenes.get(0);

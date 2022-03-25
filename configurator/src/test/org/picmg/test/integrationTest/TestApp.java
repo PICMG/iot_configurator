@@ -25,11 +25,28 @@ public class TestApp extends App {
             stage.setTitle("PICMG Configurator");
             stage.setScene(scene);
             stage.show();
-            typeTest();
-            System.out.println("Here is where the test would go");
+            // here is where tests go
+            evalTest();
         } catch (IOException e) {
             System.out.println(e);
         }
+    }
+
+    private void evalTest() {
+        RobotUtils.runLater(500,
+                () -> RobotUtils.clickEffecters(),
+                () -> RobotUtils.click("#stepCheckbox"),
+                () -> RobotUtils.check("#stepCheckbox", "true"),
+                () -> RobotUtils.click("#stepCheckbox"),
+                () -> RobotUtils.check("#stepCheckbox", "false"),
+                () -> RobotUtils.click("#descriptionTextArea"),
+                () -> RobotUtils.type("auto desc"),
+                () -> RobotUtils.check("#descriptionTextArea", "auto desc"),
+                () -> RobotUtils.click("#manufacturerTextfield"),
+                () -> RobotUtils.type("manufacturer 1"),
+                () -> RobotUtils.check("#manufacturerTextfield", "manufacturer 1"),
+                RobotUtils::close
+        );
     }
 
     private void typeTest() {
