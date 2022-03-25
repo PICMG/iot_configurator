@@ -4,18 +4,21 @@ import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class RobotUtils {
 
 
-    public static boolean debug = false;
+    private static final int offset = 5;
+    public static boolean debug = true;
     private static Robot robot = new Robot();
     /**
      * This method clicks the component with the #sensorTab id on the scene passed in
@@ -28,7 +31,7 @@ public class RobotUtils {
         Point2D point = sensorTab.localToScene(0,0);
         if(debug)
             System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
+        robot.mouseMove(offset+point.getX()+scene.getX()+area.getX(),offset+point.getY()+scene.getY()+area.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
     }
@@ -45,7 +48,7 @@ public class RobotUtils {
         Point2D point = effecterTab.localToScene(0,0);
         if(debug)
             System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
+        robot.mouseMove(offset+point.getX()+scene.getX()+area.getX(),offset+point.getY()+scene.getY()+area.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
     }
@@ -110,9 +113,76 @@ public class RobotUtils {
         Point2D point = node.localToScene(0,0);
         if(debug)
             System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
+        robot.mouseMove(offset+point.getX()+scene.getX()+area.getX(),offset+point.getY()+scene.getY()+area.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
+    }
+
+    /**
+     * Run the given function with FX threading after delaying on a generic Java thread. This threading hot potato
+     * gives the FX threads processing time so UI components can catch up before the function is added to the FX thread
+     * queue.
+     * @param runnable A runnable object to execute on the FX thread after some delay
+     * @param delay The wait time in milliseconds (e.g. delay of 1000 is 1 second)
+     */
+    public static void runLater(Runnable runnable, int delay) {
+        Thread t = new Thread(() -> {
+            try {
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                System.out.println("Exception in wait queue. "); e.printStackTrace();
+            }
+            Platform.runLater(runnable);
+        });
+        t.start();
+    }
+
+    /**
+     * Run one or many runnables with equivalent, non-FX delay time between sequential deployment to FX thread queue.
+     * @param runnables A list of runnable objects to execute on the FX thread after some delay
+     * @param delay The wait time between each thread in milliseconds (e.g. delay of 1000 is 1 second)
+     */
+    public static void runLater(Runnable[] runnables, int delay) {
+        Thread t = new Thread(() -> {
+            for (Runnable r : runnables) {
+                try {
+                    Thread.sleep(delay);
+                } catch (InterruptedException e) {
+                    System.out.println("Exception in wait queue. "); e.printStackTrace();
+                }
+                Platform.runLater(r);
+            }
+        });
+        t.start();
+    }
+    
+    public static void type(String message) {
+        for (char c : message.toCharArray()) {
+            String key = KeyEvent.getKeyText(KeyEvent.getExtendedKeyCodeForChar(c));
+            KeyCode keyCode = KeyCode.getKeyCode(key);
+            if (debug) {
+                System.out.println("Trying to convert " + c + " to " + key + " as " + keyCode);
+            }
+            if (keyCode != null) {
+                robot.keyType(keyCode);
+            } else {
+                robot.keyType(KeyCode.X);
+            }
+        }
+    }
+
+    public static Scene switchScene(int sceneNum) {
+        int counter = 0;
+        List<Scene> scenes = Stage.getWindows().stream().map(Window::getScene).collect(Collectors.toList());
+        if (counter > scenes.size()) return scenes.get(0);
+        if (scenes.iterator().hasNext()) {
+            scenes.iterator().next();
+            if (sceneNum == counter) {
+                return scenes.get(counter);
+            }
+            counter++;
+        }
+        return scenes.get(0);
     }
 
     public static void close()
