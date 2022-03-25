@@ -54,7 +54,9 @@ import java.util.ResourceBundle;
 public class MenuController implements Initializable {
 	@FXML Menu resetMenu;
 	@FXML Menu exportMenu;
+	@FXML Menu newDeviceMenu;
 	@FXML Menu loadDeviceMenu;
+
 	@FXML MenuBar mainMenubar;
 	@FXML AnchorPane deviceTabAnchorPane;
 	@FXML AnchorPane sensorsTabAnchorPane;
@@ -70,6 +72,13 @@ public class MenuController implements Initializable {
 	@FXML void notifyExport(Event event) {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+	}
+
+	void importFile()
+	{
+		FileChooser fileChooser = new FileChooser();
+		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+		mainController.loadDevice(selectedFile);
 	}
 
 
@@ -149,11 +158,21 @@ public class MenuController implements Initializable {
 		});
 		exportMenu.setGraphic(exportLabel);
 
+		Label newDeviceLabel = new Label("New");
+		newDeviceLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				mainController.showTree();
+			}
+		});
+
+		newDeviceMenu.setGraphic(newDeviceLabel);
+
 		Label loadDeviceLabel = new Label("Load");
 		loadDeviceLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-
+				importFile();
 			}
 		});
 		loadDeviceMenu.setGraphic(loadDeviceLabel);
