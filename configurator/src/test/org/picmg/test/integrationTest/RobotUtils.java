@@ -34,15 +34,16 @@ public class RobotUtils {
     /**
      * Click and open the effecters tab
      */
-    public static void clickEffecters()
-    {
+    public static void clickEffecters() {
         click("#effectersTab");
     }
 
     /**
      * Click and open the device configuration tab
      */
-    public static void clickDevice() { click("#effectersTab"); }
+    public static void clickDevice() {
+        click("#deviceTab");
+    }
 
     /**
      * Manually call reset from menu option
