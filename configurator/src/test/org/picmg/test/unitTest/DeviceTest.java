@@ -8,6 +8,8 @@ import org.picmg.jsonreader.*;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 
@@ -297,5 +299,82 @@ public class DeviceTest {
         boundIOBinding.put("isVirtual", new JsonValue("false"));
         boundIOBinding.put("boundChannel", new JsonValue("interlock_in"));
         assertTrue(device.setChannelBinding(boundIOBinding, "interlock_in"));
+    }
+
+    @Test
+    public void testRestoreBindingToDefaults(){
+        JsonAbstractValue newEntity = device.restoreBindingToDefaults("GlobalInterlockSensor");
+        JsonObject hardware = device.getJson();
+        JsonObject cfg = (JsonObject) hardware.get("configuration");
+        JsonArray cfgEntities = (JsonArray) cfg.get("logicalEntities");
+        boolean isExists = false;
+        JsonObject edef = null;
+        for (JsonAbstractValue logicalEntity : cfgEntities) {
+            edef = (JsonObject) logicalEntity;
+            if (edef.getValue("name").equals("simple1")) {
+                isExists = true;
+            }
+        }
+        assertTrue(isExists);
+        JsonAbstractValue newEntity1 = device.addLogicalEntityConfigurationByName("simple");
+        assertNull(newEntity1);
+        JsonArray bindings = (JsonArray) edef.get("ioBindings");
+        JsonArray result = new JsonArray();
+        JsonObject point1 = new JsonObject();
+        JsonObject point2 = new JsonObject();
+        point1.put("in", new JsonValue("0"));
+        point1.put("out", new JsonValue("0"));
+        point2.put("in", new JsonValue("1000"));
+        point2.put("out", new JsonValue("1000"));
+        result.add(0, point1);
+        result.add(1, point2);
+        for (JsonAbstractValue val : bindings) {
+            JsonObject binding = (JsonObject) val;
+            // if the binding has an input curve that is null, set it to a default
+            // linear response.
+            if ((binding.containsKey("inputCurve"))) {
+                JsonArray inputCurveActual = (JsonArray) binding.get("inputCurve");
+                assertTrue(inputCurveActual.containsAny(result));
+            }
+            if ((binding.containsKey("outputCurve"))) {
+                JsonArray outputCurveActual = (JsonArray) binding.get("outputCurve");
+                assertTrue(outputCurveActual.containsAny(result));
+            }
+        }
+    }
+
+    @Test
+    public void testSetSensorFromFile(){
+        device.setSensorFromFile("GlobalInterlockSensor","Calt_DYLY_103_Ounces");
+        JsonObject binding = device.getConfiguredBindingFromName("GlobalInterlockSensor");
+        assertEquals("41", binding.get("sensor").getValue("baseUnit"));
+        assertEquals("0", binding.get("sensor").getValue("auxUnit"));
+        assertEquals("Pull Pressure Force S-type Load Cell Sensor with Cable 10KG ", binding.get("sensor").getValue("description"));
+        assertEquals("Calt_DYLY_103_Ounces", binding.get("sensor").getValue("name"));
+        assertEquals("Amps", binding.get("sensor").getValue("outputUnits"));
+    }
+
+    @Test
+    public void testExportConfiguration(){
+        //exprot the file
+        File outputFile  = new File("exportConfigurationTestOutput.json");
+        device.exportConfiguration(outputFile);
+        //read the exported file
+        JsonResultFactory factory = new JsonResultFactory();
+        JsonObject hardware = (JsonObject) factory.buildFromFile(Path.of("exportConfigurationTestOutput.json"));
+        Device deviceCopy = new Device(hardware);
+
+        JsonObject capabilitiesFruRecordByName = device.getCapabilitiesFruRecordByName("test");
+        JsonObject copyCapabilitiesFruRecordByName = deviceCopy.getCapabilitiesFruRecordByName("test");
+        assertEquals(capabilitiesFruRecordByName.getValue("vendorIANA"), copyCapabilitiesFruRecordByName.getValue("vendorIANA"));
+
+        JsonObject returnedLogicalEntity = device.getLogicalEntityCapabilityByName("simple1");
+        JsonObject copyReturnedLogicalEntity = deviceCopy.getLogicalEntityCapabilityByName("simple1");
+        assertEquals(returnedLogicalEntity.getValue("entityVendorIANA"), copyReturnedLogicalEntity.getValue("entityVendorIANA"));
+
+        JsonObject binding = device.getConfiguredBindingFromName("GlobalInterlockSensor");
+        JsonObject copyBinding = deviceCopy.getConfiguredBindingFromName("GlobalInterlockSensor");
+        assertEquals(binding.getValue("stateSet"), copyBinding.getValue("stateSet"));
+
     }
 }
