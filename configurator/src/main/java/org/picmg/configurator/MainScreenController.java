@@ -740,11 +740,9 @@ public class MainScreenController implements Initializable {
 		{
 			JsonResultFactory factory = new JsonResultFactory();
 			hardware = (JsonObject)factory.buildFromFile(filePath.toPath());
-			System.out.println(hardware);
 			newDevice();
 			showTree();
 		}
-			System.out.println(filePath);
 	}
 	public void showTree()
 	{
