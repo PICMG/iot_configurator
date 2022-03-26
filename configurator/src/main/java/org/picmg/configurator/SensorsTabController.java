@@ -126,6 +126,10 @@ public class SensorsTabController implements Initializable {
 	boolean valid;
 	SensorTableData workingData = new SensorTableData();
 
+	public SensorTableData getSensorTableData() {
+		return workingData;
+	}
+
 	/**
 	 * This inner class describes the data model for the sensor table
 	 * and sensor data pane
@@ -293,7 +297,7 @@ public class SensorsTabController implements Initializable {
 			if (!App.isFloat(json.getValue("minusAccuracy"))) return;
 			if ((json.getValue("maxSampleRate")!=null)&&
 				   (!App.isUnsignedInteger(json.getValue("maxSampleRate")))) return;
-			
+
 			// check the values of the enumerated fields to make sure they match one of the
 			// possible selections
 			if ((json.getInteger("baseUnit"))>=unitsChoices.length) return;
@@ -387,7 +391,7 @@ public class SensorsTabController implements Initializable {
 		public void SaveToFile(String path) {
 			// create the Json Object
 			JsonObject json = new JsonObject();
-			
+
 			// check to make sure the json has all the right fields
 			json.put("name", new JsonValue(name.get()));
 			json.put("manufacturer", new JsonValue(manufacturer.get()));
@@ -517,7 +521,7 @@ public class SensorsTabController implements Initializable {
 				outputCurve.add(newPoint);
 			}
 		}
-			
+
 		/**
 		 * loadPointsFromCsvFile()
 		 * load points from the specified csv file into the data array for this object
@@ -596,7 +600,7 @@ public class SensorsTabController implements Initializable {
 		if (plusAccuracyImage.isVisible()) return false;
 		return true;
 	}
-	
+
 	@FXML
 	void onManufacturerAction(ActionEvent event) {
 		workingData.setManufacturer(manufacturerTextfield.getText());
@@ -801,7 +805,7 @@ public class SensorsTabController implements Initializable {
 		minusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the negative accuracy of the sensor"));
 		outputUnitsTextfield.setTooltip(createTooltip("The output electrical units of the sensor"));
 	}
-	
+
 	/**
 	 * initializeTable()
 	 * initialize the contents of the table with contents from the library folder
