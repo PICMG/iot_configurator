@@ -106,7 +106,7 @@ public class App extends Application {
 		Parent root;
 		try {
 			root = FXMLLoader.load(getClass().getClassLoader().getResource("topTabScene.fxml"));
-			Scene scene = new Scene(root, 1024, 818);
+			Scene scene = new Scene(root, 1024, 870);
 			stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("picmg_logo.png")));
 			stage.setTitle("PICMG Configurator");
 			stage.setScene(scene);
