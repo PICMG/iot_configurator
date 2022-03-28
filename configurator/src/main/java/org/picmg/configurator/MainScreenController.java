@@ -748,6 +748,18 @@ public class MainScreenController implements Initializable {
 	{
 		treeView.setVisible(true);
 	}
+
+	public void loadConfig(File filePath)
+	{
+		if(filePath != null)
+		{
+			JsonResultFactory factory = new JsonResultFactory();
+			hardware = (JsonObject)factory.buildFromFile(filePath.toPath());
+			loadDevice();
+			showTree();
+		}
+	}
+
 	/**
 	 * This method loads the tree with a device node as the root.
 	 */
@@ -757,6 +769,22 @@ public class MainScreenController implements Initializable {
 		treeView.setVisible(false);
 		configurationError.set(true);
 		device = new Device(hardware);
+		treeView.setId("device");
+		TreeItem<TreeData> rootNode = treeView.getRoot();
+		rootNode = new TreeItem<>(new TreeData(null, null, "device"));
+		treeView.setRoot(rootNode);
+		rootNode.setExpanded(true);
+		populateTree(rootNode);
+	}
+
+
+	public void loadDevice()
+	{
+		// create the tree based on the device
+		treeView.setVisible(false);
+		configurationError.set(true);
+		device = new Device(hardware);
+		device.loadDeviceConfig(hardware);
 		treeView.setId("device");
 		TreeItem<TreeData> rootNode = treeView.getRoot();
 		rootNode = new TreeItem<>(new TreeData(null, null, "device"));
