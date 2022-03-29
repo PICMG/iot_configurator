@@ -864,6 +864,7 @@ public class SensorsTabController implements Initializable {
 		if (status.equals(NO_AUX)) {
 			// if no aux, disable and default aux inputs
 			auxUnitChoicebox.getSelectionModel().select(0);
+			workingData.setAuxModifier("0");
 			auxUnitModifierTextfield.setText("0");
 			auxRateChoicebox.getSelectionModel().select(0);
 			auxUnitChoicebox.setDisable(true);
