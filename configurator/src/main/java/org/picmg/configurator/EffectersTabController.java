@@ -606,6 +606,9 @@ public class EffectersTabController implements Initializable {
 		if (nameTextField != null) {
 			nameTextField.setText(name.replaceAll("[^a-z,A-Z,0-9]","_"));
 			workingData.setName(name.replaceAll("[^a-z,A-Z,0-9]","_"));
+			saveChangesButton.setTooltip(new Tooltip("Save as default " + name));
+		} else {
+			saveChangesButton.setTooltip(null);
 		}
 	}
 
@@ -613,9 +616,9 @@ public class EffectersTabController implements Initializable {
 		return name == null || name.isBlank() ? "none" : name;
 	}
 
-	private void setSavable(boolean b) {
-		saveChangesButton.setDisable(b);
-		saveAsChangesButton.setDisable(b);
+	private void setSaveAvailability(boolean b) {
+		saveChangesButton.setDisable(!b || workingData.getSavePath() == null);
+		saveAsChangesButton.setDisable(!b);
 	}
 
 	/**
@@ -646,7 +649,7 @@ public class EffectersTabController implements Initializable {
 		workingData.setManufacturer(manufacturerTextfield.getText());
 		modified = true;
 		updateName();
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
@@ -654,84 +657,84 @@ public class EffectersTabController implements Initializable {
 		workingData.setModel(partNumberTextField.getText());
 		modified = true;
 		updateName();
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onAnalogAction(ActionEvent event) {
 		workingData.setAnalog(analogCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onDigitalAction(ActionEvent event) {
 		workingData.setDigital(digitalCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onPwmAction(ActionEvent event) {
 		workingData.setPwm(pwmCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onRateAction(ActionEvent event) {
 		workingData.setRate(rateCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onStepAction(ActionEvent event) {
 		workingData.setStep(stepCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onMaxSampleRateAction(ActionEvent event) {
 		workingData.setMaxSampleRate(maxSampleRateTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onPlusAccuractyAction(ActionEvent event) {
 		workingData.setPlusAccuracy(plusAccuracyTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onMinusAccuracyAction(ActionEvent event) {
 		workingData.setMinusAccuracy(minusAccuracyTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onInputUnitsAction(ActionEvent event) {
 		workingData.setOutputUnits(inputUnitsTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
@@ -742,7 +745,7 @@ public class EffectersTabController implements Initializable {
 		boolean result = workingData.loadPointsFromCsvFile(datafile);
 		outputCurveImage.setVisible(!result);
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
@@ -772,14 +775,14 @@ public class EffectersTabController implements Initializable {
 	void onRatedMaxAction(ActionEvent event) {
 		workingData.setRatedMax(ratedMaxTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onNominalValueAction(ActionEvent event) {
 		workingData.setNominalValue(nominalValueTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	private File promptSavePath() {
@@ -809,7 +812,7 @@ public class EffectersTabController implements Initializable {
 				: new File(System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json");
 		workingData.SaveToFile(defaultPath.toString());
 		modified = false;
-		setSavable(true);
+		setSaveAvailability(false);
 		initializeTable();
 		selectDefaultEffecter();
 	}
@@ -823,7 +826,7 @@ public class EffectersTabController implements Initializable {
 		workingData.setSavePath(path.toPath());
 		workingData.SaveToFile(path.toString());
 		modified = false;
-		setSavable(true);
+		setSaveAvailability(false);
 		initializeTable();
 		selectDefaultEffecter();
 	}
@@ -911,6 +914,7 @@ public class EffectersTabController implements Initializable {
 
 	private void selectDefaultEffecter() {
 		EffecterTableView.getSelectionModel().select(0);
+		setSaveAvailability(false);
 		EffecterTableData selectedData = EffecterTableView.getSelectionModel().getSelectedItem();
 		if (selectedData == null) {
 			refreshAuxState(NO_AUX);
@@ -919,7 +923,6 @@ public class EffectersTabController implements Initializable {
 		workingData.set(selectedData);
 		setEffecterData(selectedData);
 		modified = false;
-		setSavable(true);
 	}
 
 	private void refreshAuxState(String status) {
@@ -998,7 +1001,7 @@ public class EffectersTabController implements Initializable {
 				setEffecterData(workingData);
 
 				modified = false;
-				setSavable(true);
+				setSaveAvailability(false);
 			}
 		});
 
@@ -1009,7 +1012,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setBaseUnit(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		auxUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -1018,7 +1021,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setAuxUnit(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		rateUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -1027,7 +1030,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setRateUnit(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		auxRateChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -1036,7 +1039,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setAuxRateUnit(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		relChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -1045,7 +1048,7 @@ public class EffectersTabController implements Initializable {
 				workingData.setRel(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 				refreshAuxState(newString);
 			}
 		});
@@ -1086,7 +1089,7 @@ public class EffectersTabController implements Initializable {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) {
 					workingData.setDescription(descriptionTextArea.getText());
-					setSavable(!isValid());
+					setSaveAvailability(isValid());
 					modified = true;
 				}
 			}
