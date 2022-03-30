@@ -127,7 +127,13 @@ public class EffectersTabController implements Initializable {
 		NO_AUX, "dividedBy","multipliedBy"
 	};
 	boolean modified;
+
 	EffecterTableData workingData = new EffecterTableData();
+
+	public EffecterTableData getWorkingData() {
+		return workingData;
+	}
+
 
 	/**
 	 * This inner class describes the data model for the effecter table
