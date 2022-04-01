@@ -69,6 +69,8 @@ public class Device {
         this.jdev = new JsonObject(jdev);
 
         // create any missing sections
+
+        // -> If config, fail
         JsonObject configuration = new JsonObject();
         configuration.put("stateSets", new JsonArray());
         configuration.put("fruRecords", new JsonArray());
@@ -77,6 +79,7 @@ public class Device {
 
         allUsedPins = getAllUsedPins();
         allUsedChannels = getAllBoundChannels();
+
 
         // add all required entities to the configuration
         JsonArray entities = (JsonArray) ((JsonObject) jdev.get("capabilities")).get("logicalEntities");
@@ -95,6 +98,25 @@ public class Device {
             boolean required = record.getBoolean("required");
             if (required) {
                 addFruRecordConfigurationByName(name);
+            }
+        });
+    }
+
+    public void loadDeviceConfig(JsonObject jdev) {
+
+        this.jdev = new JsonObject(jdev);
+
+        allUsedPins = getAllUsedPins();
+        allUsedChannels = getAllBoundChannels();
+
+
+        // add all required entities to the configuration
+        JsonArray entities = (JsonArray) ((JsonObject) jdev.get("capabilities")).get("logicalEntities");
+        entities.forEach(entity -> {
+            String name = entity.getValue("name");
+            boolean required = entity.getBoolean("required");
+            if (required) {
+                addLogicalEntityConfigurationByName(name);
             }
         });
     }

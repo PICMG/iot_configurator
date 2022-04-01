@@ -81,6 +81,13 @@ public class MenuController implements Initializable {
 		mainController.loadDevice(selectedFile);
 	}
 
+	void importConfig()
+	{
+		FileChooser fileChooser = new FileChooser();
+		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+		mainController.loadConfig(selectedFile);
+	}
+
 
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
@@ -162,17 +169,18 @@ public class MenuController implements Initializable {
 		newDeviceLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				mainController.showTree();
+
+				importFile();
 			}
 		});
 
 		newDeviceMenu.setGraphic(newDeviceLabel);
 
-		Label loadDeviceLabel = new Label("Load");
+		Label loadDeviceLabel = new Label("Edit");
 		loadDeviceLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				importFile();
+				importConfig();
 			}
 		});
 		loadDeviceMenu.setGraphic(loadDeviceLabel);
