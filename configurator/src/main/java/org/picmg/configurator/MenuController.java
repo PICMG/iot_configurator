@@ -35,6 +35,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -53,6 +54,9 @@ import java.util.ResourceBundle;
 public class MenuController implements Initializable {
 	@FXML Menu resetMenu;
 	@FXML Menu exportMenu;
+	@FXML Menu newDeviceMenu;
+	@FXML Menu loadDeviceMenu;
+
 	@FXML MenuBar mainMenubar;
 	@FXML AnchorPane deviceTabAnchorPane;
 	@FXML AnchorPane sensorsTabAnchorPane;
@@ -68,6 +72,20 @@ public class MenuController implements Initializable {
 	@FXML void notifyExport(Event event) {
 		FileChooser fileChooser = new FileChooser();
 		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+	}
+
+	void importFile()
+	{
+		FileChooser fileChooser = new FileChooser();
+		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+		mainController.loadDevice(selectedFile);
+	}
+
+	void importConfig()
+	{
+		FileChooser fileChooser = new FileChooser();
+		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
+		mainController.loadConfig(selectedFile);
 	}
 
 
@@ -146,5 +164,25 @@ public class MenuController implements Initializable {
 			}
 		});
 		exportMenu.setGraphic(exportLabel);
+
+		Label newDeviceLabel = new Label("New");
+		newDeviceLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+
+				importFile();
+			}
+		});
+
+		newDeviceMenu.setGraphic(newDeviceLabel);
+
+		Label loadDeviceLabel = new Label("Edit");
+		loadDeviceLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				importConfig();
+			}
+		});
+		loadDeviceMenu.setGraphic(loadDeviceLabel);
 	}
 }

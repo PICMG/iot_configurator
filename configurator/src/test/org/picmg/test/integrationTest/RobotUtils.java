@@ -4,115 +4,134 @@ import javafx.application.Platform;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import java.awt.event.KeyEvent;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class RobotUtils {
-
-
-    public static boolean debug = false;
     private static Robot robot = new Robot();
+    public static final boolean debug = true;
+    private static final int OFFSET = 10;
+
     /**
-     * This method clicks the component with the #sensorTab id on the scene passed in
-     * @param scene
+     * Click and open the sensor tab
      */
-    public static void clickSensors(Scene scene)
-    {
-        Window area = scene.getWindow();
-        Node sensorTab = scene.lookup("#sensorTab");
-        Point2D point = sensorTab.localToScene(0,0);
-        if(debug)
-            System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
-        robot.mousePress(MouseButton.PRIMARY);
-        robot.mouseRelease(MouseButton.PRIMARY);
+    public static void clickSensors() {
+        click("#sensorTab");
     }
 
     /**
-     * ClickEffecters
-     * This method would click the effecters tab using robot. Similar to the other click methods
-     * @param scene - main scene being shown on the screen
+     * Click and open the effecters tab
      */
-    public static void clickEffecters(Scene scene)
-    {
-        Window area = scene.getWindow();
-        Node effecterTab = scene.lookup("#effectersTab");
-        Point2D point = effecterTab.localToScene(0,0);
-        if(debug)
-            System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
-        robot.mousePress(MouseButton.PRIMARY);
-        robot.mouseRelease(MouseButton.PRIMARY);
+    public static void clickEffecters() {
+        click("#effectersTab");
     }
 
     /**
-     * This method clicks on the device configuration tab
-     * @param scene
+     * Click and open the device configuration tab
      */
-    public static void clickDevice(Scene scene)
-    {
-        Window area = scene.getWindow();
-        Node deviceTab = scene.lookup("#deviceTab");
-        Point2D point = deviceTab.localToScene(0,0);
-        if(debug)
-            System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
-        robot.mousePress(MouseButton.PRIMARY);
-        robot.mouseRelease(MouseButton.PRIMARY);
+    public static void clickDevice() {
+        click("#deviceTab");
     }
 
     /**
-     * This method clicks the reset button
-     * @param scene
+     * Manually call reset from menu option
      */
-    public static void clickReset(Scene scene) {
+    public static void clickReset() {
         try {
-
-            Window area = scene.getWindow();
-            Node resetButton = scene.lookup("#resetMenu");
-            Robot robot = new Robot();
-            Point2D point = resetButton.localToScene(0, 0);
-            robot.mouseMove(point.getX() + scene.getX() + area.getX()+10, point.getY() + scene.getY() + area.getY()+10);
-            robot.mouseClick(MouseButton.PRIMARY);
-            Thread thread = new Thread(()->{
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Platform.runLater(()->{
-                    List<Window> temp = Stage.getWindows().stream().collect(Collectors.toList());
-                    Window resetOk = temp.get(1);
-                    Node ok = resetOk.getScene().lookup("#resetOk");
-                    Point2D okArea = ok.localToScene(0,0);robot.mouseMove((double)(okArea.getX() + resetOk.getX() + resetOk.getScene().getX()), (double)( okArea.getY()+ resetOk.getY() + resetOk.getScene().getY()));
-                    robot.mousePress(MouseButton.PRIMARY);
-                    robot.mouseRelease(MouseButton.PRIMARY);
-
-                });
-
-            });
-            thread.start();
-        }catch(Exception e){
+            click("#resetMenu");
+            RobotThread.build(3000, ()->click("#resetOk")).run();
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * Find a node given in any scene given its FXML ID. If multiple results are found, this returns the component in
+     * the higher indexed stage.
+     * @param value FXID of desired node
+     * @return Optional of result node if any is found. Otherwise, returns an empty optional.
+     */
+    public static Optional<Node> lookup(String value) {
+        List<Scene> scenes = Stage.getWindows().stream().map(Window::getScene).collect(Collectors.toList());
+        Node foundNode = null;
+        for (Scene scene : scenes) {
+            Node newNode = scene.lookup(value);
+            if (newNode != null) foundNode = newNode;
+        }
+        if (debug) System.out.println("Node=" + foundNode);
+        return Optional.ofNullable(foundNode);
+    }
 
-    public static void click(Scene scene, String value)
-    {
-        Window area = scene.getWindow();
-        Node node = scene.lookup(value);
+
+    public static void click(String value) {
+        Optional<Node> lookup = lookup(value);
+        if (lookup.isEmpty()) {
+            System.out.println("Error: Unable to locate FXID " + value + " in any existing stage.");
+            return;
+        }
+        Node node = lookup.get();
+        Scene scene = node.getScene();
+        Window window = scene.getWindow();
         Point2D point = node.localToScene(0,0);
-        if(debug)
-            System.out.println(scene.getX()+" "+scene.getY());
-        robot.mouseMove(point.getX()+scene.getX()+area.getX(),point.getY()+scene.getY()+area.getY());
+        if (debug) System.out.println(OFFSET+point.getX()+scene.getX()+window.getX() + "\t\t" + OFFSET+point.getY()+scene.getY()+window.getY());
+        robot.mouseMove(OFFSET+point.getX()+scene.getX()+window.getX(),OFFSET+point.getY()+scene.getY()+window.getY());
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
+    }
+
+
+    
+    public static void type(String message) {
+        for (char c : message.toCharArray()) {
+            String key = KeyEvent.getKeyText(KeyEvent.getExtendedKeyCodeForChar(c));
+            KeyCode keyCode = KeyCode.getKeyCode(key);
+            if (debug) {
+                System.out.println("Trying to convert " + c + " to " + key + " as " + keyCode);
+            }
+            if (keyCode != null) {
+                robot.keyType(keyCode);
+            }
+        }
+    }
+
+    public static void check(String fxId, String value) {
+        Optional<Node> lookup = lookup(fxId);
+        if (lookup.isEmpty()) {
+            return;
+        }
+        Node node = lookup.get();
+        String text = getText(node);
+        if (value.equals(text)) {
+            System.out.println("Success: " + fxId + " successfully evaluated to '''" + value + "'''");
+        } else {
+            System.out.println("TEST ERROR: Could not evaluate FXID " + fxId + " value '''"
+                    + text + "''' to expected value '''" + value + "'''");
+        }
+    }
+
+    private static String getText(Node node) {
+        if (node instanceof TextField) {
+            return ((TextField)node).getText();
+        } else if (node instanceof TextArea) {
+            return ((TextArea)node).getText();
+        } else if (node instanceof CheckBox) {
+            return ((CheckBox)node).isSelected() ? "true" : "false";
+        } else if (node instanceof ChoiceBox<?>) {
+            return String.valueOf(((ChoiceBox)node).getValue());
+        }
+        return null;
     }
 
     public static void close()

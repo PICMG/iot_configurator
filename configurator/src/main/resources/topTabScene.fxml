@@ -10,18 +10,44 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.layout.FlowPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.layout.TilePane?>
+<?import javafx.geometry.Insets?>
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.picmg.configurator.MenuController">
    <children>
-       <FlowPane alignment="TOP_LEFT" style="-fx-background-color: #ffffff">
-           <ImageView fx:id="picmgLogo" pickOnBounds="true" fitHeight="50" fitWidth="50" preserveRatio="true">
-               <image>
-                   <Image url="@picmg_logo.png" backgroundLoading="true"/>
-               </image>
-           </ImageView>
+       <FlowPane alignment="TOP_LEFT" style="-fx-background-color: #ffffff" >
+           <VBox>
+               <padding>
+                   <Insets top="0" bottom="0" left="0" right="20"></Insets>
+               </padding>
+               <ImageView fx:id="picmgLogo" pickOnBounds="true" fitHeight="100" fitWidth="100" preserveRatio="true" >
+                   <image>
+                       <Image url="@picmg_logo.png" backgroundLoading="true"/>
+                   </image>
+               </ImageView>
+           </VBox>
+           <VBox>
+               <padding>
+                   <Insets top="15" bottom="0" left="0" right="20"></Insets>
+               </padding>
+               <ImageView fx:id="smartSensor" pickOnBounds="true" fitHeight="100" fitWidth="200" preserveRatio="true" >
+                   <image>
+                       <Image url="@SmartSensorLogo.png" backgroundLoading="true"/>
+                   </image>
+               </ImageView>
+           </VBox>
+           <Label prefHeight="100" text = "PICMG Smart Sensor Configurator" textFill="black" style="-fx-font-weight: bold;">
+               <font>
+                   <Font size = "40"></Font>
+               </font>
+           </Label>
        </FlowPane>
        <MenuBar fx:id="mainMenubar">
           <menus>
-            <Menu fx:id="resetMenu" mnemonicParsing="false" />
+            <Menu fx:id="loadDeviceMenu" mnemonicParsing="false" />
+              <Menu fx:id="newDeviceMenu" mnemonicParsing="false" />
+              <Menu fx:id="resetMenu" mnemonicParsing="false" />
             <Menu fx:id="exportMenu" mnemonicParsing="false" onHiding="#notifyExport" onShowing="#notifyExport" />
         </menus>
       </MenuBar>
@@ -39,12 +65,12 @@
             </Tab>
             <Tab text="Effecters" fx:id="effectersTab">
               <content>
-                <AnchorPane fx:id="effectersTabAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane fx:id="effectersTabAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
               </content>
             </Tab>
-            <Tab text="State Sets">
+            <Tab text="State Sets" disable="true">
               <content>
-                <AnchorPane fx:id="stateSetsTabAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                <AnchorPane fx:id="stateSetsTabAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
               </content>
             </Tab>
         </tabs>

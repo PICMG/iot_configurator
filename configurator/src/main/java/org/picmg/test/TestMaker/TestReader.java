@@ -32,6 +32,7 @@ public class TestReader {
     public boolean read(String Test) throws Exception {
         String[] testValues = Test.split(":");
         readFileName(testValues);
+        readStage(testValues);
         for(int i = index; i < testValues.length; i++) {
             if(testValues[i].contains("Steps,Start"))
                 readSteps(testValues);
@@ -42,6 +43,13 @@ public class TestReader {
         return true;
     }
 
+
+    private void readStage(String[] testValues)
+    {
+        String[] nameValues = testValues[index].split(",");
+        container.setFileToLoad(nameValues[1]);
+        index++;
+    }
     private void readFileName(String[] testValues)
     {
         String[] nameValues = testValues[index].split(",");

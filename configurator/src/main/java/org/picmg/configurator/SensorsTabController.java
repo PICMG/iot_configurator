@@ -126,6 +126,10 @@ public class SensorsTabController implements Initializable {
 	boolean valid;
 	SensorTableData workingData = new SensorTableData();
 
+	public SensorTableData getSensorTableData() {
+		return workingData;
+	}
+
 	/**
 	 * This inner class describes the data model for the sensor table
 	 * and sensor data pane
@@ -293,7 +297,7 @@ public class SensorsTabController implements Initializable {
 			if (!App.isFloat(json.getValue("minusAccuracy"))) return;
 			if ((json.getValue("maxSampleRate")!=null)&&
 				   (!App.isUnsignedInteger(json.getValue("maxSampleRate")))) return;
-			
+
 			// check the values of the enumerated fields to make sure they match one of the
 			// possible selections
 			if ((json.getInteger("baseUnit"))>=unitsChoices.length) return;
@@ -387,7 +391,7 @@ public class SensorsTabController implements Initializable {
 		public void SaveToFile(String path) {
 			// create the Json Object
 			JsonObject json = new JsonObject();
-			
+
 			// check to make sure the json has all the right fields
 			json.put("name", new JsonValue(name.get()));
 			json.put("manufacturer", new JsonValue(manufacturer.get()));
@@ -517,7 +521,7 @@ public class SensorsTabController implements Initializable {
 				outputCurve.add(newPoint);
 			}
 		}
-			
+
 		/**
 		 * loadPointsFromCsvFile()
 		 * load points from the specified csv file into the data array for this object
@@ -571,9 +575,9 @@ public class SensorsTabController implements Initializable {
 		workingData.setName(name.replaceAll("[^a-z,A-Z,0-9]","_"));
 	}
 
-	private void setSavable(boolean b) {
-		saveChangesButton.setDisable(b);
-		saveAsChangesButton.setDisable(b);
+	private void setSaveAvailability(boolean b) {
+		saveChangesButton.setDisable(!b || workingData.getSavePath() == null);
+		saveAsChangesButton.setDisable(!b);
 	}
 
 	/**
@@ -596,13 +600,13 @@ public class SensorsTabController implements Initializable {
 		if (plusAccuracyImage.isVisible()) return false;
 		return true;
 	}
-	
+
 	@FXML
 	void onManufacturerAction(ActionEvent event) {
 		workingData.setManufacturer(manufacturerTextfield.getText());
 		modified = true;
 		updateName();
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
@@ -610,84 +614,84 @@ public class SensorsTabController implements Initializable {
 		workingData.setModel(partNumberTextField.getText());
 		modified = true;
 		updateName();
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onAnalogAction(ActionEvent event) {
 		workingData.setAnalog(analogCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onDigitalAction(ActionEvent event) {
 		workingData.setDigital(digitalCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onCountAction(ActionEvent event) {
 		workingData.setCount(countCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onRateAction(ActionEvent event) {
 		workingData.setRate(rateCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onQuadratureAction(ActionEvent event) {
 		workingData.setQuadrature(quadratureCheckbox.isSelected());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onMaxSampleRateAction(ActionEvent event) {
 		workingData.setMaxSampleRate(maxSampleRateTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onPlusAccuractyAction(ActionEvent event) {
 		workingData.setPlusAccuracy(plusAccuracyTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onMinusAccuracyAction(ActionEvent event) {
 		workingData.setMinusAccuracy(minusAccuracyTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onOutputUnitsAction(ActionEvent event) {
 		workingData.setOutputUnits(outputUnitsTextfield.getText());
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
@@ -698,7 +702,7 @@ public class SensorsTabController implements Initializable {
 		boolean result = workingData.loadPointsFromCsvFile(datafile);
 		outputCurveImage.setVisible(!result);
 		modified = true;
-		setSavable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
@@ -751,7 +755,7 @@ public class SensorsTabController implements Initializable {
 				: new File(System.getProperty("user.dir")+"/lib/sensors/" + workingData.getName()+".json");
 		workingData.SaveToFile(defaultPath.toString());
 		modified = false;
-		setSavable(true);
+		setSaveAvailability(false);
 		initializeTable();
 		selectDefaultSensor();
 	}
@@ -765,7 +769,7 @@ public class SensorsTabController implements Initializable {
 		workingData.setSavePath(path.toPath());
 		workingData.SaveToFile(path.toString());
 		modified = false;
-		setSavable(true);
+		setSaveAvailability(false);
 		initializeTable();
 		selectDefaultSensor();
 	}
@@ -801,7 +805,7 @@ public class SensorsTabController implements Initializable {
 		minusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the negative accuracy of the sensor"));
 		outputUnitsTextfield.setTooltip(createTooltip("The output electrical units of the sensor"));
 	}
-	
+
 	/**
 	 * initializeTable()
 	 * initialize the contents of the table with contents from the library folder
@@ -849,6 +853,7 @@ public class SensorsTabController implements Initializable {
 
 	private void selectDefaultSensor() {
 		SensorTableView.getSelectionModel().select(0);
+		setSaveAvailability(false);
 		SensorTableData selecteddata = SensorTableView.getSelectionModel().getSelectedItem();
 		if (selecteddata == null) {
 			refreshAuxState(NO_AUX);
@@ -857,13 +862,13 @@ public class SensorsTabController implements Initializable {
 		workingData.set(selecteddata);
 		setSensorData(selecteddata);
 		modified = false;
-		setSavable(true);
 	}
 
 	private void refreshAuxState(String status) {
 		if (status.equals(NO_AUX)) {
 			// if no aux, disable and default aux inputs
 			auxUnitChoicebox.getSelectionModel().select(0);
+			workingData.setAuxModifier("0");
 			auxUnitModifierTextfield.setText("0");
 			auxRateChoicebox.getSelectionModel().select(0);
 			auxUnitChoicebox.setDisable(true);
@@ -935,7 +940,7 @@ public class SensorsTabController implements Initializable {
 				workingData.set(data);
 				setSensorData(workingData);
 				modified = false;
-				setSavable(true);
+				setSaveAvailability(false);
 			}
 		});
 
@@ -946,7 +951,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setBaseUnit(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		auxUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -955,7 +960,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setAuxUnit(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		rateUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -964,7 +969,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setRateUnit(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		auxRateChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -973,7 +978,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setAuxRateUnit(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		relChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -982,7 +987,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setRel(newString);
 				updateName();
 				modified = true;
-				setSavable(!isValid());
+				setSaveAvailability(isValid());
 				refreshAuxState(newString);
 			}
 		});
@@ -1017,7 +1022,7 @@ public class SensorsTabController implements Initializable {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) {
 					workingData.setDescription(descriptionTextArea.getText());
-					setSavable(!isValid());
+					setSaveAvailability(isValid());
 					modified = true;
 				}
 			}
