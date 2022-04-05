@@ -15,7 +15,7 @@ public class TestMakerGUi extends Application {
         Parent root;
         try {
             root = FXMLLoader.load(getClass().getResource("/testMakerGUI.fxml"));
-            Scene scene = new Scene(root, 1024, 870);
+            Scene scene = new Scene(root, 1024, 570);
             primaryStage.setScene(scene);
             primaryStage.show();
         }
@@ -27,7 +27,6 @@ public class TestMakerGUi extends Application {
     }
 
     public static void main(String[] args) {
-        //TestReader.getInstance().read("Name,Test1:File,topTabScene.fxml:Steps,Start:Name,Test Box Test:Click,ID:Type,Temp:Check,ID,Data:Steps,End:Steps,Start:Name,Test Box BRO:Click,ID:Type,Temp:Check,ID,Data:Steps,End");
         launch();
     }
 }
