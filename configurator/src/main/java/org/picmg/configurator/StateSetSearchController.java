@@ -119,6 +119,12 @@ public class StateSetSearchController implements Initializable {
 		String line = scn.nextLine();
 		return (String) line.subSequence(str.length(), line.length()-2);
 	}
+
+	@FXML
+	void onSaveChangesAction(ActionEvent event) {
+		String fileName = "placeholder";
+		File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
+	}
 	
 	//*******************************************************************
 	// initialize()
