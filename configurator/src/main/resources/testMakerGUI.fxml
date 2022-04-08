@@ -106,20 +106,20 @@
                 <Color red="0.624" green="0.624" blue="0.624" fx:id="x2" />
               </textFill>
             </Label>
-                  <TitledPane fx:id="deviceTab" animated="false" expanded="false" layoutY="41.0" prefHeight="26.0" prefWidth="242.0" text="Device Configuration">
+                  <TitledPane fx:id="deviceTab" animated="false" expanded="false" layoutY="41.0" prefHeight="26.0" prefWidth="280.0" text="Device Configuration">
                      <content>
                         <ListView prefHeight="200.0" prefWidth="200.0" />
                      </content>
                   </TitledPane>
-                  <TitledPane fx:id="sensorsTabs" animated="false" expanded="false" layoutY="67.0" prefHeight="26.0" prefWidth="242.0" text="Sensors" />
-                  <TitledPane fx:id="effectersTab" animated="false" expanded="false" layoutY="93.0" prefHeight="26.0" prefWidth="242.0" text="Effecters" />
-                  <Button fx:id="selectIdButton" layoutX="-2.0" layoutY="119.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="244.0" text="Select ID" />
+                  <TitledPane fx:id="sensorsTabs" animated="false" expanded="false" layoutY="67.0" prefHeight="26.0" prefWidth="280.0" text="Sensors" />
+                  <TitledPane fx:id="effectersTab" animated="false" expanded="false" layoutY="93.0" prefHeight="26.0" prefWidth="280.0" text="Effecters" />
+                  <Button fx:id="selectIdButton" layoutX="-2.0" layoutY="119.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="282.0" text="Select ID" />
           </children>
         </AnchorPane>
       <AnchorPane id="actionPane" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
         <children>
           <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                  <RadioButton fx:id="typeRadio" layoutX="14.0" layoutY="66.0" mnemonicParsing="false" text="Type">
+                  <RadioButton fx:id="typeRadio" layoutX="14.0" layoutY="66.0" mnemonicParsing="false" selected="true" text="Type">
                      <toggleGroup>
                         <ToggleGroup fx:id="method" />
                      </toggleGroup>
@@ -137,15 +137,19 @@
                      </font>
                   </Label>
                   <TextField fx:id="idField" disable="true" layoutX="58.0" layoutY="117.0" />
-                  <Button fx:id="addB" layoutX="9.0" layoutY="205.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Step" />
-                  <Button fx:id="removeB" layoutX="154.0" layoutY="205.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Step" />
-                  <Button fx:id="resetB" layoutX="305.0" layoutY="205.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Reset" />
+                  <Button fx:id="addB" layoutX="4.0" layoutY="205.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Step" />
+                  <Button fx:id="removeB" layoutX="106.0" layoutY="205.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Step" />
+                  <Button fx:id="clearB" layoutX="208.0" layoutY="205.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Step" />
                   <TextField fx:id="stringInputField" layoutX="58.0" layoutY="163.0" />
                   <Text fx:id="inputLabel" layoutX="9.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="String:">
                      <font>
                         <Font size="15.0" />
                      </font>
                   </Text>
+                  <Button fx:id="addB2" layoutX="4.0" layoutY="257.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Test" />
+                  <Button fx:id="removeB2" layoutX="106.0" layoutY="257.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Test" />
+                  <Button fx:id="clearB2" layoutX="208.0" layoutY="257.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Test" />
+                  <Button fx:id="resetB" layoutX="313.0" layoutY="232.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Reset" />
         </children>
       </AnchorPane>
         <AnchorPane fx:id="outputPane">
@@ -156,7 +160,10 @@
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font></Label>
-                  <ListView fx:id="outputView" layoutX="-3.0" layoutY="98.0" prefHeight="457.0" prefWidth="221.0" />
+                  <ListView fx:id="stepView" layoutX="-4.0" layoutY="98.0" prefHeight="457.0" prefWidth="113.0" />
+                  <ListView fx:id="testView" layoutX="110.0" layoutY="98.0" prefHeight="457.0" prefWidth="113.0" />
+                  <Text layoutX="40.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Steps" />
+                  <Text layoutX="146.0" layoutY="94.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tests" />
           </children>
         </AnchorPane>
       </items>
