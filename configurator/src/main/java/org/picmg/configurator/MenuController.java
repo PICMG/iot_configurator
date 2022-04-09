@@ -126,6 +126,8 @@ public class MenuController implements Initializable {
 
 			{
 				// state sets
+				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("stateSetsTabView.fxml"));
+				stateSetsTabAnchorPane.getChildren().add(loader.load());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
