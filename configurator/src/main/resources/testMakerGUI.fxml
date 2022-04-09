@@ -136,20 +136,26 @@
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="idField" disable="true" layoutX="58.0" layoutY="117.0" />
-                  <Button fx:id="addB" layoutX="4.0" layoutY="205.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Step" />
-                  <Button fx:id="removeB" layoutX="106.0" layoutY="205.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Step" />
-                  <Button fx:id="clearB" layoutX="208.0" layoutY="205.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Step" />
+                  <TextField fx:id="idField" disable="true" layoutX="46.0" layoutY="117.0" />
+                  <Button fx:id="addB" layoutX="3.0" layoutY="278.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Step" />
+                  <Button fx:id="removeB" layoutX="105.0" layoutY="278.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Step" />
+                  <Button fx:id="clearB" layoutX="207.0" layoutY="278.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Step" />
                   <TextField fx:id="stringInputField" layoutX="58.0" layoutY="163.0" />
                   <Text fx:id="inputLabel" layoutX="9.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="String:">
                      <font>
                         <Font size="15.0" />
                      </font>
                   </Text>
-                  <Button fx:id="addB2" layoutX="4.0" layoutY="257.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Test" />
-                  <Button fx:id="removeB2" layoutX="106.0" layoutY="257.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Test" />
-                  <Button fx:id="clearB2" layoutX="208.0" layoutY="257.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Test" />
-                  <Button fx:id="resetB" layoutX="313.0" layoutY="232.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Reset" />
+                  <Button fx:id="addB2" layoutX="3.0" layoutY="330.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Test" />
+                  <Button fx:id="removeB2" layoutX="105.0" layoutY="330.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Test" />
+                  <Button fx:id="clearB2" layoutX="207.0" layoutY="330.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Test" />
+                  <Button fx:id="resetB" layoutX="312.0" layoutY="305.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Reset" />
+                  <Text layoutX="10.0" layoutY="233.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delay: (optional)">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Text>
+                  <TextField fx:id="stringInputField1" layoutX="129.0" layoutY="215.0" prefHeight="25.0" prefWidth="47.0" />
         </children>
       </AnchorPane>
         <AnchorPane fx:id="outputPane">
