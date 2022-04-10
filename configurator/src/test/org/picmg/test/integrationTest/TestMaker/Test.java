@@ -1,4 +1,4 @@
-package org.picmg.test.TestMaker;
+package org.picmg.test.integrationTest.TestMaker;
 
 import java.util.ArrayList;
 

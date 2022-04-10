@@ -1,0 +1,44 @@
+{
+  "ID": 1,
+  "Name": "Text Box Test",
+  "Test": {
+    "name": "test",
+    "Steps": [
+      {
+        "Event": "Click",
+        "Location": "#effectersTab"
+      },
+      {
+        "Event": "Click",
+        "Location": "#stepCheckbox"
+      },
+      {
+        "Event": "Check",
+        "Location": "#stepCheckbox",
+        "Data":"true"
+      },
+      {
+        "Event": "Click",
+        "Location": "#stepCheckbox"
+      },
+      {
+        "Event": "Check",
+        "Location": "#stepCheckbox",
+        "Data":"false"
+      },
+      {
+        "Event": "Click",
+        "Location": "#descriptionTextArea"
+      },
+      {
+        "Event": "Type",
+        "Data": "Test"
+      },
+      {
+        "Event": "Check",
+        "Location": "#descriptionTextArea",
+        "Data": "Test"
+      }
+    ]
+  }
+}
