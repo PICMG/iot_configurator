@@ -1,8 +1,11 @@
 package org.picmg.test.integrationTest.TestMaker;
 
+import org.picmg.test.integrationTest.RobotUtils;
+
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class TestWriter {
 
@@ -11,6 +14,7 @@ public class TestWriter {
     private BufferedWriter outputWriter;
     private TestContainer currentTestContainer;
     private static Path BASE_PATH = getBasePath();
+    private static int STEP_DELAY = 400;
 
     private static Path getBasePath() {
         Path base = Paths.get(System.getProperty("user.dir"));
@@ -89,6 +93,7 @@ public class TestWriter {
                 "javafx.application.Application",
                 "org.junit.Test",
                 "static org.junit.Assert.*",
+                "org.picmg.test.integrationTest.RobotThread",
                 "org.picmg.test.integrationTest.RobotUtils",
                 "java.io.IOException"};
 
@@ -99,20 +104,23 @@ public class TestWriter {
 
     private void writeTest(Test t) throws IOException {
         outputWriter.write("\tpublic void " + t.getName().replaceAll(" ", "") + "()\n\t{\n");
-
+        outputWriter.write("\tSystem.out.println(\"Executing integration test " + t.getName() + "\");\n");
+        outputWriter.write("\t\tnew RobotThread()");
         for (Test.Step s : t.getSteps()) {
             switch (s.type) {
                 case "Click":
-                    outputWriter.write("\t\tRobotUtils.click(" + "\"" + s.id + "\"" + ");\n");
+                    outputWriter.write("\t\t\t.then(" + STEP_DELAY + ", ()->RobotUtils.click(" + "\"" + s.id + "\"" + "))\n");
                     break;
                 case "Type":
-                    outputWriter.write("\t\tRobotUtils.type(" + "\"" + s.data + "\"" + ");\n");
+                    outputWriter.write("\t\t\t.then(" + STEP_DELAY +  ", ()->RobotUtils.type(\"" + s.data + "\"" + "))\n");
                     break;
                 case "Check":
-                    outputWriter.write("\t\tRobotUtils.check(" + "\"" + s.id + "\"" + "," + "\"" + s.data + "\"" + ");\n");
+                    outputWriter.write("\t\t\t.then(" + STEP_DELAY + ", ()->RobotUtils.check(" + "\"" + s.id + "\"" + "," + "\"" + s.data + "\"" + "))\n");
                     break;
             }
         }
+        outputWriter.write("\t\t\t.wait(5000)\n");
+        outputWriter.write("\t\t\t.run();\n");
         outputWriter.write("\t}\n");
     }
 

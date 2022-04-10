@@ -7,7 +7,6 @@ import org.picmg.jsonreader.JsonResultFactory;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class TestReader {
 
@@ -67,16 +66,20 @@ public class TestReader {
         return newTest;
     }
 
-    public static List<Path> findFilesForFXIDS(List<String> fxids) {
-        // todo: reflection for each fxid to get paths?
-        return List.of();
-    }
-
     public static void main(String[] args) {
         try {
             for (String arg : args) {
+                Path path = Paths.get(arg);
+                if (!path.toFile().exists() || !path.toFile().canRead()) {
+                    System.out.println("Cannot open " + arg + "; skipping.");
+                    continue;
+                }
                 JsonResultFactory jsonResultFactory = new JsonResultFactory();
                 JsonObject json = (JsonObject)jsonResultFactory.buildFromFile(Paths.get(arg));
+                if (json == null) {
+                    System.out.println("Failed to load json");
+                    return;
+                }
                 TestContainer container = getInstance().read(json);
                 if (container == null) {
                     System.out.println("Failed to read tests");

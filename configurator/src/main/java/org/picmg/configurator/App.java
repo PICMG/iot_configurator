@@ -22,32 +22,14 @@
 //
 package org.picmg.configurator;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.geometry.Point2D;
-import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.stage.StageStyle;
-import javafx.stage.Window;
-import org.picmg.test.TestMaker.Test;
-import org.picmg.test.TestMaker.TestWriter;
-import org.picmg.test.TestMaker.TestReader;
 
 public class App extends Application {	
 	

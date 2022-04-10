@@ -3,43 +3,39 @@ package org.picmg.test.integrationTest;
 import javafx.application.Platform;
 
 public class RobotThread {
-    private Runnable runnable;
+    private final Runnable runnable;
     private int delay;
     private RobotThread next = null;
     private RobotThread prev = null;
     private volatile boolean wasStarted = false;
-    private volatile boolean isFinished = false;
 
-    private RobotThread(int delay, Runnable runnable) {
+    /**
+     * Starts a thread chain with no runner. This is intended as the optional head of a new chain.
+     */
+    public RobotThread() {
+        this(0, null);
+    }
+
+    /**
+     * Starts a thread chain with an executable.
+     * @param delay The time in milliseconds to run a generic thread before queueing the runnable as an FX thread.
+     * @param runnable Function to execute.
+     */
+    public RobotThread(int delay, Runnable runnable) {
         this.runnable = runnable;
         this.delay = delay;
     }
 
-    private RobotThread(int delay, Runnable runnable, RobotThread prev) {
-        this(delay, runnable);
-        this.prev = prev;
-    }
-
-
-    public static RobotThread build(int delay, Runnable runnable) {
-        return new RobotThread(delay, runnable);
-    }
-
     /**
-     * Run one or many runnables with equivalent, non-FX delay time between sequential deployments to FX thread queue.
-     * @param delay The wait time between each thread in milliseconds (e.g. delay of 1000 is 1 second)
-     * @param runnables A list of runnable objects to execute on the FX thread after some delay
+     * Appends a runnable to the previous RobotThread. Called from then().
+     * @param delay The time in milliseconds to run a generic thread before queueing the runnable as an FX thread.
+     * @param runnable Function to execute.
+     * @param prev The previous threaded item that will execute this item after completing.
      */
-    public static RobotThread build(int delay, Runnable... runnables) {
-        if (runnables.length < 1) return null;
-        if (runnables.length == 1) return build(delay, runnables[0]);
-        RobotThread head = new RobotThread(0, runnables[0]);
-        RobotThread cursor = head;
-        // create chain of cursors
-        for (int i = 1; i < runnables.length; i++) {
-            cursor = new RobotThread(delay, runnables[i], cursor);
-        }
-        return head;
+    private RobotThread(int delay, Runnable runnable, RobotThread prev) {
+        this.runnable = runnable;
+        this.delay = delay;
+        this.prev = prev;
     }
 
     /**
@@ -49,34 +45,39 @@ public class RobotThread {
      * Calling this on any instance in a chain will only execute the first of the chain.
      */
     public void run() {
+        // if this is not first in chain and previous has not run, start it
         if (prev != null && !prev.wasStarted) {
-            // if this is not first in chain and previous has not run, start it
             prev.run();
             return;
         }
-        if (prev != null && !prev.isFinished) {
-            // if this is not first in chain and previous has run, wait for it to finish and call
-            return;
-        }
+
         // lock to execute new thread only once
         if (wasStarted) {
             return;
         }
         wasStarted = true;
-        new Thread(() -> {
-            try {
-                Thread.sleep(delay);
-                Platform.runLater(() -> {
-                    if (runnable != null) runnable.run();
-                    isFinished = true;
-                    if (next != null) {
-                        next.run();
-                    }
-                });
-            } catch (InterruptedException e) {
-                System.out.println("Exception in wait queue. "); e.printStackTrace();
+
+        // skip if head empty
+        if (runnable == null && delay == 0) {
+            if (next != null) {
+                next.run();
             }
-        }).start();
+            return;
+        } else {
+            new Thread(() -> {
+                try {
+                    Thread.sleep(delay);
+                    Platform.runLater(() -> {
+                        if (runnable != null) runnable.run();
+                        if (next != null) {
+                            next.run();
+                        }
+                    });
+                } catch (InterruptedException e) {
+                    System.out.println("Exception in wait queue. "); e.printStackTrace();
+                }
+            }).start();
+        }
     }
 
     public RobotThread then(Runnable runnable) {
