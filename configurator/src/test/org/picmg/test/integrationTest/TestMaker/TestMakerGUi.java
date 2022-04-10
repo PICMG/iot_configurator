@@ -1,6 +1,8 @@
-package org.picmg.test.TestMaker;
+package org.picmg.test.integrationTest.TestMaker;
 
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -12,6 +14,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.picmg.configurator.MainScreenController;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 
@@ -36,6 +39,8 @@ public class TestMakerGUi extends Application {
     @FXML private RadioButton testB;
     @FXML private TextField idField;
     @FXML private TextField stringInputField;
+    @FXML private TextField delayField;
+
     @FXML private Button addB;
     @FXML private Button removeB;
     @FXML private Button clearB;
@@ -48,7 +53,7 @@ public class TestMakerGUi extends Application {
     @FXML private TextField nameField;
 
     // List views
-    @FXML private ListView stepView;
+    @FXML private ListView<Test.Step> stepView;
     @FXML private ListView testView;
 
 
@@ -75,8 +80,43 @@ public class TestMakerGUi extends Application {
     }
 
 
+    /**
+     * This method adds all the action listeners
+     */
     private void actionListeners()
     {
+        delayField.textProperty().addListener(new ChangeListener<String>() {
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                if(!newValue.matches("\\d*"))
+                {
+                    System.out.println("DATA isn't a numbe");
+                    delayField.setText(newValue.replaceAll("[^\\d]", ""));
+                }
+            }
+        });
+
+        clearB.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                clearSteps();
+            }
+        });
+
+        clearB2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                clearTests();
+            }
+        });
+
+        removeB2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                removeTest();
+            }
+        });
+
         // Action listeners
         resetB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -84,6 +124,8 @@ public class TestMakerGUi extends Application {
                 reset();
             }
         });
+
+
         addB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -94,7 +136,7 @@ public class TestMakerGUi extends Application {
         removeB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                removeItem();
+                removeStep();
             }
         });
     }
@@ -103,12 +145,17 @@ public class TestMakerGUi extends Application {
 
         //TextFields
         stringInputField =(TextField) scene.lookup("#stringInputField");
+        delayField = (TextField) scene.lookup("#delayField");
         idField =(TextField) scene.lookup("#idField");
 
         // Assign the buttons
         addB = (Button) scene.lookup("#addB");
         removeB = (Button) scene.lookup("#removeB");
-        clearB = (Button) scene.lookup("clearB");
+        clearB = (Button) scene.lookup("#clearB");
+
+        addB2 = (Button) scene.lookup("#addB2");
+        removeB2 = (Button) scene.lookup("#removeB2");
+        clearB2 = (Button) scene.lookup("#clearB2");
 
         resetB = (Button) scene.lookup("#resetB");
 
@@ -120,10 +167,6 @@ public class TestMakerGUi extends Application {
         //
         stepView = (ListView)  scene.lookup("#stepView");
         testView = (ListView)  scene.lookup("#testView");
-
-
-
-
     }
 
 
@@ -132,23 +175,39 @@ public class TestMakerGUi extends Application {
         idField.setText("");
         stringInputField.setText("");
         typeB.setSelected(true);
+        delayField.setText("");
     }
 
-    private void removeItem()
+    private void clearSteps()
+    {
+        stepView.getItems().clear();
+    }
+
+    private void clearTests()
+    {
+        testView.getItems().clear();
+    }
+
+    private void removeStep()
     {
         if(stepView.getSelectionModel().getSelectedIndex() != -1)
         {
-            System.out.println("I have something");
+            stepView.getItems().remove(stepView.getSelectionModel().getSelectedIndex());
         }
-        else
+    }
+
+    private void removeTest()
+    {
+        if(testView.getSelectionModel().getSelectedIndex() != -1)
         {
-            System.out.println("I Nothing");
+            testView.getItems().remove(testView.getSelectionModel().getSelectedIndex());
         }
     }
 
     private void addStep()
     {
         String output ="";
+        Test.Step step = null;
         if(typeB.isSelected())
         {
             if(stringInputField.getText().equals(""))
@@ -161,6 +220,7 @@ public class TestMakerGUi extends Application {
             }
             output += "Type ";
             output += stringInputField.getText() + " ";
+            step = new Test.Step("Type","",stringInputField.getText());
         }
         else if(clickB.isSelected())
         {
@@ -172,8 +232,7 @@ public class TestMakerGUi extends Application {
                 alert.showAndWait();
                 return;
             }
-            output += "Click ";
-            output += idField.getText() + " ";
+            step = new Test.Step("Click",idField.getText(),"");
         }
         else if(testB.isSelected())
         {
@@ -181,8 +240,6 @@ public class TestMakerGUi extends Application {
             String content = "";
             if(stringInputField.getText().equals(""))
             {
-                System.out.println("GER");
-
                 error = true;
                 content += "You have entered in an empty string as the input\n";
             }
@@ -202,16 +259,19 @@ public class TestMakerGUi extends Application {
                 return;
 
             }
-            output += "Test ";
-            output += idField.getText() + " ";
-            output += stringInputField.getText() + " ";
+            step = new Test.Step("Test",idField.getText(),stringInputField.getText());
 
         }
-        stepView.getItems().add(output);
-        stepView.setItems(stepView.getItems());
 
-        testView.getItems().add(output);
-        testView.setItems(testView.getItems());
+        if(delayField.getText() != "")
+        {
+            output += "D="+ delayField.getText();
+        }
+        if(step != null)
+        {
+            stepView.getItems().add(step);
+            stepView.setItems(stepView.getItems());
+        }
 
     }
     public static void main(String[] args) {

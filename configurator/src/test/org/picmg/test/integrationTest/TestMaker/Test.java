@@ -7,7 +7,7 @@ public class Test {
     private String name;
     private ArrayList<Step> steps;
 
-    public class Step
+    public static class Step
     {
         public String id;
         public String data;
@@ -24,6 +24,13 @@ public class Test {
         public void print()
         {
             System.out.println("Method = " + type + " Id = " + id + " Data =" + data);
+        }
+
+        @Override
+        public String toString()
+        {
+
+            return "Method = " + type + " Id = " + id + " Data =" + data;
         }
     }
 
@@ -62,6 +69,10 @@ public class Test {
         steps.add(newStep);
     }
 
+    public void addStep(Step step)
+    {
+        steps.add(step);
+    }
     /**
      * This method returns the steps for the test
      * @return
