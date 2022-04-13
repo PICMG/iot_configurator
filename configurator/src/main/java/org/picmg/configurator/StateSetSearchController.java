@@ -124,6 +124,21 @@ public class StateSetSearchController implements Initializable {
 	void onSaveChangesAction(ActionEvent event) {
 		String fileName = "placeholder";
 		File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
+		StateSet placeholderStateSet = new StateSet("Some StateSet", "Some Vendor");
+		saveToFile(placeholderStateSet, defaultPath.toString());
+	}
+
+	public void saveToFile(StateSet stateSet, String path) {
+		try {
+			FileWriter fileWriter;
+			fileWriter = new FileWriter(path);
+			BufferedWriter br = new BufferedWriter(fileWriter);
+			stateSet.toJSON().writeToFile(br);
+			br.close();
+		} catch (IOException e) {
+			System.out.println("IOException occurred while writing to file");
+			e.printStackTrace();
+		}
 	}
 	
 	//*******************************************************************
