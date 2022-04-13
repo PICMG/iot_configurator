@@ -57,20 +57,12 @@
   <children>
     <MenuBar VBox.vgrow="NEVER">
       <menus>
-        <Menu mnemonicParsing="false" text="File">
+        <Menu fx:id="menuOptions" mnemonicParsing="false" text="File">
           <items>
-            <MenuItem mnemonicParsing="false" text="New" />
-            <MenuItem mnemonicParsing="false" text="Open…" />
-            <Menu mnemonicParsing="false" text="Open Recent" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Close" />
-            <MenuItem mnemonicParsing="false" text="Save" />
-            <MenuItem mnemonicParsing="false" text="Save As…" />
-            <MenuItem mnemonicParsing="false" text="Revert" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Preferences…" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" text="Quit" />
+            <MenuItem fx:id="newOption" mnemonicParsing="false" text="New" />
+            <MenuItem fx:id="openOption" mnemonicParsing="false" text="Open…" />
+            <MenuItem fx:id="saveOption" mnemonicParsing="false" text="Save As…" />
+            <MenuItem fx:id="quitOption" mnemonicParsing="false" text="Quit" />
           </items>
         </Menu>
         <Menu mnemonicParsing="false" text="Edit">
@@ -94,7 +86,7 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.2728285077951002, 0.7249443207126949" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.2728285077951002, 0.5" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
       <items>
         <AnchorPane fx:id="idPane">
           <children>
@@ -137,45 +129,41 @@
                      </font>
                   </Label>
                   <TextField fx:id="idField" disable="true" layoutX="46.0" layoutY="117.0" />
-                  <Button fx:id="addB" layoutX="3.0" layoutY="278.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Step" />
-                  <Button fx:id="removeB" layoutX="105.0" layoutY="278.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Step" />
-                  <Button fx:id="clearB" layoutX="207.0" layoutY="278.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Steps" />
+                  <Button fx:id="addB" layoutX="-1.0" layoutY="278.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Step" />
+                  <Button fx:id="removeB" layoutX="-1.0" layoutY="311.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Step" />
+                  <Button fx:id="clearB" layoutX="-1.0" layoutY="344.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Steps" />
                   <TextField fx:id="stringInputField" layoutX="58.0" layoutY="163.0" />
                   <Text fx:id="inputLabel" layoutX="9.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" text="String:">
                      <font>
                         <Font size="15.0" />
                      </font>
                   </Text>
-                  <Button fx:id="addB2" layoutX="3.0" layoutY="330.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Test" />
-                  <Button fx:id="removeB2" layoutX="105.0" layoutY="330.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Test" />
-                  <Button fx:id="clearB2" layoutX="207.0" layoutY="330.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Tests" />
-                  <Button fx:id="resetB" layoutX="312.0" layoutY="305.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Reset" />
+                  <Button fx:id="addB2" layoutX="112.0" layoutY="279.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Add Test" />
+                  <Button fx:id="removeB2" layoutX="112.0" layoutY="311.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Remove Test" />
+                  <Button fx:id="clearB2" layoutX="112.0" layoutY="344.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Clear Tests" />
+                  <Button fx:id="resetB" layoutX="222.0" layoutY="278.0" mnemonicParsing="false" prefHeight="27.0" prefWidth="95.0" text="Reset" />
                   <Text fx:id="delayT" layoutY="233.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Delay: (optional)">
                      <font>
                         <Font size="15.0" />
                      </font>
                   </Text>
                   <TextField fx:id="delayField" layoutX="129.0" layoutY="215.0" prefHeight="25.0" prefWidth="47.0" />
+                  <Button fx:id="recallB" layoutX="112.0" layoutY="379.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="95.0" text="Recall Test" />
         </children>
       </AnchorPane>
         <AnchorPane fx:id="outputPane">
           <children>
             <Label alignment="CENTER" font="$x1" layoutX="92.0" layoutY="14.0" style="&#10;" text="Test Output" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-                  <TextField fx:id="nameField" layoutX="79.0" layoutY="50.0" />
-                  <Label layoutX="5.0" layoutY="54.0" text="FileName:">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font></Label>
                   <ListView fx:id="stepView" layoutX="-4.0" layoutY="140.0" prefHeight="200.0" prefWidth="282.0" />
                   <ListView fx:id="testView" layoutY="386.0" prefHeight="165.0" prefWidth="278.0" />
                   <Text layoutY="136.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Steps" />
                   <Text layoutX="1.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tests" />
-                  <Label layoutX="5.0" layoutY="89.0" text="TestName:">
+                  <Label layoutX="14.0" layoutY="54.0" text="TestName:">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="nameField1" layoutX="79.0" layoutY="85.0" />
+                  <TextField fx:id="nameField1" layoutX="92.0" layoutY="50.0" />
           </children>
         </AnchorPane>
       </items>

@@ -12,10 +12,16 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.picmg.configurator.MainScreenController;
+import org.picmg.jsonreader.JsonArray;
+import org.picmg.jsonreader.JsonObject;
 import org.w3c.dom.Text;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class TestMakerGUi extends Application {
@@ -33,10 +39,18 @@ public class TestMakerGUi extends Application {
     @FXML private Button selectIdButton;
 
 
+    // Components menus
+    @FXML private MenuItem newOption;
+    @FXML private MenuItem openOption;
+    @FXML private MenuItem saveOption;
+    @FXML private MenuItem quitOption;
+
+
+
     // Middile components
-    @FXML private RadioButton typeB;
-    @FXML private RadioButton clickB;
-    @FXML private RadioButton testB;
+    @FXML private RadioButton typeRadio;
+    @FXML private RadioButton clickRadio;
+    @FXML private RadioButton testRadio;
     @FXML private TextField idField;
     @FXML private TextField stringInputField;
     @FXML private TextField delayField;
@@ -48,9 +62,11 @@ public class TestMakerGUi extends Application {
     @FXML private Button removeB2;
     @FXML private Button clearB2;
     @FXML private Button resetB;
+    @FXML private  Button recallB;
 
     // Right components
     @FXML private TextField nameField;
+    @FXML private TextField nameField1;
 
     // List views
     @FXML private ListView<Test.Step> stepView;
@@ -62,23 +78,41 @@ public class TestMakerGUi extends Application {
         Stage temp = new Stage();
         Parent root;
         try {
-            root = FXMLLoader.load(getClass().getResource("/testMakerGUI.fxml").toURI().toURL());
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/testMakerGUI.fxml"));
+            loader.setController(this); // You need to set this instance as the controller.
+            root = loader.load();
+            //root = FXMLLoader.load(getClass().getResource("/testMakerGUI.fxml").toURI().toURL());
             Scene scene = new Scene(root, 1024, 570);
             primaryStage.setScene(scene);
             primaryStage.show();
 
-            loadData(scene);
             actionListeners();
 
+            saveOption.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    FileChooser fc = new FileChooser();
+                    File file = fc.showSaveDialog(primaryStage);
+                    if(file != null)
+                    {
+                        try {
+                            saveTest(file.getAbsolutePath());
+                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setTitle("Test File Saved");
+                            alert.setContentText(file.getName() + " was saved");
+                            alert.showAndWait();                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
 
         }
         catch(Exception e)
         {
             System.out.println(e.toString());
         }
-
     }
-
 
     /**
      * This method adds all the action listeners
@@ -90,9 +124,16 @@ public class TestMakerGUi extends Application {
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if(!newValue.matches("\\d*"))
                 {
-                    System.out.println("DATA isn't a numbe");
+                    System.out.println("DATA isn't a number");
                     delayField.setText(newValue.replaceAll("[^\\d]", ""));
                 }
+            }
+        });
+
+        recallB.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                reCallTest();
             }
         });
 
@@ -126,6 +167,13 @@ public class TestMakerGUi extends Application {
         });
 
 
+        addB2.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                addTest();
+            }
+        });
+
         addB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
@@ -139,42 +187,17 @@ public class TestMakerGUi extends Application {
                 removeStep();
             }
         });
+
+
     }
-    public void loadData(Scene scene) throws IOException {
 
-
-        //TextFields
-        stringInputField =(TextField) scene.lookup("#stringInputField");
-        delayField = (TextField) scene.lookup("#delayField");
-        idField =(TextField) scene.lookup("#idField");
-
-        // Assign the buttons
-        addB = (Button) scene.lookup("#addB");
-        removeB = (Button) scene.lookup("#removeB");
-        clearB = (Button) scene.lookup("#clearB");
-
-        addB2 = (Button) scene.lookup("#addB2");
-        removeB2 = (Button) scene.lookup("#removeB2");
-        clearB2 = (Button) scene.lookup("#clearB2");
-
-        resetB = (Button) scene.lookup("#resetB");
-
-        // Assign radio buttons
-        typeB = (RadioButton) scene.lookup("#typeRadio");
-        clickB = (RadioButton) scene.lookup("#clickRadio");
-        testB = (RadioButton) scene.lookup("#testRadio");
-
-        //
-        stepView = (ListView)  scene.lookup("#stepView");
-        testView = (ListView)  scene.lookup("#testView");
-    }
 
 
     private void reset()
     {
         idField.setText("");
         stringInputField.setText("");
-        typeB.setSelected(true);
+        typeRadio.setSelected(true);
         delayField.setText("");
     }
 
@@ -204,11 +227,31 @@ public class TestMakerGUi extends Application {
         }
     }
 
+    private void loadTest() throws IOException
+    {
+        
+    }
+    private void saveTest(String name) throws IOException {
+        JsonObject jsonObject = new JsonObject();
+        JsonArray testJson = new JsonArray();
+        for(int i = 0; i < testView.getItems().size(); i++)
+        {
+            testJson.add(((Test)testView.getItems().get(i)).toJson());
+        }
+        jsonObject.put("Tests", testJson);
+        System.out.println(name);
+
+        BufferedWriter bw = new BufferedWriter(new FileWriter(name));
+        boolean good = jsonObject.writeToFile(bw);
+        bw.close();
+        System.out.println(good);
+    }
+
     private void addStep()
     {
         String output ="";
         Test.Step step = null;
-        if(typeB.isSelected())
+        if(typeRadio.isSelected())
         {
             if(stringInputField.getText().equals(""))
             {
@@ -222,7 +265,7 @@ public class TestMakerGUi extends Application {
             output += stringInputField.getText() + " ";
             step = new Test.Step("Type","",stringInputField.getText());
         }
-        else if(clickB.isSelected())
+        else if(clickRadio.isSelected())
         {
             if(idField.getText().equals(""))
             {
@@ -234,7 +277,7 @@ public class TestMakerGUi extends Application {
             }
             step = new Test.Step("Click",idField.getText(),"");
         }
-        else if(testB.isSelected())
+        else if(testRadio.isSelected())
         {
             boolean error = false;
             String content = "";
@@ -245,8 +288,6 @@ public class TestMakerGUi extends Application {
             }
             if(idField.getText().equals(""))
             {
-                System.out.println("GER");
-
                 error = true;
                 content +="An ID is required";
             }
@@ -272,8 +313,74 @@ public class TestMakerGUi extends Application {
             stepView.getItems().add(step);
             stepView.setItems(stepView.getItems());
         }
-
     }
+    private void addTest()
+    {
+        String output ="";
+        Test test = new Test();
+
+        if(stepView.getItems().size() < 1)
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Missing steps");
+            alert.setContentText("Steps are required to make the test");
+            alert.showAndWait();
+            return;
+        }
+
+        if(nameField1.getText().equals(""))
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Missing steps");
+            alert.setContentText("Steps are required to make the test");
+            alert.showAndWait();
+            return;
+        }
+
+        for(Test.Step s : stepView.getItems())
+        {
+            test.addStep(s);
+        }
+        test.setName(nameField1.getText());
+        int index = -1;
+        for(int i = 0; i < testView.getItems().size(); i++)
+        {
+            if(((Test)testView.getItems().get(i)).getName().equals(test.getName()))
+            {
+                index = i;
+            }
+        }
+        if(index != -1)
+            testView.getItems().remove(index);
+        testView.getItems().add(test);
+        testView.setItems(testView.getItems());
+        System.out.println(test.toJson());
+        clearSteps();
+        nameField1.setText("");
+    }
+
+    private void reCallTest()
+    {
+        if(testView.getSelectionModel().getSelectedIndex() != -1)
+        {
+            stepView.getItems().clear();
+            Test t = (Test) testView.getSelectionModel().getSelectedItem();
+            for(Test.Step s : t.getSteps())
+            {
+                stepView.getItems().add(s);
+            }
+            stepView.setItems(stepView.getItems());
+        }
+        else
+        {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Empty test");
+            alert.setContentText("Please select a test");
+            alert.showAndWait();
+            return;
+        }
+    }
+
     public static void main(String[] args) {
         launch();
     }
