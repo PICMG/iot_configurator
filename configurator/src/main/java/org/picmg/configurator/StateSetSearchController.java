@@ -124,7 +124,7 @@ public class StateSetSearchController implements Initializable {
 	void onSaveChangesAction(ActionEvent event) {
 		String fileName = "placeholder";
 		File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
-		StateSet placeholderStateSet = new StateSet("Some StateSet", "Some Vendor");
+		StateSet placeholderStateSet = new StateSet("Some StateSet", -1, "Some Vendor", -1, new ArrayList<>());
 		saveToFile(placeholderStateSet, defaultPath.toString());
 	}
 
