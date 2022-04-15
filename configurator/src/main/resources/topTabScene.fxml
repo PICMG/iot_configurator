@@ -19,7 +19,7 @@
        <FlowPane alignment="TOP_LEFT" style="-fx-background-color: #ffffff" >
            <VBox>
                <padding>
-                   <Insets top="0" bottom="0" left="0" right="20"></Insets>
+                   <Insets top="0" bottom="0" left="20" right="90"></Insets>
                </padding>
                <ImageView fx:id="picmgLogo" pickOnBounds="true" fitHeight="100" fitWidth="100" preserveRatio="true" >
                    <image>
@@ -27,9 +27,14 @@
                    </image>
                </ImageView>
            </VBox>
+           <Label prefHeight="100" text = "Smart Sensor Configurator" textFill="black" style="-fx-font-weight: bold;">
+               <font>
+                   <Font size = "40"></Font>
+               </font>
+           </Label>
            <VBox>
                <padding>
-                   <Insets top="15" bottom="0" left="0" right="20"></Insets>
+                   <Insets top="15" bottom="0" left="90" right="0"></Insets>
                </padding>
                <ImageView fx:id="smartSensor" pickOnBounds="true" fitHeight="100" fitWidth="200" preserveRatio="true" >
                    <image>
@@ -37,11 +42,6 @@
                    </image>
                </ImageView>
            </VBox>
-           <Label prefHeight="100" text = "PICMG Smart Sensor Configurator" textFill="black" style="-fx-font-weight: bold;">
-               <font>
-                   <Font size = "40"></Font>
-               </font>
-           </Label>
        </FlowPane>
        <MenuBar fx:id="mainMenubar">
           <menus>
@@ -68,7 +68,7 @@
                 <AnchorPane fx:id="effectersTabAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
               </content>
             </Tab>
-            <Tab text="State Sets" disable="true">
+            <Tab text="State Sets" fx:id="stateSetsTab" disable="false">
               <content>
                 <AnchorPane fx:id="stateSetsTabAnchorPane" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0"/>
               </content>
