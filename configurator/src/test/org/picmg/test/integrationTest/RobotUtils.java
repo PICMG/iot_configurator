@@ -51,7 +51,7 @@ public class RobotUtils {
     public static void clickReset() {
         try {
             click("#resetMenu");
-            RobotThread.build(3000, ()->click("#resetOk")).run();
+            new RobotThread(1000, ()->click("#resetOk")).run();
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -114,7 +114,7 @@ public class RobotUtils {
         Node node = lookup.get();
         String text = getText(node);
         if (value.equals(text)) {
-            System.out.println("Success: " + fxId + " successfully evaluated to '''" + value + "'''");
+            System.out.println("Success: " + fxId + " evaluated to '''" + value + "'''");
         } else {
             System.out.println("TEST ERROR: Could not evaluate FXID " + fxId + " value '''"
                     + text + "''' to expected value '''" + value + "'''");
