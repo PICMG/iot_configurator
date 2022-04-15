@@ -90,6 +90,7 @@ public class TestReader {
                     return;
                 }
                 TestWriter.getInstance().createTest(container);
+                System.out.println("Successfully generated the following tests:"); container.print();
             }
         } catch (Exception e) {
             e.printStackTrace();

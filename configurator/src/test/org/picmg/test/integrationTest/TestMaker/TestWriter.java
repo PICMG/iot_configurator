@@ -47,12 +47,13 @@ public class TestWriter {
     }
 
     private void writeHeader() throws IOException {
-        outputWriter.write("package org.picmg.test.generated;\n/**\n\tThis is a generated integration test using the testMaker application\n*/\n");
+        outputWriter.write("package org.picmg.test.integrationTest.generated;\n/**\n\tThis is a generated integration test using the testMaker application\n*/\n");
     }
 
     private void writeClass() throws IOException {
         outputWriter.write("public class " + currentTestContainer.getTestContainerName() + " extends Application\n{\n");
         writeRobotMethods();
+        writeSetup();
         writeTests();
         outputWriter.write("}");
         outputWriter.close();
@@ -65,8 +66,12 @@ public class TestWriter {
         }
     }
 
+    private void writeSetup() throws IOException {
+        outputWriter.write("\t@BeforeClass\n\tpublic static void setup() {\n\t\tlaunch();\n\t}\n\n");
+    }
+
     private void writeStart() throws IOException {
-        outputWriter.write("\t@Override\n\tpublic void start(Stage stage)\n\t{\n\t\tParent root;\n\t\ttry \n\t\t{\n\t\t\troot = FXMLLoader.load(getClass().getClassLoader().getResource(\"" +
+        outputWriter.write("\t@Override\n\tpublic void start(Stage stage) {\n\t\tParent root;\n\t\ttry \n\t\t{\n\t\t\troot = FXMLLoader.load(getClass().getClassLoader().getResource(\"" +
                 currentTestContainer.getFileToLoad() + "\"));\n");
 
         outputWriter.write("\t\t\tScene scene = new Scene(root, 1024, 768);\n\t\t\tstage.setTitle(\"PICMG Configurator\");\n\t\t\tstage.setScene(scene);\n\t\t\tstage.show();\n\t\t\trobotCalls();\n");
@@ -75,7 +80,7 @@ public class TestWriter {
     }
 
     private void writeRobotMethods() throws IOException {
-        outputWriter.write("\tpublic void robotCalls()\n\t{\n");
+        outputWriter.write("\tpublic void robotCalls() {\n");
         for (Test t : currentTestContainer.getTests()) {
             outputWriter.write("\t\t" + t.getName().replaceAll(" ", "") + "();" + "\n");
         }
@@ -88,6 +93,7 @@ public class TestWriter {
                 "javafx.scene.Scene",
                 "javafx.stage.Stage",
                 "javafx.application.Application",
+                "org.junit.BeforeClass",
                 "org.junit.Test",
                 "static org.junit.Assert.*",
                 "org.picmg.test.integrationTest.RobotThread",
@@ -100,7 +106,7 @@ public class TestWriter {
     }
 
     private void writeTest(Test t) throws IOException {
-        outputWriter.write("\tpublic void " + t.getName().replaceAll(" ", "") + "()\n\t{\n");
+        outputWriter.write("\t@Test\n\tpublic void " + t.getName().replaceAll(" ", "") + "()\n\t{\n");
         outputWriter.write("\tSystem.out.println(\"Executing integration test " + t.getName() + "\");\n");
         outputWriter.write("\t\tnew RobotThread()");
         for (Test.Step s : t.getSteps()) {
