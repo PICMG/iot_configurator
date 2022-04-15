@@ -7,6 +7,8 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.picmg.configurator.App;
 
+//import org.picmg.test.generated.*;
+
 import java.io.IOException;
 
 public class TestApp extends App {

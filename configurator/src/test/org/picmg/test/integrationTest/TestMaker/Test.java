@@ -18,12 +18,18 @@ public class Test {
         public String data;
         public String type;
         public String name;
+        public int delay = 25;
 
         public Step(String type, String id, String data)
         {
             this.id = id;
             this.data = data;
             this.type = type;
+        }
+
+        public Step(String type, String id, String data, int delay) {
+            this(type, id, data);
+            this.delay = delay;
         }
 
         public void print()
