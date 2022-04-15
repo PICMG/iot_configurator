@@ -7,6 +7,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.application.Application;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.picmg.test.integrationTest.RobotThread;
 import org.picmg.test.integrationTest.RobotUtils;
 import java.io.IOException;
@@ -36,6 +39,12 @@ public class OldTextBoxTest extends Application
 		}
 	}
 
+	@BeforeClass
+	public static void setup() {
+		launch();
+	}
+
+	@Test
 	public void test()
 	{
 		System.out.println("Executing integration test test");
@@ -49,5 +58,6 @@ public class OldTextBoxTest extends Application
 			.then(400, ()->RobotUtils.check("#descriptionTextArea","Test"))
 			.wait(5000)
 			.run();
+		Assert.assertTrue(true);
 	}
 }
