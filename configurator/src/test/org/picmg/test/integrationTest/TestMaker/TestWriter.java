@@ -1,11 +1,8 @@
 package org.picmg.test.integrationTest.TestMaker;
 
-import org.picmg.test.integrationTest.RobotUtils;
-
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class TestWriter {
 
@@ -50,7 +47,7 @@ public class TestWriter {
     }
 
     private void writeHeader() throws IOException {
-        outputWriter.write("package org.picmg.test.integrationTest.generated;\n/**\n\tThis is a generated integration test using the testMaker application\n*/\n");
+        outputWriter.write("package org.picmg.test.generated;\n/**\n\tThis is a generated integration test using the testMaker application\n*/\n");
     }
 
     private void writeClass() throws IOException {

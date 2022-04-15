@@ -29,11 +29,15 @@ public class TestReader {
             // read test file header
             container.setTestContainerName(json.getValue("Name").replaceAll(" ", ""));
             container.setFileToLoad("topTabScene.fxml"); // TODO replace with findFilesForFXIDS?
-            JsonObject testObj = (JsonObject) json.get("Test");
+            JsonArray testObj = (JsonArray) json.get("Test");
             // read test file body
-            Test test = readTest(testObj);
-            if (test == null) return null;
-            container.addTest(readTest(testObj));
+            if (testObj == null) {
+                System.out.println("");
+                return null;
+            }
+            for (JsonAbstractValue t : testObj) {
+                container.addTest(readTest((JsonObject) t));
+            }
         } catch (Exception e) {
             System.out.println("Failed to read test json.");
             e.printStackTrace();
