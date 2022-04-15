@@ -24,7 +24,7 @@
             <TableView fx:id="stateSetTableView" prefHeight="738.0">
               <columns>
                 <TableColumn fx:id="name" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="81.0" text="Name" />
-                  <TableColumn fx:id="vendorName" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="132.0" text="Vensor Name" />
+                  <TableColumn fx:id="vendorName" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="132.0" text="Vendor Name" />
                   <TableColumn fx:id="vendorIANA" maxWidth="1.7976931348623157E308" prefWidth="135.0" text="Vendor IANA" />
                   <TableColumn fx:id="stateSetID" maxWidth="1.7976931348623157E308" prefWidth="150.0" text="State Set ID" />
               </columns>
