@@ -1,11 +1,11 @@
 package org.picmg.configurator;
 
+import org.picmg.jsonreader.JsonAbstractValue;
 import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonValue;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 public class StateSet {
 
@@ -13,20 +13,27 @@ public class StateSet {
     private int id;
     private String vendorName;
     private int vendorIANA;
-    private Map<String, String> statesList; // Pairs between names and keys
+    private ArrayList<OEMStateValueRecord> oemStateValueRecords;
 
-    public StateSet(String name, String vendorName) {
-        this(name, vendorName, new HashMap<>());
+    public StateSet(JsonObject json) {
+        this.name = json.getValue("name");
+        this.vendorName = json.getValue("vendorName");
+        this.vendorIANA = json.getInteger("vendorIANA");
+        this.id = json.getInteger("stateSetId");
+        this.oemStateValueRecords = new ArrayList<>();
+
+        for (JsonAbstractValue abstractValue : ((JsonArray) json.get("oemStateValueRecords"))) {
+            JsonObject oemStateValueRecordJSON = (JsonObject) abstractValue;
+            OEMStateValueRecord oemStateValueRecord = new OEMStateValueRecord(oemStateValueRecordJSON);
+            oemStateValueRecords.add(oemStateValueRecord);
+        }
+
     }
 
-    public StateSet(String name, String vendorName, Map<String, String> statesList) {
-        this(name, -1, vendorName, -1, statesList);
-    }
-
-    public StateSet(String name, int id, String vendorName, int vendorIANA, Map<String, String> statesList) {
+    public StateSet(String name, int id, String vendorName, int vendorIANA, ArrayList<OEMStateValueRecord> oemStateValueRecords) {
         this.name = name;
         this.vendorName = vendorName;
-        this.statesList = statesList;
+        this.oemStateValueRecords = oemStateValueRecords;
         this.id = id;
         this.vendorIANA = vendorIANA;
     }
@@ -47,20 +54,20 @@ public class StateSet {
         this.vendorName = vendorName;
     }
 
-    public Map<String, String> getStatesList() {
-        return statesList;
+    public int getStateSetID() {
+        return id;
     }
 
-    public void setStatesList(Map<String, String> statesList) {
-        this.statesList = statesList;
+    public void setStateSetID(int id) {
+        this.id = id;
     }
 
-    public String getStateByKey(String key) {
-        return statesList.get(key);
+    public int getVendorIANA() {
+        return vendorIANA;
     }
 
-    public void setState(String key, String value) {
-        statesList.put(key, value);
+    public void setVendorIANA(int vendorIANA) {
+        this.vendorIANA = vendorIANA;
     }
 
     public JsonObject toJSON() {
@@ -68,9 +75,20 @@ public class StateSet {
         jsonObject.put("name", new JsonValue(name));
         jsonObject.put("vendorName", new JsonValue(vendorName));
         jsonObject.put("vendorIANA", new JsonValue(String.valueOf(vendorIANA)));
-        jsonObject.put("stateSetID", new JsonValue(String.valueOf(id)));
+        jsonObject.put("stateSetId", new JsonValue(String.valueOf(id)));
         JsonArray oemStateValueRecords = new JsonArray();
+        for (OEMStateValueRecord oemStateValueRecord : this.oemStateValueRecords) {
+            oemStateValueRecords.add(oemStateValueRecord.toJSON());
+        }
         jsonObject.put("oemStateValueRecords", oemStateValueRecords);
         return jsonObject;
+    }
+
+    public ArrayList<OEMStateValueRecord> getOemStateValueRecords() {
+        return oemStateValueRecords;
+    }
+
+    public void setOemStateValueRecords(ArrayList<OEMStateValueRecord> oemStateValueRecords) {
+        this.oemStateValueRecords = oemStateValueRecords;
     }
 }
