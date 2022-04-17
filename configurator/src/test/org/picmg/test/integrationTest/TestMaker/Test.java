@@ -1,4 +1,9 @@
-package org.picmg.test.TestMaker;
+package org.picmg.test.integrationTest.TestMaker;
+
+import org.picmg.jsonreader.JsonAbstractValue;
+import org.picmg.jsonreader.JsonArray;
+import org.picmg.jsonreader.JsonObject;
+import org.picmg.jsonreader.JsonValue;
 
 import java.util.ArrayList;
 
@@ -7,12 +12,13 @@ public class Test {
     private String name;
     private ArrayList<Step> steps;
 
-    public class Step
+    public static class Step
     {
         public String id;
         public String data;
         public String type;
         public String name;
+        public int delay = 25;
 
         public Step(String type, String id, String data)
         {
@@ -21,9 +27,31 @@ public class Test {
             this.type = type;
         }
 
+        public Step(String type, String id, String data, int delay) {
+            this(type, id, data);
+            this.delay = delay;
+        }
+
         public void print()
         {
             System.out.println("Method = " + type + " Id = " + id + " Data =" + data);
+        }
+
+        @Override
+        public String toString()
+        {
+
+            return "Method = " + type + " Id = " + id + " Data =" + data;
+        }
+
+        public JsonObject toJson()
+        {
+            JsonObject stepObject = new JsonObject();
+            stepObject.put("Event", new JsonValue(type));
+            stepObject.put("Location", new JsonValue(id));
+            if(!data.equals(""))
+                stepObject.put("Data", new JsonValue(data));
+            return stepObject;
         }
     }
 
@@ -62,6 +90,10 @@ public class Test {
         steps.add(newStep);
     }
 
+    public void addStep(Step step)
+    {
+        steps.add(step);
+    }
     /**
      * This method returns the steps for the test
      * @return
@@ -82,6 +114,28 @@ public class Test {
         {
             s.print();
         }
+    }
+
+    @Override
+    public String toString()
+    {
+        return getName()+ " Steps " + getSteps().size();
+    }
+
+    public JsonObject toJson()
+    {
+        JsonObject testObject = new JsonObject();
+        testObject.put("name", new JsonValue(this.getName()));
+
+        JsonArray steps = new JsonArray();
+        for(Step s : getSteps())
+        {
+
+            steps.add(s.toJson());
+
+        }
+        testObject.put("Steps", steps);
+        return testObject;
     }
 
 }

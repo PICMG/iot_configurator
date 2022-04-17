@@ -5,9 +5,8 @@ import org.junit.Test;
 
 public class AppTest {
 
-
     @Test
     public void JavaFXTest() {
-        Application.launch(TestApp.class);
+//        Application.launch(TestApp.class);
     }
 }
