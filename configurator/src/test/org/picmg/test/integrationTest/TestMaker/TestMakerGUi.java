@@ -214,7 +214,7 @@ public class TestMakerGUi extends Application {
                 if (file != null) {
                     try {
                         String[] name = file.getName().split(".");
-                        saveTest(file.getAbsolutePath(), name[0]);
+                        saveTest(file.getAbsolutePath(), file.getName());
                         Alert alert = new Alert(Alert.AlertType.INFORMATION);
                         alert.setTitle("Test File Saved");
                         alert.setContentText(file.getName() + " was saved");
