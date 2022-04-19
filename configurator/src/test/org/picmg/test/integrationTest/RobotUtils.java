@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class RobotUtils {
     private static Robot robot = new Robot();
-    public static final boolean debug = true;
+    public static final boolean debug = false;
     private static final int OFFSET = 10;
 
     /**
@@ -64,7 +64,7 @@ public class RobotUtils {
      * @return Optional of result node if any is found. Otherwise, returns an empty optional.
      */
     public static Optional<Node> lookup(String value) {
-        List<Scene> scenes = Stage.getWindows().stream().map(Window::getScene).collect(Collectors.toList());
+        List<Scene> scenes = Stage.getWindows().stream().map(Window::getScene).toList();
         Node foundNode = null;
         for (Scene scene : scenes) {
             Node newNode = scene.lookup(value);
@@ -114,9 +114,9 @@ public class RobotUtils {
         Node node = lookup.get();
         String text = getText(node);
         if (value.equals(text)) {
-            System.out.println("Success: " + fxId + " evaluated to '''" + value + "'''");
+            System.out.println("CHECK SUCCESS: " + fxId + " evaluated to '''" + value + "'''");
         } else {
-            System.out.println("TEST ERROR: Could not evaluate FXID " + fxId + " value '''"
+            System.out.println("CHECK ERROR: Could not evaluate FXID " + fxId + " value '''"
                     + text + "''' to expected value '''" + value + "'''");
         }
     }

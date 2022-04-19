@@ -19,6 +19,7 @@ public class Test {
         public String type;
         public int delay;
         public String name;
+        private int delay = 1000;
 
         public Step(String type, String id, String data)
         {
@@ -38,6 +39,15 @@ public class Test {
             this.data = data;
             this.type = type;
             this.delay = delay;
+        }
+
+        public Step(String type, String id, String data, int delay) {
+            this(type, id, data);
+            this.delay = delay;
+        }
+
+        public int getDelay() {
+            return delay;
         }
 
         public void print()
