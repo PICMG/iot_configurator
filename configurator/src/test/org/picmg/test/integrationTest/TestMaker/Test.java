@@ -17,6 +17,7 @@ public class Test {
         public String id;
         public String data;
         public String type;
+        public int delay;
         public String name;
 
         public Step(String type, String id, String data)
@@ -24,18 +25,43 @@ public class Test {
             this.id = id;
             this.data = data;
             this.type = type;
+            delay = 0;
+        }
+
+        public Step()
+        {
+
+        }
+        public Step(String type, String id, String data, int delay)
+        {
+            this.id = id;
+            this.data = data;
+            this.type = type;
+            this.delay = delay;
         }
 
         public void print()
         {
-            System.out.println("Method = " + type + " Id = " + id + " Data =" + data);
+            System.out.println(delay);
+            if(delay == 0) {
+                System.out.println("Method = " + type + " Id = " + id + " Data =" + data);
+            }
+            else
+            {
+                System.out.println("Method = " + type + " Id = " + id + " Data =" + data + " Delay = " + delay);
+            }
+
+
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
 
-            return "Method = " + type + " Id = " + id + " Data =" + data;
+            if (delay == 0) {
+                return "Method = " + type + " Id = " + id + " Data = " + data;
+            } else {
+                return "Method = " + type + " Id = " + id + " Data = " + data + " Delay = " + delay;
+            }
         }
 
         public JsonObject toJson()
@@ -43,9 +69,17 @@ public class Test {
             JsonObject stepObject = new JsonObject();
             stepObject.put("Event", new JsonValue(type));
             stepObject.put("Location", new JsonValue(id));
-            if(!data.equals(""))
+            if(!data.equals("") && data != null)
                 stepObject.put("Data", new JsonValue(data));
             return stepObject;
+        }
+
+        public void fromJson(JsonObject jsonObject)
+        {
+            this.type = jsonObject.getValue("Event");
+            this.id = jsonObject.getValue("Location");
+            this.data = jsonObject.getValue("Data");
+
         }
     }
 
@@ -130,6 +164,20 @@ public class Test {
         }
         testObject.put("Steps", steps);
         return testObject;
+    }
+
+    public void fromJson(JsonObject jsonValue)
+    {
+        this.name = jsonValue.getValue("name");
+        steps.clear();
+        JsonArray jsonSteps = (JsonArray) jsonValue.get("Steps");
+        for(int i = 0; i < jsonSteps.size(); i++)
+        {
+            Step step = new Step();
+            step.fromJson((JsonObject) jsonSteps.get(i));
+            System.out.println(step);
+            steps.add(step);
+        }
     }
 
 }

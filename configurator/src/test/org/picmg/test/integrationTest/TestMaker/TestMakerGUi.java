@@ -17,12 +17,16 @@ import javafx.stage.Stage;
 import org.picmg.configurator.MainScreenController;
 import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
+import org.picmg.jsonreader.JsonResultFactory;
+import org.picmg.jsonreader.JsonValue;
 import org.w3c.dom.Text;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class TestMakerGUi extends Application {
 
@@ -83,29 +87,11 @@ public class TestMakerGUi extends Application {
             root = loader.load();
             //root = FXMLLoader.load(getClass().getResource("/testMakerGUI.fxml").toURI().toURL());
             Scene scene = new Scene(root, 1024, 570);
+            primaryStage.setResizable(false);
             primaryStage.setScene(scene);
             primaryStage.show();
 
-            actionListeners();
-
-            saveOption.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    FileChooser fc = new FileChooser();
-                    File file = fc.showSaveDialog(primaryStage);
-                    if(file != null)
-                    {
-                        try {
-                            saveTest(file.getAbsolutePath());
-                            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                            alert.setTitle("Test File Saved");
-                            alert.setContentText(file.getName() + " was saved");
-                            alert.showAndWait();                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            });
+            actionListeners(primaryStage);
 
         }
         catch(Exception e)
@@ -117,14 +103,13 @@ public class TestMakerGUi extends Application {
     /**
      * This method adds all the action listeners
      */
-    private void actionListeners()
+    private void actionListeners(Stage primaryStage)
     {
         delayField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
                 if(!newValue.matches("\\d*"))
                 {
-                    System.out.println("DATA isn't a number");
                     delayField.setText(newValue.replaceAll("[^\\d]", ""));
                 }
             }
@@ -188,6 +173,44 @@ public class TestMakerGUi extends Application {
             }
         });
 
+        saveOption.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FileChooser fc = new FileChooser();
+                File file = fc.showSaveDialog(primaryStage);
+                if(file != null)
+                {
+                    try {
+                        saveTest(file.getAbsolutePath(), file.getName());
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Test File Saved");
+                        alert.setContentText(file.getName() + " was saved");
+                        alert.showAndWait();                        } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        openOption.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                FileChooser fc = new FileChooser();
+                File file = fc.showSaveDialog(primaryStage);
+                if(file != null)
+                {
+                    try {
+                        loadTest(file.getAbsolutePath());
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Test File was loaded");
+                        alert.setContentText(file.getName() + " was loaded");
+                        alert.showAndWait();                        } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+
 
     }
 
@@ -227,24 +250,36 @@ public class TestMakerGUi extends Application {
         }
     }
 
-    private void loadTest() throws IOException
+    private void loadTest(String name) throws IOException
     {
-        
+        JsonResultFactory temp= new JsonResultFactory();
+        JsonArray tests = (JsonArray) ((JsonObject) temp.buildFromFile(Path.of(name))).get("Tests");
+        for(int i = 0; i < tests.size(); i++)
+        {
+            Test test = new Test();
+            test.fromJson((JsonObject) tests.get(i));
+            testView.getItems().add(test);
+        }
+        testView.setItems(testView.getItems());
+
     }
-    private void saveTest(String name) throws IOException {
+    private void saveTest(String name, String fileName) throws IOException {
         JsonObject jsonObject = new JsonObject();
         JsonArray testJson = new JsonArray();
         for(int i = 0; i < testView.getItems().size(); i++)
         {
             testJson.add(((Test)testView.getItems().get(i)).toJson());
         }
+        jsonObject.put("Name", new JsonValue(fileName));
         jsonObject.put("Tests", testJson);
-        System.out.println(name);
-
         BufferedWriter bw = new BufferedWriter(new FileWriter(name));
         boolean good = jsonObject.writeToFile(bw);
         bw.close();
-        System.out.println(good);
+    }
+
+    private void openTest()
+    {
+
     }
 
     private void addStep()
@@ -300,14 +335,18 @@ public class TestMakerGUi extends Application {
                 return;
 
             }
-            step = new Test.Step("Test",idField.getText(),stringInputField.getText());
-
         }
 
-        if(delayField.getText() != "")
+        if(!delayField.getText().equals(""))
         {
-            output += "D="+ delayField.getText();
+            int delay = Integer.parseInt(delayField.getText());
+            step = new Test.Step("Test",idField.getText(),stringInputField.getText(), delay);
+
         }
+        else {
+            step = new Test.Step("Test", idField.getText(), stringInputField.getText());
+        }
+
         if(step != null)
         {
             stepView.getItems().add(step);
@@ -331,8 +370,8 @@ public class TestMakerGUi extends Application {
         if(nameField1.getText().equals(""))
         {
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Missing steps");
-            alert.setContentText("Steps are required to make the test");
+            alert.setTitle("Missing Name");
+            alert.setContentText("Test Name field is blank");
             alert.showAndWait();
             return;
         }
@@ -354,7 +393,6 @@ public class TestMakerGUi extends Application {
             testView.getItems().remove(index);
         testView.getItems().add(test);
         testView.setItems(testView.getItems());
-        System.out.println(test.toJson());
         clearSteps();
         nameField1.setText("");
     }
