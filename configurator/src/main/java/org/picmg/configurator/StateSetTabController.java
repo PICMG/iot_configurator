@@ -112,13 +112,34 @@ public class StateSetTabController implements Initializable {
 	@FXML
 	void onSaveChangesAction(ActionEvent event) {
 		//TODO: finish
+		String fileName = "placeholder";
+		File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
+		StateSet placeholderStateSet = new StateSet("Some StateSet", -1, "Some Vendor", -1, new ArrayList<>());
+		saveToFile(placeholderStateSet, defaultPath.toString());
 	}
 	@FXML
 	void onSaveAsChangesAction(ActionEvent event) {
 		//TODO: finish
+		String fileName = "placeholder";
+		File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
+		StateSet placeholderStateSet = new StateSet("Some StateSet", -1, "Some Vendor", -1, new ArrayList<>());
+		saveToFile(placeholderStateSet, defaultPath.toString());
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//TODO: fill out with needed initialize
+	}
+
+	public void saveToFile(StateSet stateSet, String path) {
+		try {
+			FileWriter fileWriter;
+			fileWriter = new FileWriter(path);
+			BufferedWriter br = new BufferedWriter(fileWriter);
+			stateSet.toJSON().writeToFile(br);
+			br.close();
+		} catch (IOException e) {
+			System.out.println("IOException occurred while writing to file");
+			e.printStackTrace();
+		}
 	}
 }
