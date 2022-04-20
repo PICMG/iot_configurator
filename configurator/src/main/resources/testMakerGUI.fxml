@@ -65,9 +65,9 @@
         </Menu>
       </menus>
     </MenuBar>
-    <SplitPane dividerPositions="0.2728285077951002, 0.5" focusTraversable="true" prefHeight="583.0" prefWidth="801.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.2728285077951002, 0.5" focusTraversable="true" prefHeight="583.0" prefWidth="801.0" VBox.vgrow="NEVER">
       <items>
-        <AnchorPane fx:id="idPane">
+        <AnchorPane fx:id="idPane" maxWidth="300">
           <children>
             <Label alignment="CENTER" layoutX="90.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Tabs" wrapText="false">
               <font>

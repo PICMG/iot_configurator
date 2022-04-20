@@ -334,8 +334,7 @@ public class TestMakerGUi extends Application {
         JsonResultFactory temp = new JsonResultFactory();
         JsonArray tests = (JsonArray) ((JsonObject) temp.buildFromFile(Path.of(name))).get("Tests");
         for (int i = 0; i < tests.size(); i++) {
-            Test test = new Test();
-            test.fromJson((JsonObject) tests.get(i));
+            Test test = new Test((JsonObject) tests.get(i));
             testView.getItems().add(test);
         }
         testView.setItems(testView.getItems());

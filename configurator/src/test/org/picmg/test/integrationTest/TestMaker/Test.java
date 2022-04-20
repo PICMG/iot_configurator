@@ -17,31 +17,55 @@ public class Test {
         public String id;
         public String data;
         public String type;
-        public String name;
         private int delay = 1000;
 
+        /**
+         * Step class for the different robot methods called
+         * @param type
+         * @param id
+         * @param data
+         */
         public Step(String type, String id, String data)
         {
             this.id = id;
             this.data = data;
             this.type = type;
-            delay = 0;
         }
 
-        public Step()
+        /**
+         * Step from a json object
+         * @param jsonObject
+         */
+        public Step(JsonObject jsonObject)
         {
-
+            this.type = jsonObject.getValue("Event");
+            this.id = jsonObject.getValue("Location");
+            this.data = jsonObject.getValue("Data");
         }
 
+        /**
+         * Step with delay as a parameter
+         * @param type
+         * @param id
+         * @param data
+         * @param delay
+         */
         public Step(String type, String id, String data, int delay) {
             this(type, id, data);
             this.delay = delay;
         }
 
+        /**
+         * Returns the current delay
+         * @return
+         */
         public int getDelay() {
             return delay;
         }
 
+        /**
+         * Prints the data, this is a debug method
+         */
         public void print()
         {
             System.out.println(delay);
@@ -52,8 +76,6 @@ public class Test {
             {
                 System.out.println("Method = " + type + " Id = " + id + " Data =" + data + " Delay = " + delay);
             }
-
-
         }
 
         @Override
@@ -66,25 +88,41 @@ public class Test {
             }
         }
 
+        /**
+         * Convert the object to json format
+         * @return
+         */
         public JsonObject toJson()
         {
             JsonObject stepObject = new JsonObject();
             stepObject.put("Event", new JsonValue(type));
             stepObject.put("Location", new JsonValue(id));
-            if(!data.equals("") && data != null)
+            if(data != null && !data.equals(""))
                 stepObject.put("Data", new JsonValue(data));
             return stepObject;
         }
+    }
 
-        public void fromJson(JsonObject jsonObject)
+    /**
+     * Create object from json
+     * @param jsonValue
+     */
+    public Test(JsonObject jsonValue)
+    {
+        this.name = jsonValue.getValue("name");
+        steps = new ArrayList<>();
+        JsonArray jsonSteps = (JsonArray) jsonValue.get("Steps");
+        for(int i = 0; i < jsonSteps.size(); i++)
         {
-            this.type = jsonObject.getValue("Event");
-            this.id = jsonObject.getValue("Location");
-            this.data = jsonObject.getValue("Data");
-
+            Step step = new Step((JsonObject) jsonSteps.get(i));
+            System.out.println(step);
+            steps.add(step);
         }
     }
 
+    /**
+     * Default
+     */
     public Test()
     {
         steps = new ArrayList<Step>();
@@ -120,6 +158,10 @@ public class Test {
         steps.add(newStep);
     }
 
+    /**
+     * Add a step to the list
+     * @param step
+     */
     public void addStep(Step step)
     {
         steps.add(step);
@@ -146,6 +188,10 @@ public class Test {
         }
     }
 
+    /**
+     * To string method
+     * @return
+     */
     @Override
     public String toString()
     {
@@ -167,19 +213,4 @@ public class Test {
         testObject.put("Steps", steps);
         return testObject;
     }
-
-    public void fromJson(JsonObject jsonValue)
-    {
-        this.name = jsonValue.getValue("name");
-        steps.clear();
-        JsonArray jsonSteps = (JsonArray) jsonValue.get("Steps");
-        for(int i = 0; i < jsonSteps.size(); i++)
-        {
-            Step step = new Step();
-            step.fromJson((JsonObject) jsonSteps.get(i));
-            System.out.println(step);
-            steps.add(step);
-        }
-    }
-
 }
