@@ -29,10 +29,10 @@ public class TestReader {
             // read test file header
             container.setTestContainerName(json.getValue("Name").replaceAll(" ", ""));
             container.setFileToLoad("topTabScene.fxml"); // TODO replace with findFilesForFXIDS?
-            JsonArray testObj = (JsonArray) json.get("Test");
+            JsonArray testObj = (JsonArray) json.get("Tests");
             // read test file body
             if (testObj == null) {
-                System.out.println("");
+                System.out.println("Could not find any tests");
                 return null;
             }
             for (JsonAbstractValue t : testObj) {
@@ -59,7 +59,7 @@ public class TestReader {
                 case "Type":
                     newTest.addStep(eventType, "", stepObj.getValue("Data"));
                     break;
-                case "Check":
+                case "Test":
                     newTest.addStep(eventType, stepObj.getValue("Location"), stepObj.getValue("Data"));
                     break;
                 default:

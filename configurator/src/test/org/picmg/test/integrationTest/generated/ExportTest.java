@@ -13,11 +13,11 @@ import static org.junit.Assert.*;
 import org.picmg.test.integrationTest.RobotThread;
 import org.picmg.test.integrationTest.RobotUtils;
 import java.io.IOException;
-public class TextBoxTest extends Application
+public class Export extends Application
 {
 	@Test
 	public void robotCalls() {
-		Sensorscanbemodified().run();
+		TestMain().then(()->Test2Main()).run();
 	}
 	@BeforeClass
 	public static void setup() {
@@ -30,7 +30,7 @@ public class TextBoxTest extends Application
 		try 
 		{
 			root = FXMLLoader.load(getClass().getClassLoader().getResource("topTabScene.fxml"));
-			Scene scene = new Scene(root, 1024, 768);
+			Scene scene = new Scene(root, 1024, 870);
 			stage.setTitle("PICMG Configurator");
 			stage.setScene(scene);
 			stage.show();
@@ -41,18 +41,21 @@ public class TextBoxTest extends Application
 			System.out.println(e);
 		}
 	}
-	public RobotThread Sensorscanbemodified()
+	public RobotThread TestMain()
 	{
-		System.out.println("Executing integration test Sensorscanbemodified");
+		System.out.println("Executing integration test TestMain");
 		return new RobotThread()
-				.then(1000, ()->RobotUtils.click("#sensorsTab"))
-				.then(1000, ()->RobotUtils.click("#stepCheckbox"))
-				.then(1000, ()->RobotUtils.check("#stepCheckbox","true"))
-				.then(1000, ()->RobotUtils.click("#stepCheckbox"))
-				.then(1000, ()->RobotUtils.check("#stepCheckbox","false"))
-				.then(1000, ()->RobotUtils.click("#descriptionTextArea"))
-				.then(1000, ()->RobotUtils.type("Test"))
-				.then(1000, ()->RobotUtils.check("#descriptionTextArea","Test"))
+				.then(1000, ()->RobotUtils.click("#effectersTab"))
+				.then(1000, ()->RobotUtils.click("#auxUnitChoicebox"))
+				.then(1000, ()->RobotUtils.check("#auxUnitChoicebox","test"))
+				.wait(8000);
+	}
+	public RobotThread Test2Main()
+	{
+		System.out.println("Executing integration test Test2Main");
+		return new RobotThread()
+				.then(1000, ()->RobotUtils.click("#sensorTab"))
+				.then(1000, ()->RobotUtils.type("nonsense"))
 				.wait(8000);
 	}
 }
