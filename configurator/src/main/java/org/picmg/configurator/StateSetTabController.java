@@ -85,7 +85,7 @@ public class StateSetTabController implements Initializable {
 	@FXML private ImageView plusAccuracyImage;
 
 	//TODO:change to use state sensor data class
-	//SensorTableData workingData = new SensorTableData();
+//	StateSet workingData = new StateSet(new JsonObject());
 
 	//	public SensorTableData getSensorTableData() {
 	//		return workingData;
@@ -125,9 +125,20 @@ public class StateSetTabController implements Initializable {
 		StateSet placeholderStateSet = new StateSet("Some StateSet", -1, "Some Vendor", -1, new ArrayList<>());
 		saveToFile(placeholderStateSet, defaultPath.toString());
 	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//TODO: fill out with needed initialize
+		stateSetTableView.getItems().clear();
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir") + "/lib/state_sets"))) {
+			for (Path path : stream) {
+				if (!Files.isDirectory(path)) {
+                    // TODO: Figure out to read in
+				}
+			}
+		} catch (IOException e) {
+			// unable to find the directory
+		}
 	}
 
 	public void saveToFile(StateSet stateSet, String path) {
