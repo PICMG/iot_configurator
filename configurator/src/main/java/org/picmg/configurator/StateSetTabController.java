@@ -22,7 +22,10 @@
 //
 package org.picmg.configurator;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -62,12 +65,10 @@ public class StateSetTabController implements Initializable {
 	@FXML private ImageView plusAccuracyImage;
 
 	StateSetTabController.StateSetTableData workingData = new StateSetTableData();
-	boolean modified;
 
 	public StateSetTableData getWorkingData() {
 		return workingData;
 	}
-
 
 	//TODO:change to use state sensor data class
 	//SensorTableData workingData = new SensorTableData();
@@ -93,32 +94,12 @@ public class StateSetTabController implements Initializable {
 			return stateSetId.get();
 		}
 
-		public SimpleStringProperty stateSetIdProperty() {
-			return stateSetId;
-		}
-
 		public void setStateSetId(String stateSetId) {
 			this.stateSetId.set(stateSetId);
 		}
 
-		public String getStateSetVendorIANA() {
-			return stateSetVendorIANA.get();
-		}
-
-		public SimpleStringProperty stateSetVendorIANAProperty() {
-			return stateSetVendorIANA;
-		}
-
 		public void setStateSetVendorIANA(String stateSetVendorIANA) {
 			this.stateSetVendorIANA.set(stateSetVendorIANA);
-		}
-
-		public String getStateSetVendorName() {
-			return stateSetVendorName.get();
-		}
-
-		public SimpleStringProperty stateSetVendorNameProperty() {
-			return stateSetVendorName;
 		}
 
 		public void setStateSetVendorName(String stateSetVendorName) {
@@ -131,26 +112,23 @@ public class StateSetTabController implements Initializable {
 
 	@FXML
 	void onStateSetVendorNameAction(ActionEvent event) {
-		if (stateSetVendorNameTextField.getText().isBlank()) stateSetVendorNameTextField.setVisible(true);
-		else stateSetVendorNameTextField.setVisible(false);
+		if (stateSetVendorNameTextField.getText().isBlank()) vendorNameImage.setVisible(true);
+		else vendorNameImage.setVisible(false);
 		workingData.setStateSetVendorName(stateSetVendorNameTextField.getText());;
-		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 	@FXML
 	void onStateSetVendorIANAAction(ActionEvent event) {
-		if (stateSetVendorIANA.getText().isBlank() && !App.isInteger(stateSetVendorIANA.getText())) stateSetVendorIANA.setVisible(true);
-		else stateSetVendorIANA.setVisible(false);
+		if (stateSetVendorIANA.getText().isBlank() && !App.isInteger(stateSetVendorIANA.getText())) vendorIANAImage.setVisible(true);
+		else vendorIANAImage.setVisible(false);
 		workingData.setStateSetVendorIANA(stateSetVendorIANA.getText());;
-		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 	@FXML
 	void onStateSetIDAction(ActionEvent event) {
-		if (stateSetId.getText().isBlank() && !App.isInteger(stateSetId.getText())) stateSetId.setVisible(true);
-		else stateSetId.setVisible(false);
+		if (stateSetId.getText().isBlank() && !App.isInteger(stateSetId.getText())) stateSetIDImage.setVisible(true);
+		else stateSetIDImage.setVisible(false);
 		workingData.setStateSetId(stateSetId.getText());;
-		modified = true;
 		saveChangesButton.setDisable(!isValid());
 	}
 	@FXML
@@ -163,13 +141,22 @@ public class StateSetTabController implements Initializable {
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		//TODO: fill out with needed initialize
+		// fire action events if focus is lost on our text fields - this allows the normal action handler
+		// to update and check values.
+		stateSetVendorNameTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				if (!newValue) { stateSetVendorNameTextField.fireEvent(new ActionEvent()); }}});
+
+		// bind images to their input constraints
+		vendorNameImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						stateSetVendorNameTextField.textProperty().getValueSafe().isBlank(),
+				stateSetVendorNameTextField.textProperty()));
 	}
 
 	public boolean isValid() {
-		if(stateSetVendorNameTextField.isVisible()) return  false;
-		if(stateSetVendorIANA.isVisible()) return  false;
-		if(stateSetId.isVisible()) return  false;
+		if(vendorNameImage.isVisible()) return  false;
+		if(vendorIANAImage.isVisible()) return  false;
+		if(stateSetIDImage.isVisible()) return  false;
 		if(this.getWorkingData().getOemStateValueRecords() != null && this.getWorkingData().getOemStateValueRecords().size() == 0) return false;
 		return true;
 	}
