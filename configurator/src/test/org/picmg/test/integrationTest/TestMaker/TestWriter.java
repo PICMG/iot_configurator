@@ -80,7 +80,7 @@ public class TestWriter {
     private void writeStart() throws IOException {
         outputWriter.write("\t@Override\n\tpublic void start(Stage stage) {\n\t\tParent root;\n\t\ttry \n\t\t{\n\t\t\troot = FXMLLoader.load(getClass().getClassLoader().getResource(\"" +
                 currentTestContainer.getFileToLoad() + "\"));\n");
-        outputWriter.write("\t\t\tScene scene = new Scene(root, 1024, 768);\n\t\t\tstage.setTitle(\"PICMG Configurator\");\n\t\t\tstage.setScene(scene);\n\t\t\tstage.show();\n\t\t\t\n");
+        outputWriter.write("\t\t\tScene scene = new Scene(root, 1024, 870);\n\t\t\tstage.setTitle(\"PICMG Configurator\");\n\t\t\tstage.setScene(scene);\n\t\t\tstage.show();\n\t\t\t\n");
         outputWriter.write("\t\t\n\t\t}\n\t\tcatch (IOException e) {\n\t\t\tSystem.out.println(e);\n\t\t}\n\t}\n");
 
     }
@@ -95,10 +95,10 @@ public class TestWriter {
     private void writeRobotMethods() throws IOException {
         ArrayList<Test> tests = currentTestContainer.getTests();
         outputWriter.write("\t\t");
-        for (int i = 0; i < tests.size(); i++) {
-            Test t = tests.get(i);
+        for (Test t : tests) {
+            int index = tests.indexOf(t);
             outputWriter.write(t.getName().replaceAll(" ", "") + "()");
-            if (tests.indexOf(t) < tests.size() - 1)
+            if (index < tests.size() - 1)
                 outputWriter.write(".then(()->");
         }
         if (tests.size() != 0) {
@@ -146,7 +146,7 @@ public class TestWriter {
                 case "Type":
                     outputWriter.write("\t\t\t\t.then(" + s.getDelay() +  ", ()->RobotUtils.type(\"" + s.data + "\"" + "))\n");
                     break;
-                case "Check":
+                case "Test":
                     outputWriter.write("\t\t\t\t.then(" + s.getDelay() + ", ()->RobotUtils.check(" + "\"" + s.id + "\"" + "," + "\"" + s.data + "\"" + "))\n");
                     break;
             }
