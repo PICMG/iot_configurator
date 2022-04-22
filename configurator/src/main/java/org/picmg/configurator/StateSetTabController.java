@@ -141,7 +141,7 @@ public class StateSetTabController implements Initializable {
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		// fire action events if focus is lost on our text fields - this allows the normal action handler
+	/*	// fire action events if focus is lost on our text fields - this allows the normal action handler
 		// to update and check values.
 		stateSetVendorNameTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
@@ -150,7 +150,7 @@ public class StateSetTabController implements Initializable {
 		// bind images to their input constraints
 		vendorNameImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 						stateSetVendorNameTextField.textProperty().getValueSafe().isBlank(),
-				stateSetVendorNameTextField.textProperty()));
+				stateSetVendorNameTextField.textProperty()))*/;
 	}
 
 	public boolean isValid() {
