@@ -47,10 +47,10 @@ public class StateSetTabController implements Initializable {
 	@FXML private TableColumn<ValueRecords, String> maxStateValue;
 	@FXML private TableColumn<ValueRecords, String> languageTags;
 	@FXML private TableColumn<ValueRecords, String> stateName;
-	@FXML private TextField stateSetId;
+	@FXML private TextField stateSetIdTextField;
 	@FXML private TextField stateSetNameTextField;
 	@FXML private TextField stateSetVendorNameTextField;
-	@FXML private TextField stateSetVendorIANA;
+	@FXML private TextField stateSetVendorIANATextField;
 	@FXML private Button saveChangesButton;
 	@FXML private Button saveAsChangesButton;
 	@FXML private ImageView vendorNameImage;
@@ -119,16 +119,16 @@ public class StateSetTabController implements Initializable {
 	}
 	@FXML
 	void onStateSetVendorIANAAction(ActionEvent event) {
-		if (stateSetVendorIANA.getText().isBlank() && !App.isInteger(stateSetVendorIANA.getText())) vendorIANAImage.setVisible(true);
+		if (stateSetVendorIANATextField.getText().isBlank() || !App.isInteger(stateSetVendorIANATextField.getText())) vendorIANAImage.setVisible(true);
 		else vendorIANAImage.setVisible(false);
-		workingData.setStateSetVendorIANA(stateSetVendorIANA.getText());;
+		workingData.setStateSetVendorIANA(stateSetVendorIANATextField.getText());;
 		saveChangesButton.setDisable(!isValid());
 	}
 	@FXML
 	void onStateSetIDAction(ActionEvent event) {
-		if (stateSetId.getText().isBlank() && !App.isInteger(stateSetId.getText())) stateSetIDImage.setVisible(true);
+		if (stateSetIdTextField.getText().isBlank() || !App.isInteger(stateSetIdTextField.getText())) stateSetIDImage.setVisible(true);
 		else stateSetIDImage.setVisible(false);
-		workingData.setStateSetId(stateSetId.getText());;
+		workingData.setStateSetId(stateSetIdTextField.getText());;
 		saveChangesButton.setDisable(!isValid());
 	}
 	@FXML
@@ -141,16 +141,33 @@ public class StateSetTabController implements Initializable {
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-	/*	// fire action events if focus is lost on our text fields - this allows the normal action handler
+		// fire action events if focus is lost on our text fields - this allows the normal action handler
 		// to update and check values.
 		stateSetVendorNameTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { stateSetVendorNameTextField.fireEvent(new ActionEvent()); }}});
 
+		stateSetVendorIANATextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				if (!newValue) { stateSetVendorNameTextField.fireEvent(new ActionEvent()); }}});
+
+		stateSetIdTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
+			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
+				if (!newValue) { stateSetIdTextField.fireEvent(new ActionEvent()); }}});
+
+
 		// bind images to their input constraints
 		vendorNameImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 						stateSetVendorNameTextField.textProperty().getValueSafe().isBlank(),
-				stateSetVendorNameTextField.textProperty()))*/;
+				stateSetVendorNameTextField.textProperty()));
+
+		vendorIANAImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						stateSetVendorIANATextField.textProperty().getValueSafe().isBlank(),
+				stateSetVendorIANATextField.textProperty()));
+
+		stateSetIDImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						stateSetIdTextField.textProperty().getValueSafe().isBlank(),
+				stateSetIdTextField.textProperty()));
 	}
 
 	public boolean isValid() {

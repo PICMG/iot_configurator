@@ -55,8 +55,8 @@
                         <Label text="Vendor Name" GridPane.rowIndex="1" />
                         <Label text="Vendor IANA" GridPane.rowIndex="2" />
                         <TextField fx:id="stateSetNameTextField" disable="true" editable="false" GridPane.columnIndex="2" />
-                        <TextField fx:id="stateSetVendorNameTextfield" onAction="#onStateSetVendorNameAction" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <TextField fx:id="stateSetVendorIANA" onAction="#onStateSetVendorIANAAction" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <TextField fx:id="stateSetVendorNameTextField" onAction="#onStateSetVendorNameAction" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <TextField fx:id="stateSetVendorIANATextField" onAction="#onStateSetVendorIANAAction" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                         <Label text="State Set ID" GridPane.rowIndex="3" />
                         <Label prefHeight="42.0" prefWidth="79.0" text="OEM State Set Value Records" wrapText="true" GridPane.rowIndex="4">
                            <padding>
@@ -89,7 +89,7 @@
                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="stateSetId" onAction="#onStateSetIDAction" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <TextField fx:id="stateSetIdTextField" onAction="#onStateSetIDAction" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                         <TableView fx:id="stateSetValueRecords" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                           <columns>
                             <TableColumn fx:id="minStateValue" prefWidth="104.0" text="Min State Value" />
