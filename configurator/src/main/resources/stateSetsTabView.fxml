@@ -45,8 +45,8 @@
                       <RowConstraints maxHeight="26.0" minHeight="0.0" prefHeight="0.0" vgrow="SOMETIMES" />
                       <RowConstraints maxHeight="52.0" minHeight="26.0" prefHeight="31.0" vgrow="SOMETIMES" />
                       <RowConstraints maxHeight="47.0" minHeight="19.0" prefHeight="39.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="54.0" minHeight="0.0" prefHeight="34.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="551.0" minHeight="15.0" prefHeight="485.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="54.0" minHeight="0.0" prefHeight="41.0" vgrow="SOMETIMES" />
+                        <RowConstraints maxHeight="551.0" minHeight="15.0" prefHeight="478.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="274.0" minHeight="0.0" prefHeight="117.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                       <children>
@@ -87,11 +87,13 @@
                                <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <TableView fx:id="stateSetValueRecords" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                        <TableView fx:id="stateSetValueRecords" maxWidth="250.0" prefWidth="335.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                           <columns>
-                              <TableColumn fx:id="stateName" prefWidth="206.0" text="State Name" />
-                            <TableColumn fx:id="stateValue" prefWidth="189.0" text="State Value" />
+                              <TableColumn fx:id="stateName" prefWidth="250.0" text="State Name" />
                           </columns>
+                           <GridPane.margin>
+                              <Insets top="10.0" />
+                           </GridPane.margin>
                         </TableView>
                      </children>
                   </GridPane>

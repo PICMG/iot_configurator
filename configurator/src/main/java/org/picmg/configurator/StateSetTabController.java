@@ -64,8 +64,6 @@ public class StateSetTabController implements Initializable {
 	@FXML private TableColumn<StateSetTableData, String> stateSetID;
 
 	@FXML private TableView<ValueRecords> stateSetValueRecords;
-	@FXML private TableColumn<ValueRecords, String> stateValue;
-	@FXML private TableColumn<ValueRecords, String> languageTags;
 	@FXML private TableColumn<ValueRecords, String> stateName;
 
 	@FXML private TextField stateSetId;
