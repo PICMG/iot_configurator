@@ -49,49 +49,48 @@
                         <RowConstraints maxHeight="551.0" minHeight="15.0" prefHeight="485.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints maxHeight="274.0" minHeight="0.0" prefHeight="117.0" vgrow="SOMETIMES" />
                     </rowConstraints>
-                     <children>
-                        <Label text="Vendor Name" GridPane.rowIndex="1" />
-                        <Label text="Vendor IANA" GridPane.rowIndex="2" />
-                        <TextField fx:id="stateSetVendorNameTextfield" onAction="#onStateSetVendorNameAction" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <TextField fx:id="stateSetVendorIANA" onAction="#onStateSetVendorIANAAction" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Label text="State Set ID" GridPane.rowIndex="3" />
-                        <Label prefHeight="42.0" prefWidth="79.0" text="OEM State Set Value Records" wrapText="true" GridPane.rowIndex="4">
-                           <padding>
-                              <Insets top="5.0" />
+                      <children>
+                          <Label text="Vendor Name" GridPane.rowIndex="1" />
+                          <Label text="Vendor IANA" GridPane.rowIndex="2" />
+                          <Label text="State Set ID" GridPane.rowIndex="3" />
+                          <TextField fx:id="stateSetVendorNameTextfield" onAction="#onStateSetVendorNameAction" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                          <TextField fx:id="stateSetId" onAction="#onStateSetIDAction" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                          <TextField fx:id="stateSetVendorIANA" onAction="#onStateSetVendorIANAAction" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                         <Label prefHeight="42.0" prefWidth="79.0" text="OEM State Set Value Records" wrapText="true" GridPane.rowIndex="4">
+                            <padding>
+                               <Insets top="5.0" />
                            </padding></Label>
-                        <HBox alignment="CENTER_LEFT" spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="5">
-                           <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#onSaveChangesAction" styleClass="button" stylesheets="ButtonDecor.css" text="Save" />
-                           <Button fx:id="saveAsChangesButton" mnemonicParsing="false" onAction="#onSaveAsChangesAction" styleClass="button" stylesheets="ButtonDecor.css" text="Save As" />
+                         <HBox alignment="CENTER_LEFT" spacing="5" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                            <Button fx:id="saveChangesButton" mnemonicParsing="false" onAction="#onSaveChangesAction" styleClass="button" stylesheets="ButtonDecor.css" text="Save" />
+                            <Button fx:id="saveAsChangesButton" mnemonicParsing="false" onAction="#onSaveAsChangesAction" styleClass="button" stylesheets="ButtonDecor.css" text="Save As" />
                         </HBox>
-                        <ImageView fx:id="vendorNameImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
-                           <image>
-                              <Image url="@red_dot.png" />
+                         <ImageView fx:id="vendorNameImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1">
+                            <image>
+                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="oemStateSetValueRecordImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
-                           <image>
-                              <Image url="@red_dot.png" />
+                         <ImageView fx:id="oemStateSetValueRecordImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                            <image>
+                               <Image url="@red_dot.png" />
                            </image>
-                           <GridPane.margin>
-                              <Insets top="10.0" />
+                            <GridPane.margin>
+                               <Insets top="10.0" />
                            </GridPane.margin>
                         </ImageView>
-                        <ImageView fx:id="stateSetIDImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
-                           <image>
-                              <Image url="@red_dot.png" />
+                         <ImageView fx:id="stateSetIDImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3">
+                            <image>
+                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <ImageView fx:id="vendorIANAImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
-                           <image>
-                              <Image url="@red_dot.png" />
+                         <ImageView fx:id="vendorIANAImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2">
+                            <image>
+                               <Image url="@red_dot.png" />
                            </image>
                         </ImageView>
-                        <TextField fx:id="stateSetId" onAction="#onStateSetIDAction" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                         <TableView fx:id="stateSetValueRecords" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                           <columns>
-                            <TableColumn fx:id="stateValue" prefWidth="125.0" text="State Value" />
-                              <TableColumn fx:id="languageTags" prefWidth="139.0" text="language Tags" />
-                              <TableColumn fx:id="stateName" prefWidth="131.0" text="State Name" />
+                              <TableColumn fx:id="stateName" prefWidth="206.0" text="State Name" />
+                            <TableColumn fx:id="stateValue" prefWidth="189.0" text="State Value" />
                           </columns>
                         </TableView>
                      </children>

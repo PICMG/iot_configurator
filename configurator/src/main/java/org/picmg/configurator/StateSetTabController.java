@@ -59,28 +59,26 @@ import java.util.ResourceBundle;
 
 public class StateSetTabController implements Initializable {
 	@FXML private TableView<StateSetTableData> stateSetTableView;
-	@FXML private TableColumn<StateSetTableData, String> manufacturerColumn;
-	@FXML private TableColumn<StateSetTableData, String> modelColumn;
-	@FXML private TableColumn<StateSetTableData, String> typeColumn;
+	@FXML private TableColumn<StateSetTableData, String> vendorName;
+	@FXML private TableColumn<StateSetTableData, String> vendorIANA;
+	@FXML private TableColumn<StateSetTableData, String> stateSetID;
+
 	@FXML private TableView<ValueRecords> stateSetValueRecords;
 	@FXML private TableColumn<ValueRecords, String> stateValue;
 	@FXML private TableColumn<ValueRecords, String> languageTags;
 	@FXML private TableColumn<ValueRecords, String> stateName;
+
 	@FXML private TextField stateSetId;
-	@FXML private TextField stateSetVendorTextField;
+	@FXML private TextField stateSetVendorNameTextField;
 	@FXML private TextField stateSetVendorIANA;
+
 	@FXML private Button saveChangesButton;
 	@FXML private Button saveAsChangesButton;
+
 	@FXML private ImageView vendorNameImage;
 	@FXML private ImageView oemStateSetValueRecordImage;
 	@FXML private ImageView stateSetIDImage;
 	@FXML private ImageView vendorIANAImage;
-	@FXML private ImageView stateSetValueRecordImage;
-	@FXML private ImageView auxUnitImage;
-	@FXML private ImageView minusAccuracyImage;
-	@FXML private ImageView outputCurveImage;
-	@FXML private ImageView outputUnitsImage;
-	@FXML private ImageView plusAccuracyImage;
 
 	//TODO:change to use state sensor data class
 	//SensorTableData workingData = new SensorTableData();
