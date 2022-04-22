@@ -53,9 +53,7 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class StateSetTabController implements Initializable {
 	@FXML private TableView<StateSetTableData> stateSetTableView;
@@ -91,6 +89,111 @@ public class StateSetTabController implements Initializable {
 	//		return workingData;
 	//	}
 	public class StateSetTableData{
+		SimpleStringProperty name = new SimpleStringProperty();
+		SimpleStringProperty stateSetVendorName = new SimpleStringProperty();
+		SimpleStringProperty stateSetVendorIANA = new SimpleStringProperty();
+		SimpleStringProperty stateSetId = new SimpleStringProperty();
+		List<OEMStateValueRecord> oemStateValueRecords = new LinkedList<>();
+		Path savePath = null;
+
+		boolean valid;
+		public StateSetTableData(Path path) {
+			savePath = path;
+			JsonAbstractValue json = new JsonResultFactory().buildFromFile(path);
+			populate((JsonObject)json);
+		}
+
+		private final boolean validate(JsonObject json) {
+			if (json == null) return false;
+			if (json.get("name") == null
+					|| !json.get("name").getClass().isAssignableFrom(JsonValue.class)) return false;
+			if (json.get("stateSetId") == null
+					|| !json.get("stateSetId").getClass().isAssignableFrom(JsonValue.class)
+					|| !App.isUnsignedInteger(json.getValue("stateSetId"))) return false;
+			if (json.get("vendorIANA") == null
+					|| !json.get("vendorIANA").getClass().isAssignableFrom(JsonValue.class)
+					|| !App.isUnsignedInteger(json.getValue("vendorIANA"))) return false;
+			if (json.get("vendorName") == null
+					|| !json.get("vendorName").getClass().isAssignableFrom(JsonValue.class)) return false;
+			if (json.get("oemStateValueRecords") == null
+					|| !json.get("oemStateValueRecords").getClass().isAssignableFrom(JsonArray.class)) return false;
+
+			JsonArray states = (JsonArray) json.get("oemStateValueRecords");
+			// verify that oemStateValueRecords has at least one object
+			if (states.isEmpty()) return false;
+			// verify the values in each state record
+			for (JsonAbstractValue state : states) {
+				JsonObject stateObj = (JsonObject) state;
+				if (stateObj.get("minStateValue") == null
+						|| !stateObj.get("minStateValue").getClass().isAssignableFrom(JsonValue.class)
+						|| !App.isUnsignedInteger(stateObj.getValue("minStateValue"))) return false;
+				if (stateObj.get("maxStateValue") == null
+						|| !stateObj.get("maxStateValue").getClass().isAssignableFrom(JsonValue.class)
+						|| !App.isUnsignedInteger(stateObj.getValue("maxStateValue"))) return false;
+				if (stateObj.get("languageTags") == null
+						|| !stateObj.get("languageTags").getClass().isAssignableFrom(JsonArray.class)
+						|| "".equals(stateObj.get("languageTags").getValue("0."))) return false;
+				if (stateObj.get("stateName") == null
+						|| !stateObj.get("stateName").getClass().isAssignableFrom(JsonArray.class)
+						|| "".equals(stateObj.get("stateName").getValue("0."))) return false;
+			}
+
+			return true;
+		}
+
+		private final void populate(JsonObject json) {
+			valid = validate(json);
+			if (!valid) return;
+
+			name.set(json.getValue("name"));
+			stateSetVendorName.set(json.getValue("vendorName"));
+			stateSetVendorIANA.set(json.getValue("vendorIANA"));
+			stateSetId.set(json.getValue("stateSetId"));
+
+			JsonArray states = (JsonArray)json.get("oemStateValueRecords");
+			for (JsonAbstractValue jsonAbstractValue : states) {
+				if (!jsonAbstractValue.getClass().isAssignableFrom(JsonObject.class)) continue;
+				JsonObject state = (JsonObject) jsonAbstractValue;
+				state.dump(4);
+				oemStateValueRecords.add(new OEMStateValueRecord(state));
+			}
+		}
+
+		public StateSetTableData() {
+			valid = false;
+		}
+
+		public List<OEMStateValueRecord> getOemStateValueRecords() {
+			return oemStateValueRecords;
+		}
+
+		public void setOemStateValueRecords(List<OEMStateValueRecord> oemStateValueRecords) {
+			this.oemStateValueRecords = oemStateValueRecords;
+		}
+
+		public String getStateSetId() {
+			return stateSetId.get();
+		}
+
+		public void setStateSetId(String stateSetId) {
+			this.stateSetId.set(stateSetId);
+		}
+
+		public void setStateSetVendorIANA(String stateSetVendorIANA) {
+			this.stateSetVendorIANA.set(stateSetVendorIANA);
+		}
+
+		public String getStateSetVendorIANA() {
+			return this.stateSetVendorIANA.get();
+		}
+
+		public String getStateSetVendorName(String stateSetVendorName) {
+			return this.stateSetVendorName.get();
+		}
+
+		public void setStateSetVendorName(String stateSetVendorName) {
+			this.stateSetVendorName.set(stateSetVendorName);
+		}
 
 	}
 	public class ValueRecords{
@@ -120,5 +223,28 @@ public class StateSetTabController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//TODO: fill out with needed initialize
+
+		initializeTable();
+		selectDefaultStateSet();
+	}
+
+	private void initializeTable() {
+		stateSetTableView.getItems().clear();
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/state_sets"))) {
+			for (Path path : stream) {
+				if (!Files.isDirectory(path)) {
+					StateSetTableData data = new StateSetTableData(path);
+					if (data.valid) {
+						// place the data in the table
+						stateSetTableView.getItems().add(data);
+					}
+				}
+			}
+		} catch (IOException e) {
+			// unable to find the directory
+		}
+	}
+
+	private void selectDefaultStateSet() {
 	}
 }
