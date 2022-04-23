@@ -30,6 +30,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class TestMakerGUi extends Application {
@@ -311,7 +312,7 @@ public class TestMakerGUi extends Application {
                     idList.getItems().clear();
                     for(String s : tempList.getItems())
                     {
-                        if(s.contains(newValue))
+                        if(s.toLowerCase(Locale.ROOT).contains(newValue.toLowerCase(Locale.ROOT)))
                         {
                             idList.getItems().add(s);
                         }
@@ -403,10 +404,7 @@ public class TestMakerGUi extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + file));
             try {
                 root = loader.load();
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            } catch (IOException e) {}
             Map<String, Object> ids = loader.getNamespace();
 
             for (String key : ids.keySet()) {
