@@ -57,10 +57,9 @@
       <menus>
         <Menu fx:id="menuOptions" mnemonicParsing="false" text="File">
           <items>
-            <MenuItem fx:id="newOption" mnemonicParsing="false" text="New" />
             <MenuItem fx:id="openOption" mnemonicParsing="false" text="Open…" />
             <MenuItem fx:id="saveOption" mnemonicParsing="false" text="Save As…" />
-            <MenuItem fx:id="quitOption" mnemonicParsing="false" text="Quit" />
+              <MenuItem fx:id="exportOption" mnemonicParsing="false" text="Export" />
           </items>
         </Menu>
       </menus>
@@ -69,7 +68,7 @@
       <items>
         <AnchorPane fx:id="idPane" maxWidth="300">
           <children>
-            <Label alignment="CENTER" layoutX="90.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Tabs" wrapText="false">
+            <Label alignment="CENTER" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Tabs" wrapText="false">
               <font>
                 <Font size="18.0" fx:id="x1" />
               </font>
@@ -78,7 +77,8 @@
               </textFill>
             </Label>
                   <Button fx:id="selectIdButton" layoutY="514.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="382.0" text="Select ID" />
-                  <ListView fx:id="idList" layoutY="41.0" prefHeight="473.0" prefWidth="382.0" />
+                  <ListView fx:id="idList" layoutY="67.0" prefHeight="447.0" prefWidth="382.0" />
+                  <TextField fx:id="searchField" layoutY="41.0" prefHeight="25.0" prefWidth="382.0" promptText="Search...." />
           </children>
         </AnchorPane>
       <AnchorPane id="actionPane" minHeight="-1.0" minWidth="-1.0" prefHeight="545.0" prefWidth="430.0">
@@ -129,14 +129,18 @@
             <Label alignment="CENTER" font="$x1" layoutX="92.0" layoutY="14.0" style="&#10;" text="Test Output" textAlignment="CENTER" textFill="$x2" wrapText="false" />
                   <ListView fx:id="stepView" layoutX="-4.0" layoutY="140.0" prefHeight="200.0" prefWidth="296.0" />
                   <ListView fx:id="testView" layoutY="386.0" prefHeight="165.0" prefWidth="292.0" />
-                  <Text layoutY="136.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Steps" />
-                  <Text layoutX="1.0" layoutY="382.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tests" />
+                  <Text layoutX="13.0" layoutY="128.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Steps" />
+                  <Text layoutX="14.0" layoutY="374.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tests" />
                   <Label layoutX="14.0" layoutY="54.0" text="TestName:">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
                   <TextField fx:id="nameField1" layoutX="92.0" layoutY="50.0" />
+                  <Button fx:id="stepUp" layoutX="57.0" layoutY="111.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="Up" />
+                  <Button fx:id="stepDown" layoutX="119.0" layoutY="111.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="Down" />
+                  <Button fx:id="testUp" layoutX="57.0" layoutY="357.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="Up" />
+                  <Button fx:id="testDown" layoutX="121.0" layoutY="357.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="50.0" text="Down" />
           </children>
         </AnchorPane>
       </items>
