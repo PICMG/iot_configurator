@@ -81,6 +81,9 @@ public class StateSetTabController implements Initializable {
 	@FXML private ImageView outputCurveImage;
 	@FXML private ImageView outputUnitsImage;
 	@FXML private ImageView plusAccuracyImage;
+	@FXML private TableColumn<StateSetTableData, String> vendorNameColumn;
+	@FXML private TableColumn<StateSetTableData, String> vendorIANAColumn;
+	@FXML private TableColumn<StateSetTableData, String> stateSetIDColumn;
 
 	//TODO:change to use state sensor data class
 	//SensorTableData workingData = new SensorTableData();
@@ -137,7 +140,6 @@ public class StateSetTabController implements Initializable {
 						|| !stateObj.get("stateName").getClass().isAssignableFrom(JsonArray.class)
 						|| "".equals(stateObj.get("stateName").getValue("0."))) return false;
 			}
-
 			return true;
 		}
 
@@ -223,6 +225,9 @@ public class StateSetTabController implements Initializable {
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		//TODO: fill out with needed initialize
+		vendorNameColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorName"));
+		vendorIANAColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorIANA"));
+		stateSetIDColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetId"));
 
 		initializeTable();
 		selectDefaultStateSet();
