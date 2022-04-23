@@ -57,30 +57,24 @@ import java.util.*;
 
 public class StateSetTabController implements Initializable {
 	@FXML private TableView<StateSetTableData> stateSetTableView;
-	@FXML private TableColumn<StateSetTableData, String> manufacturerColumn;
-	@FXML private TableColumn<StateSetTableData, String> modelColumn;
-	@FXML private TableColumn<StateSetTableData, String> typeColumn;
+	@FXML private TableColumn<StateSetTableData, String> vendorName;
+	@FXML private TableColumn<StateSetTableData, String> vendorIANA;
+	@FXML private TableColumn<StateSetTableData, String> stateSetID;
+
 	@FXML private TableView<ValueRecords> stateSetValueRecords;
-	@FXML private TableColumn<ValueRecords, String> minStateValue;
-	@FXML private TableColumn<ValueRecords, String> maxStateValue;
-	@FXML private TableColumn<ValueRecords, String> languageTags;
 	@FXML private TableColumn<ValueRecords, String> stateName;
+
 	@FXML private TextField stateSetId;
-	@FXML private TextField stateSetNameTextField;
-	@FXML private TextField stateSetVendorTextField;
+	@FXML private TextField stateSetVendorNameTextField;
 	@FXML private TextField stateSetVendorIANA;
+
 	@FXML private Button saveChangesButton;
 	@FXML private Button saveAsChangesButton;
+
 	@FXML private ImageView vendorNameImage;
 	@FXML private ImageView oemStateSetValueRecordImage;
 	@FXML private ImageView stateSetIDImage;
 	@FXML private ImageView vendorIANAImage;
-	@FXML private ImageView stateSetValueRecordImage;
-	@FXML private ImageView auxUnitImage;
-	@FXML private ImageView minusAccuracyImage;
-	@FXML private ImageView outputCurveImage;
-	@FXML private ImageView outputUnitsImage;
-	@FXML private ImageView plusAccuracyImage;
 	@FXML private TableColumn<StateSetTableData, String> vendorNameColumn;
 	@FXML private TableColumn<StateSetTableData, String> vendorIANAColumn;
 	@FXML private TableColumn<StateSetTableData, String> stateSetIDColumn;
@@ -189,7 +183,7 @@ public class StateSetTabController implements Initializable {
 			return this.stateSetVendorIANA.get();
 		}
 
-		public String getStateSetVendorName(String stateSetVendorName) {
+		public String getStateSetVendorName() {
 			return this.stateSetVendorName.get();
 		}
 
