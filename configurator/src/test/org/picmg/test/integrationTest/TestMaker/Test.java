@@ -41,6 +41,7 @@ public class Test {
             this.type = jsonObject.getValue("Event");
             this.id = jsonObject.getValue("Location");
             this.data = jsonObject.getValue("Data");
+            this.data = jsonObject.getValue("Delay");
         }
 
         /**
@@ -97,6 +98,7 @@ public class Test {
             JsonObject stepObject = new JsonObject();
             stepObject.put("Event", new JsonValue(type));
             stepObject.put("Location", new JsonValue(id));
+            stepObject.put("Delay", new JsonValue(String.valueOf(delay)));
             if(data != null && !data.equals(""))
                 stepObject.put("Data", new JsonValue(data));
             return stepObject;
