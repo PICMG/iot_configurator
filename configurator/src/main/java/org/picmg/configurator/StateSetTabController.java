@@ -80,11 +80,11 @@ public class StateSetTabController implements Initializable {
 	@FXML private TableColumn<StateSetTableData, String> stateSetIDColumn;
 
 	//TODO:change to use state sensor data class
-	//SensorTableData workingData = new SensorTableData();
+	StateSetTableData workingData = new StateSetTableData();
 
-	//	public SensorTableData getSensorTableData() {
-	//		return workingData;
-	//	}
+	public StateSetTableData getSensorTableData() {
+		return workingData;
+	}
 	public class StateSetTableData{
 		SimpleStringProperty name = new SimpleStringProperty();
 		SimpleStringProperty stateSetVendorName = new SimpleStringProperty();
@@ -191,6 +191,14 @@ public class StateSetTabController implements Initializable {
 			this.stateSetVendorName.set(stateSetVendorName);
 		}
 
+		public void set(StateSetTableData selectedData) {
+			setStateSetVendorName(selectedData.getStateSetVendorName());
+			setStateSetVendorIANA(selectedData.getStateSetVendorIANA());
+			setStateSetId(selectedData.getStateSetId());
+
+			oemStateValueRecords.clear();
+			oemStateValueRecords.addAll(selectedData.getOemStateValueRecords());
+		}
 	}
 	public class ValueRecords{
 
@@ -225,6 +233,22 @@ public class StateSetTabController implements Initializable {
 
 		initializeTable();
 		selectDefaultStateSet();
+
+		ObservableList<StateSetTabController.StateSetTableData> tableSelection = stateSetTableView.getSelectionModel().getSelectedItems();
+		tableSelection.addListener(new ListChangeListener<StateSetTabController.StateSetTableData>() {
+			@Override
+			public void onChanged(Change<? extends StateSetTabController.StateSetTableData> c) {
+				// here if a new selection has been made from the table - populate the
+				// controls with the data
+				StateSetTabController.StateSetTableData data = stateSetTableView.getSelectionModel().getSelectedItem();
+				if (data==null) return;
+				workingData.set(data);
+				setStateSetData(workingData);
+
+//				modified = false;
+//				setSaveAvailability(false);
+			}
+		});
 	}
 
 	private void initializeTable() {
@@ -244,6 +268,18 @@ public class StateSetTabController implements Initializable {
 		}
 	}
 
+	private void setStateSetData(StateSetTableData data) {
+		stateSetVendorNameTextField.setText(data.getStateSetVendorName());
+		stateSetVendorIANA.setText(data.getStateSetVendorIANA());
+		stateSetId.setText(data.getStateSetId());
+	}
+
 	private void selectDefaultStateSet() {
+		stateSetTableView.getSelectionModel().select(0);
+//		setSaveAvailability(false);
+		StateSetTabController.StateSetTableData selectedData = stateSetTableView.getSelectionModel().getSelectedItem();
+		workingData.set(selectedData);
+		setStateSetData(selectedData);
+//		modified = false;
 	}
 }
