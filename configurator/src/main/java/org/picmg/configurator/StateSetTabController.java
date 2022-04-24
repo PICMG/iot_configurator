@@ -24,6 +24,7 @@ package org.picmg.configurator;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -61,11 +62,11 @@ public class StateSetTabController implements Initializable {
 	@FXML private TableColumn<StateSetTableData, String> vendorIANA;
 	@FXML private TableColumn<StateSetTableData, String> stateSetID;
 
-	@FXML private TableView<ValueRecords> stateSetValueRecords;
-	@FXML private TableColumn<ValueRecords, String> stateName;
+	@FXML private TableView<OEMStateValueRecord> stateSetValueRecords;
+	@FXML private TableColumn<OEMStateValueRecord, String> stateName;
 
 	@FXML private TextField stateSetId;
-	@FXML private TextField stateSetVendorNameTextField;
+	@FXML private TextField stateSetVendorNameTextfield;
 	@FXML private TextField stateSetVendorIANA;
 
 	@FXML private Button saveChangesButton;
@@ -150,7 +151,6 @@ public class StateSetTabController implements Initializable {
 			for (JsonAbstractValue jsonAbstractValue : states) {
 				if (!jsonAbstractValue.getClass().isAssignableFrom(JsonObject.class)) continue;
 				JsonObject state = (JsonObject) jsonAbstractValue;
-				state.dump(4);
 				oemStateValueRecords.add(new OEMStateValueRecord(state));
 			}
 		}
@@ -164,7 +164,8 @@ public class StateSetTabController implements Initializable {
 		}
 
 		public void setOemStateValueRecords(List<OEMStateValueRecord> oemStateValueRecords) {
-			this.oemStateValueRecords = oemStateValueRecords;
+			this.oemStateValueRecords.clear();
+			this.oemStateValueRecords.addAll(oemStateValueRecords);
 		}
 
 		public String getStateSetId() {
@@ -200,9 +201,6 @@ public class StateSetTabController implements Initializable {
 			oemStateValueRecords.addAll(selectedData.getOemStateValueRecords());
 		}
 	}
-	public class ValueRecords{
-
-	}
 
 	@FXML
 	void onStateSetVendorNameAction(ActionEvent event) {
@@ -230,6 +228,7 @@ public class StateSetTabController implements Initializable {
 		vendorNameColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorName"));
 		vendorIANAColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorIANA"));
 		stateSetIDColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetId"));
+		stateName.setCellValueFactory(new PropertyValueFactory<>("stateName"));
 
 		initializeTable();
 		selectDefaultStateSet();
@@ -269,9 +268,12 @@ public class StateSetTabController implements Initializable {
 	}
 
 	private void setStateSetData(StateSetTableData data) {
-		stateSetVendorNameTextField.setText(data.getStateSetVendorName());
+		stateSetVendorNameTextfield.setText(data.getStateSetVendorName());
 		stateSetVendorIANA.setText(data.getStateSetVendorIANA());
 		stateSetId.setText(data.getStateSetId());
+
+		stateSetValueRecords.getItems().clear();
+		stateSetValueRecords.getItems().addAll(data.getOemStateValueRecords());
 	}
 
 	private void selectDefaultStateSet() {
