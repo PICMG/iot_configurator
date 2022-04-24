@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -59,6 +60,8 @@ public class TestMakerGUi extends Application {
 
     @FXML
     private TextField searchField;
+
+    @FXML MenuBar mainMenubar;
 
 
     // Components menus
@@ -263,6 +266,10 @@ public class TestMakerGUi extends Application {
             public void handle(ActionEvent event) {
                 // Pass to test reader HERE TODO
                 // You need a file system TODO
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+                File selectedFile = fileChooser.showSaveDialog(mainMenubar.getScene().getWindow());
+                if (selectedFile != null) export(selectedFile);
             }
         });
 
@@ -392,6 +399,14 @@ public class TestMakerGUi extends Application {
                 }
             }
         });
+    }
+
+    /**
+     * export to the specified output file.
+     * @param outputFile - the name of the file to output to
+     */
+    public void export(File outputFile) {
+
     }
 
     /**
