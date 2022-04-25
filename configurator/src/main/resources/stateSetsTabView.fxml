@@ -21,11 +21,11 @@
    <children>
       <SplitPane dividerPositions="0.49021909233176836" prefHeight="738.0" prefWidth="1024.0">
          <items>
-            <TableView fx:id="stateSetTableView" prefHeight="738.0">
+            <TableView fx:id="stateSetTableView" editable="false" prefHeight="738.0">
               <columns>
-                  <TableColumn fx:id="vendorName" maxWidth="1.7976931348623157E308" minWidth="0.0" prefWidth="160.0" text="Vendor Name" />
-                  <TableColumn fx:id="vendorIANA" maxWidth="1.7976931348623157E308" prefWidth="176.0" text="Vendor IANA" />
-                  <TableColumn fx:id="stateSetID" maxWidth="1.7976931348623157E308" prefWidth="162.0" text="State Set ID" />
+                  <TableColumn fx:id="vendorNameColumn" maxWidth="1.7976931348623157E308" prefWidth="${stateSetTableView.width/3}" text="Vendor Name" />
+                  <TableColumn fx:id="vendorIANAColumn" maxWidth="1.7976931348623157E308" prefWidth="${stateSetTableView.width/3}" text="Vendor IANA" />
+                  <TableColumn fx:id="stateSetIDColumn" maxWidth="1.7976931348623157E308" prefWidth="${stateSetTableView.width/3}" text="State Set ID" />
               </columns>
             </TableView>
             <VBox prefHeight="200.0" prefWidth="100.0">
@@ -58,7 +58,7 @@
                           <TextField fx:id="stateSetId" onAction="#onStateSetIDAction" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                           <TableView fx:id="stateSetValueRecords" maxWidth="250.0" prefWidth="335.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                               <columns>
-                                  <TableColumn fx:id="stateName" prefWidth="250.0" text="State Name" />
+                                  <TableColumn fx:id="stateName" prefWidth="${stateSetValueRecords.width}" text="State Name" />
                               </columns>
                               <GridPane.margin>
                                   <Insets top="10.0" />
