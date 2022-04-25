@@ -42,232 +42,288 @@ import java.nio.file.Paths;
 import java.util.*;
 
 public class StateSetTabController implements Initializable {
-	@FXML private TableView<StateSetTableData> stateSetTableView;
-	@FXML private TableColumn<StateSetTableData, String> vendorName;
-	@FXML private TableColumn<StateSetTableData, String> vendorIANA;
-	@FXML private TableColumn<StateSetTableData, String> stateSetID;
+    @FXML
+    private TableView<StateSetTableData> stateSetTableView;
+    @FXML
+    private TableColumn<StateSetTableData, String> vendorName;
+    @FXML
+    private TableColumn<StateSetTableData, String> vendorIANA;
+    @FXML
+    private TableColumn<StateSetTableData, String> stateSetID;
 
-	@FXML private TableView<OEMStateValueRecord> stateSetValueRecords;
-	@FXML private TableColumn<OEMStateValueRecord, String> stateName;
+    @FXML
+    private TableView<OEMStateValueRecord> stateSetValueRecords;
+    @FXML
+    private TableColumn<OEMStateValueRecord, String> stateName;
 
-	@FXML private TextField stateSetId;
-	@FXML private TextField stateSetVendorNameTextfield;
-	@FXML private TextField stateSetVendorIANA;
+    @FXML
+    private TextField stateSetId;
+    @FXML
+    private TextField stateSetVendorNameTextfield;
+    @FXML
+    private TextField stateSetVendorIANA;
 
-	@FXML private Button saveChangesButton;
-	@FXML private Button saveAsChangesButton;
+    @FXML
+    private Button saveChangesButton;
+    @FXML
+    private Button saveAsChangesButton;
 
-	@FXML private ImageView vendorNameImage;
-	@FXML private ImageView oemStateSetValueRecordImage;
-	@FXML private ImageView stateSetIDImage;
-	@FXML private ImageView vendorIANAImage;
-	@FXML private TableColumn<StateSetTableData, String> vendorNameColumn;
-	@FXML private TableColumn<StateSetTableData, String> vendorIANAColumn;
-	@FXML private TableColumn<StateSetTableData, String> stateSetIDColumn;
+    @FXML
+    private ImageView vendorNameImage;
+    @FXML
+    private ImageView oemStateSetValueRecordImage;
+    @FXML
+    private ImageView stateSetIDImage;
+    @FXML
+    private ImageView vendorIANAImage;
+    @FXML
+    private TableColumn<StateSetTableData, String> vendorNameColumn;
+    @FXML
+    private TableColumn<StateSetTableData, String> vendorIANAColumn;
+    @FXML
+    private TableColumn<StateSetTableData, String> stateSetIDColumn;
 
-	//TODO:change to use state sensor data class
-	StateSetTableData workingData = new StateSetTableData();
+    //TODO:change to use state sensor data class
+    StateSetTableData workingData = new StateSetTableData();
 
-	public StateSetTableData getSensorTableData() {
-		return workingData;
-	}
-	public class StateSetTableData{
-		SimpleStringProperty name = new SimpleStringProperty();
-		SimpleStringProperty stateSetVendorName = new SimpleStringProperty();
-		SimpleStringProperty stateSetVendorIANA = new SimpleStringProperty();
-		SimpleStringProperty stateSetId = new SimpleStringProperty();
-		List<OEMStateValueRecord> oemStateValueRecords = new LinkedList<>();
-		Path savePath = null;
+    public StateSetTableData getSensorTableData() {
+        return workingData;
+    }
 
-		boolean valid;
-		public StateSetTableData(Path path) {
-			savePath = path;
-			JsonAbstractValue json = new JsonResultFactory().buildFromFile(path);
-			valid = isValid((JsonObject)json);
-			if (valid) populate((JsonObject)json);
-		}
+    public class StateSetTableData {
+        SimpleStringProperty name = new SimpleStringProperty();
+        SimpleStringProperty stateSetVendorName = new SimpleStringProperty();
+        SimpleStringProperty stateSetVendorIANA = new SimpleStringProperty();
+        SimpleStringProperty stateSetId = new SimpleStringProperty();
+        List<OEMStateValueRecord> oemStateValueRecords = new LinkedList<>();
+        Path savePath = null;
 
-		private static final boolean isValid(JsonObject json) {
-			if (json == null) return false;
-			if (json.get("name") == null
-					|| !json.get("name").getClass().isAssignableFrom(JsonValue.class)) return false;
-			if (json.get("stateSetId") == null
-					|| !json.get("stateSetId").getClass().isAssignableFrom(JsonValue.class)
-					|| !App.isUnsignedInteger(json.getValue("stateSetId"))) return false;
-			if (json.get("vendorIANA") == null
-					|| !json.get("vendorIANA").getClass().isAssignableFrom(JsonValue.class)
-					|| !App.isUnsignedInteger(json.getValue("vendorIANA"))) return false;
-			if (json.get("vendorName") == null
-					|| !json.get("vendorName").getClass().isAssignableFrom(JsonValue.class)) return false;
-			if (json.get("oemStateValueRecords") == null
-					|| !json.get("oemStateValueRecords").getClass().isAssignableFrom(JsonArray.class)) return false;
+        boolean valid;
 
-			JsonArray states = (JsonArray) json.get("oemStateValueRecords");
-			// verify that oemStateValueRecords has at least one object
-			if (states.isEmpty()) return false;
-			// verify the values in each state record
-			for (JsonAbstractValue state : states) {
-				JsonObject stateObj = (JsonObject) state;
-				if (stateObj.get("minStateValue") == null
-						|| !stateObj.get("minStateValue").getClass().isAssignableFrom(JsonValue.class)
-						|| !App.isUnsignedInteger(stateObj.getValue("minStateValue"))) return false;
-				if (stateObj.get("maxStateValue") == null
-						|| !stateObj.get("maxStateValue").getClass().isAssignableFrom(JsonValue.class)
-						|| !App.isUnsignedInteger(stateObj.getValue("maxStateValue"))) return false;
-				if (stateObj.get("languageTags") == null
-						|| !stateObj.get("languageTags").getClass().isAssignableFrom(JsonArray.class)
-						|| "".equals(stateObj.get("languageTags").getValue("0."))) return false;
-				if (stateObj.get("stateName") == null
-						|| !stateObj.get("stateName").getClass().isAssignableFrom(JsonArray.class)
-						|| "".equals(stateObj.get("stateName").getValue("0."))) return false;
-			}
-			return true;
-		}
+        public StateSetTableData(Path path) {
+            savePath = path;
+            JsonAbstractValue json = new JsonResultFactory().buildFromFile(path);
+            valid = isValid((JsonObject) json);
+            if (valid) populate((JsonObject) json);
+        }
 
-		private final void populate(JsonObject json) {
-			name.set(json.getValue("name"));
-			stateSetVendorName.set(json.getValue("vendorName"));
-			stateSetVendorIANA.set(json.getValue("vendorIANA"));
-			stateSetId.set(json.getValue("stateSetId"));
+        private static final boolean isValid(JsonObject json) {
+            if (json == null) return false;
+            if (json.get("name") == null
+                    || !json.get("name").getClass().isAssignableFrom(JsonValue.class))
+                return false;
+            if (json.get("stateSetId") == null
+                    || !json.get("stateSetId").getClass().isAssignableFrom(JsonValue.class)
+                    || !App.isUnsignedInteger(json.getValue("stateSetId")))
+                return false;
+            if (json.get("vendorIANA") == null
+                    || !json.get("vendorIANA").getClass().isAssignableFrom(JsonValue.class)
+                    || !App.isUnsignedInteger(json.getValue("vendorIANA")))
+                return false;
+            if (json.get("vendorName") == null
+                    || !json.get("vendorName").getClass().isAssignableFrom(JsonValue.class))
+                return false;
+            if (json.get("oemStateValueRecords") == null
+                    || !json.get("oemStateValueRecords").getClass().isAssignableFrom(JsonArray.class))
+                return false;
 
-			JsonArray states = (JsonArray)json.get("oemStateValueRecords");
-			for (JsonAbstractValue jsonAbstractValue : states) {
-				if (!jsonAbstractValue.getClass().isAssignableFrom(JsonObject.class)) continue;
-				JsonObject state = (JsonObject) jsonAbstractValue;
-				oemStateValueRecords.add(new OEMStateValueRecord(state));
-			}
-		}
+            JsonArray states = (JsonArray) json.get("oemStateValueRecords");
+            // verify that oemStateValueRecords has at least one object
+            if (states.isEmpty()) return false;
+            // verify the values in each state record
+            for (JsonAbstractValue state : states) {
+                JsonObject stateObj = (JsonObject) state;
+                if (stateObj.get("minStateValue") == null
+                        || !stateObj.get("minStateValue").getClass().isAssignableFrom(JsonValue.class)
+                        || !App.isUnsignedInteger(stateObj.getValue("minStateValue")))
+                    return false;
+                if (stateObj.get("maxStateValue") == null
+                        || !stateObj.get("maxStateValue").getClass().isAssignableFrom(JsonValue.class)
+                        || !App.isUnsignedInteger(stateObj.getValue("maxStateValue")))
+                    return false;
+                if (stateObj.get("languageTags") == null
+                        || !stateObj.get("languageTags").getClass().isAssignableFrom(JsonArray.class)
+                        || "".equals(stateObj.get("languageTags").getValue("0.")))
+                    return false;
+                if (stateObj.get("stateName") == null
+                        || !stateObj.get("stateName").getClass().isAssignableFrom(JsonArray.class)
+                        || "".equals(stateObj.get("stateName").getValue("0.")))
+                    return false;
+            }
+            return true;
+        }
 
-		public StateSetTableData() {
-			valid = false;
-		}
+        private final void populate(JsonObject json) {
+            name.set(json.getValue("name"));
+            stateSetVendorName.set(json.getValue("vendorName"));
+            stateSetVendorIANA.set(json.getValue("vendorIANA"));
+            stateSetId.set(json.getValue("stateSetId"));
 
-		public List<OEMStateValueRecord> getOemStateValueRecords() {
-			return oemStateValueRecords;
-		}
+            JsonArray states = (JsonArray) json.get("oemStateValueRecords");
+            for (JsonAbstractValue jsonAbstractValue : states) {
+                if (!jsonAbstractValue.getClass().isAssignableFrom(JsonObject.class))
+                    continue;
+                JsonObject state = (JsonObject) jsonAbstractValue;
+                oemStateValueRecords.add(new OEMStateValueRecord(state));
+            }
+        }
 
-		public void setOemStateValueRecords(List<OEMStateValueRecord> oemStateValueRecords) {
-			this.oemStateValueRecords.clear();
-			this.oemStateValueRecords.addAll(oemStateValueRecords);
-			// add empty slot
+        public StateSetTableData() {
+            valid = false;
+        }
+
+        public List<OEMStateValueRecord> getOemStateValueRecords() {
+            return oemStateValueRecords;
+        }
+
+        public void setOemStateValueRecords(List<OEMStateValueRecord> oemStateValueRecords) {
+            this.oemStateValueRecords.clear();
+            this.oemStateValueRecords.addAll(oemStateValueRecords);
+            // add empty slot
 //			this.oemStateValueRecords.add(null);
-		}
+        }
 
-		public String getStateSetId() {
-			return stateSetId.get();
-		}
+        public String getStateSetId() {
+            return stateSetId.get();
+        }
 
-		public void setStateSetId(String stateSetId) {
-			this.stateSetId.set(stateSetId);
-		}
+        public void setStateSetId(String stateSetId) {
+            this.stateSetId.set(stateSetId);
+        }
 
-		public void setStateSetVendorIANA(String stateSetVendorIANA) {
-			this.stateSetVendorIANA.set(stateSetVendorIANA);
-		}
+        public void setStateSetVendorIANA(String stateSetVendorIANA) {
+            this.stateSetVendorIANA.set(stateSetVendorIANA);
+        }
 
-		public String getStateSetVendorIANA() {
-			return this.stateSetVendorIANA.get();
-		}
+        public String getStateSetVendorIANA() {
+            return this.stateSetVendorIANA.get();
+        }
 
-		public String getStateSetVendorName() {
-			return this.stateSetVendorName.get();
-		}
+        public String getStateSetVendorName() {
+            return this.stateSetVendorName.get();
+        }
 
-		public void setStateSetVendorName(String stateSetVendorName) {
-			this.stateSetVendorName.set(stateSetVendorName);
-		}
+        public void setStateSetVendorName(String stateSetVendorName) {
+            this.stateSetVendorName.set(stateSetVendorName);
+        }
 
-		public void set(StateSetTableData selectedData) {
-			setStateSetVendorName(selectedData.getStateSetVendorName());
-			setStateSetVendorIANA(selectedData.getStateSetVendorIANA());
-			setStateSetId(selectedData.getStateSetId());
+        public void set(StateSetTableData selectedData) {
+            setStateSetVendorName(selectedData.getStateSetVendorName());
+            setStateSetVendorIANA(selectedData.getStateSetVendorIANA());
+            setStateSetId(selectedData.getStateSetId());
 
-			oemStateValueRecords.clear();
-			oemStateValueRecords.addAll(selectedData.getOemStateValueRecords());
-		}
-	}
+            oemStateValueRecords.clear();
+            oemStateValueRecords.addAll(selectedData.getOemStateValueRecords());
+        }
+    }
 
-	@FXML
-	void onStateSetVendorNameAction(ActionEvent event) {
-		//TODO: finish
-	}
-	@FXML
-	void onStateSetVendorIANAAction(ActionEvent event) {
-		//TODO: finish
-	}
-	@FXML
-	void onStateSetIDAction(ActionEvent event) {
-		//TODO: finish
-	}
-	@FXML
-	void onSaveChangesAction(ActionEvent event) {
-		//TODO: finish
-	}
-	@FXML
-	void onSaveAsChangesAction(ActionEvent event) {
-		//TODO: finish
-	}
-	@Override
-	public void initialize(URL location, ResourceBundle resources) {
-		//TODO: fill out with needed initialize
-		vendorNameColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorName"));
-		vendorIANAColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorIANA"));
-		stateSetIDColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetId"));
-		stateName.setCellValueFactory(new PropertyValueFactory<>("stateName"));
+    @FXML
+    void onStateSetVendorNameAction(ActionEvent event) {
+        //TODO: finish
+    }
 
-		initializeTable();
-		selectDefaultStateSet();
+    @FXML
+    void onStateSetVendorIANAAction(ActionEvent event) {
+        //TODO: finish
+    }
 
-		ObservableList<StateSetTabController.StateSetTableData> tableSelection = stateSetTableView.getSelectionModel().getSelectedItems();
-		tableSelection.addListener(new ListChangeListener<StateSetTabController.StateSetTableData>() {
-			@Override
-			public void onChanged(Change<? extends StateSetTabController.StateSetTableData> c) {
-				// here if a new selection has been made from the table - populate the
-				// controls with the data
-				StateSetTabController.StateSetTableData data = stateSetTableView.getSelectionModel().getSelectedItem();
-				if (data==null) return;
-				workingData.set(data);
-				setStateSetData(workingData);
+    @FXML
+    void onStateSetIDAction(ActionEvent event) {
+        //TODO: finish
+    }
+
+    @FXML
+    void onSaveChangesAction(ActionEvent event) {
+        //TODO: finish
+        String fileName = "placeholder";
+        File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
+        StateSet placeholderStateSet = new StateSet("Some StateSet", -1, "Some Vendor", -1, new ArrayList<>());
+        saveToFile(placeholderStateSet, defaultPath.toString());
+    }
+
+    @FXML
+    void onSaveAsChangesAction(ActionEvent event) {
+        //TODO: finish
+        String fileName = "placeholder";
+        File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
+        StateSet placeholderStateSet = new StateSet("Some StateSet", -1, "Some Vendor", -1, new ArrayList<>());
+        saveToFile(placeholderStateSet, defaultPath.toString());
+    }
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        //TODO: fill out with needed initialize
+        vendorNameColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorName"));
+        vendorIANAColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorIANA"));
+        stateSetIDColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetId"));
+        stateName.setCellValueFactory(new PropertyValueFactory<>("stateName"));
+
+        initializeTable();
+        selectDefaultStateSet();
+
+        ObservableList<StateSetTabController.StateSetTableData> tableSelection = stateSetTableView.getSelectionModel().getSelectedItems();
+        tableSelection.addListener(new ListChangeListener<StateSetTabController.StateSetTableData>() {
+            @Override
+            public void onChanged(Change<? extends StateSetTabController.StateSetTableData> c) {
+                // here if a new selection has been made from the table - populate the
+                // controls with the data
+                StateSetTabController.StateSetTableData data = stateSetTableView.getSelectionModel().getSelectedItem();
+                if (data == null) return;
+                workingData.set(data);
+                setStateSetData(workingData);
 
 //				modified = false;
 //				setSaveAvailability(false);
-			}
-		});
-	}
+            }
+        });
+    }
 
-	private void initializeTable() {
-		stateSetTableView.getItems().clear();
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/state_sets"))) {
-			for (Path path : stream) {
-				if (!Files.isDirectory(path)) {
-					StateSetTableData data = new StateSetTableData(path);
-					if (data.valid) {
-						// place the data in the table
-						stateSetTableView.getItems().add(data);
-					}
-				}
-			}
-		} catch (IOException e) {
-			// unable to find the directory
-		}
-	}
+    private void initializeTable() {
+        stateSetTableView.getItems().clear();
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir") + "/lib/state_sets"))) {
+            for (Path path : stream) {
+                if (!Files.isDirectory(path)) {
+                    StateSetTableData data = new StateSetTableData(path);
+                    if (data.valid) {
+                        // place the data in the table
+                        stateSetTableView.getItems().add(data);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            // unable to find the directory
+        }
+    }
 
-	private void setStateSetData(StateSetTableData data) {
-		stateSetVendorNameTextfield.setText(data.getStateSetVendorName());
-		stateSetVendorIANA.setText(data.getStateSetVendorIANA());
-		stateSetId.setText(data.getStateSetId());
+    private void setStateSetData(StateSetTableData data) {
+        stateSetVendorNameTextfield.setText(data.getStateSetVendorName());
+        stateSetVendorIANA.setText(data.getStateSetVendorIANA());
+        stateSetId.setText(data.getStateSetId());
 
-		stateSetValueRecords.getItems().clear();
-		stateSetValueRecords.getItems().addAll(data.getOemStateValueRecords());
-	}
+        stateSetValueRecords.getItems().clear();
+        stateSetValueRecords.getItems().addAll(data.getOemStateValueRecords());
+    }
 
-	private void selectDefaultStateSet() {
-		stateSetTableView.getSelectionModel().select(0);
+    private void selectDefaultStateSet() {
+        stateSetTableView.getSelectionModel().select(0);
 //		setSaveAvailability(false);
 //		modified = false;
-		StateSetTabController.StateSetTableData selectedData = stateSetTableView.getSelectionModel().getSelectedItem();
-		if (selectedData == null) return;
-		workingData.set(selectedData);
-		setStateSetData(selectedData);
-	}
+        StateSetTabController.StateSetTableData selectedData = stateSetTableView.getSelectionModel().getSelectedItem();
+        if (selectedData == null) return;
+        workingData.set(selectedData);
+        setStateSetData(selectedData);
+    }
+
+    public void saveToFile(StateSet stateSet, String path) {
+        try {
+            FileWriter fileWriter;
+            fileWriter = new FileWriter(path);
+            BufferedWriter br = new BufferedWriter(fileWriter);
+            stateSet.toJSON().writeToFile(br);
+            br.close();
+        } catch (IOException e) {
+            System.out.println("IOException occurred while writing to file");
+            e.printStackTrace();
+        }
+    }
 }
