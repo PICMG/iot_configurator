@@ -112,24 +112,21 @@ public class StateSetTabController implements Initializable {
 
 	@FXML
 	void onStateSetVendorNameAction(ActionEvent event) {
-		if (stateSetVendorNameTextField.getText().isBlank()) vendorNameImage.setVisible(true);
-		else vendorNameImage.setVisible(false);
-		workingData.setStateSetVendorName(stateSetVendorNameTextField.getText());;
+		workingData.setStateSetVendorName(stateSetVendorNameTextField.getText());
 		saveChangesButton.setDisable(!isValid());
+		saveAsChangesButton.setDisable(!isValid());
 	}
 	@FXML
 	void onStateSetVendorIANAAction(ActionEvent event) {
-		if (stateSetVendorIANATextField.getText().isBlank() || !App.isInteger(stateSetVendorIANATextField.getText())) vendorIANAImage.setVisible(true);
-		else vendorIANAImage.setVisible(false);
 		workingData.setStateSetVendorIANA(stateSetVendorIANATextField.getText());;
 		saveChangesButton.setDisable(!isValid());
+		saveAsChangesButton.setDisable(!isValid());
 	}
 	@FXML
 	void onStateSetIDAction(ActionEvent event) {
-		if (stateSetIdTextField.getText().isBlank() || !App.isInteger(stateSetIdTextField.getText())) stateSetIDImage.setVisible(true);
-		else stateSetIDImage.setVisible(false);
 		workingData.setStateSetId(stateSetIdTextField.getText());;
 		saveChangesButton.setDisable(!isValid());
+		saveAsChangesButton.setDisable(!isValid());
 	}
 	@FXML
 	void onSaveChangesAction(ActionEvent event) {
@@ -162,11 +159,11 @@ public class StateSetTabController implements Initializable {
 				stateSetVendorNameTextField.textProperty()));
 
 		vendorIANAImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						stateSetVendorIANATextField.textProperty().getValueSafe().isBlank(),
+						stateSetVendorIANATextField.textProperty().getValueSafe().isBlank() ||  !App.isInteger(stateSetVendorIANATextField.textProperty().getValueSafe()),
 				stateSetVendorIANATextField.textProperty()));
 
 		stateSetIDImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						stateSetIdTextField.textProperty().getValueSafe().isBlank(),
+						stateSetIdTextField.textProperty().getValueSafe().isBlank() ||  !App.isInteger(stateSetIdTextField.textProperty().getValueSafe()),
 				stateSetIdTextField.textProperty()));
 	}
 
@@ -174,7 +171,7 @@ public class StateSetTabController implements Initializable {
 		if(vendorNameImage.isVisible()) return  false;
 		if(vendorIANAImage.isVisible()) return  false;
 		if(stateSetIDImage.isVisible()) return  false;
-		if(this.getWorkingData().getOemStateValueRecords() != null && this.getWorkingData().getOemStateValueRecords().size() == 0) return false;
+		if(this.getWorkingData().getOemStateValueRecords() != null || this.getWorkingData().getOemStateValueRecords().size() == 0) return false;
 		return true;
 	}
 
