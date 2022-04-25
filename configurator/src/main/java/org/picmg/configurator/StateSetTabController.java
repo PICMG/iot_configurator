@@ -22,30 +22,15 @@
 //
 package org.picmg.configurator;
 
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Point2D;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
 import org.picmg.jsonreader.*;
 
 import java.io.*;
@@ -98,10 +83,11 @@ public class StateSetTabController implements Initializable {
 		public StateSetTableData(Path path) {
 			savePath = path;
 			JsonAbstractValue json = new JsonResultFactory().buildFromFile(path);
-			populate((JsonObject)json);
+			valid = isValid((JsonObject)json);
+			if (valid) populate((JsonObject)json);
 		}
 
-		private final boolean validate(JsonObject json) {
+		private static final boolean isValid(JsonObject json) {
 			if (json == null) return false;
 			if (json.get("name") == null
 					|| !json.get("name").getClass().isAssignableFrom(JsonValue.class)) return false;
@@ -139,9 +125,6 @@ public class StateSetTabController implements Initializable {
 		}
 
 		private final void populate(JsonObject json) {
-			valid = validate(json);
-			if (!valid) return;
-
 			name.set(json.getValue("name"));
 			stateSetVendorName.set(json.getValue("vendorName"));
 			stateSetVendorIANA.set(json.getValue("vendorIANA"));
@@ -166,6 +149,8 @@ public class StateSetTabController implements Initializable {
 		public void setOemStateValueRecords(List<OEMStateValueRecord> oemStateValueRecords) {
 			this.oemStateValueRecords.clear();
 			this.oemStateValueRecords.addAll(oemStateValueRecords);
+			// add empty slot
+//			this.oemStateValueRecords.add(null);
 		}
 
 		public String getStateSetId() {
@@ -279,9 +264,10 @@ public class StateSetTabController implements Initializable {
 	private void selectDefaultStateSet() {
 		stateSetTableView.getSelectionModel().select(0);
 //		setSaveAvailability(false);
+//		modified = false;
 		StateSetTabController.StateSetTableData selectedData = stateSetTableView.getSelectionModel().getSelectedItem();
+		if (selectedData == null) return;
 		workingData.set(selectedData);
 		setStateSetData(selectedData);
-//		modified = false;
 	}
 }
