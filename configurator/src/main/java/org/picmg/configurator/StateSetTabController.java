@@ -187,6 +187,10 @@ public class StateSetTabController implements Initializable {
             return stateSetId.get();
         }
 
+        public String getStateSetName() {
+            return stateSetId.getName();
+        }
+
         public void setStateSetId(String stateSetId) {
             this.stateSetId.set(stateSetId);
         }
@@ -234,8 +238,7 @@ public class StateSetTabController implements Initializable {
 
     @FXML
     void onSaveChangesAction(ActionEvent event) {
-        //TODO: finish
-        String fileName = "placeholder";
+        String fileName = workingData.getStateSetVendorName() + '_' + workingData.getStateSetId();
         File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
         StateSet placeholderStateSet = new StateSet("Some StateSet", -1, "Some Vendor", -1, new ArrayList<>());
         saveToFile(placeholderStateSet, defaultPath.toString());
