@@ -31,6 +31,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import org.picmg.jsonreader.*;
 
 import java.io.*;
@@ -107,6 +108,9 @@ public class StateSetTabController implements Initializable {
             if (valid) populate((JsonObject) json);
         }
 
+        public void setSavePath(Path savePath) {this.savePath = savePath;}
+        public Path getSavePath() {return savePath;}
+
         private static final boolean isValid(JsonObject json) {
             if (json == null) return false;
             if (json.get("name") == null
@@ -170,6 +174,12 @@ public class StateSetTabController implements Initializable {
 
         public StateSetTableData() {
             valid = false;
+        }
+
+        public StateSet getStateSet() {
+            ArrayList<OEMStateValueRecord> valueRecords = new ArrayList<>();
+            // TODO: Parse into ArrayList
+            return new StateSet(this.getStateSetName(), Integer.valueOf(this.getStateSetId()), this.getStateSetVendorName(), Integer.valueOf(this.getStateSetVendorIANA()), valueRecords);
         }
 
         public List<OEMStateValueRecord> getOemStateValueRecords() {
@@ -239,18 +249,40 @@ public class StateSetTabController implements Initializable {
     @FXML
     void onSaveChangesAction(ActionEvent event) {
         String fileName = workingData.getStateSetVendorName() + '_' + workingData.getStateSetId();
-        File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
-        StateSet placeholderStateSet = new StateSet("Some StateSet", -1, "Some Vendor", -1, new ArrayList<>());
-        saveToFile(placeholderStateSet, defaultPath.toString());
+        File defaultPath = (workingData.getSavePath() != null)
+                ? workingData.getSavePath().toFile()
+                : new File(System.getProperty("user.dir")+"/lib/state_sets/" + fileName+".json");
+        saveToFile(workingData.getStateSet(), defaultPath.toString());
     }
 
     @FXML
     void onSaveAsChangesAction(ActionEvent event) {
-        //TODO: finish
-        String fileName = "placeholder";
-        File defaultPath = new File(System.getProperty("user.dir") + "/lib/state_sets/" + fileName + ".json");
-        StateSet placeholderStateSet = new StateSet("Some StateSet", -1, "Some Vendor", -1, new ArrayList<>());
-        saveToFile(placeholderStateSet, defaultPath.toString());
+        File path = promptSavePath();
+        if (path == null) {
+            return;
+        }
+        workingData.setSavePath(path.toPath());
+        saveToFile(workingData.getStateSet(), path.toString());
+    }
+
+    private File promptSavePath() {
+        File defaultPath = (workingData.getSavePath() != null)
+                ? workingData.getSavePath().toFile()
+                : new File(System.getProperty("user.dir")+"/lib/state_sets/" + workingData.getStateSetVendorName() + '_' + workingData.getStateSetId()+".json");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
+        fileChooser.setTitle("Save As");
+        fileChooser.setInitialDirectory(defaultPath.getParentFile());
+        fileChooser.setInitialFileName(workingData.getStateSetVendorName() + '_' + workingData.getStateSetId() + ".json");
+        File result = fileChooser.showSaveDialog(saveChangesButton.getScene().getWindow());
+        if (result == null) {
+            return null;
+        }
+        if (result.canWrite()) {
+            System.out.println("Unable to save to readonly file.");
+            return null;
+        }
+        return result;
     }
 
     @Override
