@@ -56,6 +56,7 @@ public class TestWriter {
 
     private void writeClass() throws IOException {
         outputWriter.write("public class " + currentTestContainer.getTestContainerName() + " extends Application\n{\n");
+        writeLine(1, "volatile boolean hasRun = false;");
         writeExecutor();
         writeLaunch();
         writeTests();
@@ -88,7 +89,9 @@ public class TestWriter {
     private void writeExecutor() throws IOException {
         writeLine(1, "@Test");
         writeLine(1, "public void robotCalls() {");
+        writeLine(2, "if (hasRun) return;");
         writeRobotMethods();
+        writeLine(2, "hasRun = true;");
         writeLine(1, "}");
     }
 
