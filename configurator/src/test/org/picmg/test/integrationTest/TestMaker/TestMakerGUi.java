@@ -268,8 +268,16 @@ public class TestMakerGUi extends Application {
                 // You need a file system TODO
                 FileChooser fileChooser = new FileChooser();
                 fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-                File selectedFile = fileChooser.showSaveDialog(mainMenubar.getScene().getWindow());
-                if (selectedFile != null) export(selectedFile);
+                File selectedFile = fileChooser.showSaveDialog(primaryStage);
+                if (selectedFile != null) {
+                    try {
+                        export(selectedFile);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                TestReader reader = TestReader.getInstance();
+                reader.readFromFile(selectedFile);
             }
         });
 
@@ -405,7 +413,17 @@ public class TestMakerGUi extends Application {
      * export to the specified output file.
      * @param outputFile - the name of the file to output to
      */
-    public void export(File outputFile) {
+    public void export(File outputFile) throws IOException {
+        JsonObject jsonObject = new JsonObject();
+        JsonArray testJson = new JsonArray();
+        for (int i = 0; i < testView.getItems().size(); i++) {
+            testJson.add(((Test) testView.getItems().get(i)).toJson());
+        }
+        jsonObject.put("Name", new JsonValue(outputFile.getName()));
+        jsonObject.put("Tests", testJson);
+        BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile.getName()));
+        boolean good = jsonObject.writeToFile(bw);
+        bw.close();
 
     }
 

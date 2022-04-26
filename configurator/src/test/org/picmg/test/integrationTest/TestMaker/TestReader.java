@@ -5,6 +5,7 @@ import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonResultFactory;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -46,6 +47,12 @@ public class TestReader {
         return container;
     }
 
+    public TestContainer readFromFile(File inputFile){
+        JsonResultFactory factory = new JsonResultFactory();
+        JsonObject json = (JsonObject)factory.buildFromFile(inputFile.toPath());
+        return reader.read(json);
+    }
+
     private Test readTest(JsonObject testObj) {
         JsonArray stepsArr = (JsonArray) testObj.get("Steps");
         Test newTest = new Test();
@@ -69,6 +76,8 @@ public class TestReader {
         }
         return newTest;
     }
+
+
 
     public static void main(String[] args) {
         try {
