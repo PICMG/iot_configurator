@@ -39,15 +39,15 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import org.picmg.jsonreader.*;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.nio.file.Path;
 
 public class StateSetTabController implements Initializable {
@@ -89,8 +89,21 @@ public class StateSetTabController implements Initializable {
 			valid = isValid((JsonObject)json);
 			if (valid) populate((JsonObject)json);
 		}
-    
-    public void setSavePath(Path savePath) {this.savePath = savePath;}
+
+		public String getStateSetName() {
+			return stateSetId.getName();
+		}
+
+		public StateSet getStateSet() {
+			ArrayList<OEMStateValueRecord> valueRecords = new ArrayList<>();
+			for (int i = 0; i < oemStateValueRecords.size(); i++) {
+				valueRecords.add((OEMStateValueRecord) oemStateValueRecords.get(i));
+			}
+			return new StateSet(this.getStateSetName(), Integer.valueOf(this.getStateSetId()), this.getStateSetVendorName(), Integer.valueOf(this.getStateSetVendorIANA()), valueRecords);
+		}
+
+    	public void setSavePath(Path savePath) {this.savePath = savePath;}
+
         public Path getSavePath() {return savePath;}
 
 		private static final boolean isValid(JsonObject json) {
@@ -175,8 +188,6 @@ public class StateSetTabController implements Initializable {
 		public void setStateSetVendorName(String stateSetVendorName) {
 			this.stateSetVendorName.set(stateSetVendorName);
 		}
-		public Path getSavePath() {return savePath;}
-		public void setSavePath(Path savePath) {this.savePath = savePath;}
 
 		public void set(StateSetTableData selectedData) {
 			setStateSetVendorName(selectedData.getStateSetVendorName());
@@ -346,5 +357,18 @@ public class StateSetTabController implements Initializable {
 		if (selectedData == null) return;
 		workingData.set(selectedData);
 		setStateSetData(selectedData);
+	}
+
+	public void saveToFile(StateSet stateSet, String path) {
+		try {
+			FileWriter fileWriter;
+			fileWriter = new FileWriter(path);
+			BufferedWriter br = new BufferedWriter(fileWriter);
+			stateSet.toJSON().writeToFile(br);
+			br.close();
+		} catch (IOException e) {
+			System.out.println("IOException occurred while writing to file");
+			e.printStackTrace();
+		}
 	}
 }
