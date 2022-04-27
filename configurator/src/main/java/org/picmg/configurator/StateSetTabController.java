@@ -23,46 +23,50 @@
 package org.picmg.configurator;
 
 import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import org.picmg.jsonreader.*;
 
+import java.io.IOException;
 import java.net.URL;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.nio.file.Path;
 
 public class StateSetTabController implements Initializable {
 	@FXML private TableView<StateSetTableData> stateSetTableView;
-	@FXML private TableColumn<StateSetTableData, String> manufacturerColumn;
-	@FXML private TableColumn<StateSetTableData, String> modelColumn;
-	@FXML private TableColumn<StateSetTableData, String> typeColumn;
-	@FXML private TableView<ValueRecords> stateSetValueRecords;
-	@FXML private TableColumn<ValueRecords, String> minStateValue;
-	@FXML private TableColumn<ValueRecords, String> maxStateValue;
-	@FXML private TableColumn<ValueRecords, String> languageTags;
-	@FXML private TableColumn<ValueRecords, String> stateName;
-	@FXML private TextField stateSetIdTextField;
-	@FXML private TextField stateSetNameTextField;
 	@FXML private TextField stateSetVendorNameTextField;
 	@FXML private TextField stateSetVendorIANATextField;
+	@FXML private TextField stateSetIdTextField;
+	@FXML private TableView<OEMStateValueRecord> stateSetValueRecords;
+	@FXML private TableColumn<OEMStateValueRecord, String> stateName;
+
 	@FXML private Button saveChangesButton;
 	@FXML private Button saveAsChangesButton;
+
 	@FXML private ImageView vendorNameImage;
-	@FXML private ImageView oemStateSetValueRecordImage;
+	@FXML private ImageView oemValueRecordImage;
 	@FXML private ImageView stateSetIDImage;
 	@FXML private ImageView vendorIANAImage;
-	@FXML private ImageView stateSetValueRecordImage;
-	@FXML private ImageView auxUnitImage;
-	@FXML private ImageView minusAccuracyImage;
-	@FXML private ImageView outputCurveImage;
-	@FXML private ImageView outputUnitsImage;
-	@FXML private ImageView plusAccuracyImage;
+	@FXML private TableColumn<StateSetTableData, String> vendorNameColumn;
+	@FXML private TableColumn<StateSetTableData, String> vendorIANAColumn;
+	@FXML private TableColumn<StateSetTableData, String> stateSetIDColumn;
 
 	StateSetTabController.StateSetTableData workingData = new StateSetTableData();
 
@@ -70,62 +74,132 @@ public class StateSetTabController implements Initializable {
 		return workingData;
 	}
 
-	//TODO:change to use state sensor data class
-	//SensorTableData workingData = new SensorTableData();
-
-	//	public SensorTableData getSensorTableData() {
-	//		return workingData;
-	//	}
 	public class StateSetTableData{
 		SimpleStringProperty stateSetVendorName = new SimpleStringProperty();
 		SimpleStringProperty stateSetVendorIANA = new SimpleStringProperty();
 		SimpleStringProperty stateSetId = new SimpleStringProperty();
-		List<OEMStateValueRecord> oemStateValueRecords = new LinkedList<>();
+		SimpleListProperty oemStateValueRecords = new SimpleListProperty();
+		Path savePath = null;
 
-		public List<OEMStateValueRecord> getOemStateValueRecords() {
-			return oemStateValueRecords;
+		boolean valid;
+		public StateSetTableData(Path path) {
+			savePath = path;
+			JsonAbstractValue json = new JsonResultFactory().buildFromFile(path);
+			valid = isValid((JsonObject)json);
+			if (valid) populate((JsonObject)json);
 		}
 
-		public void setOemStateValueRecords(List<OEMStateValueRecord> oemStateValueRecords) {
-			this.oemStateValueRecords = oemStateValueRecords;
+		private static final boolean isValid(JsonObject json) {
+			if (json == null) return false;
+			if (json.get("name") == null
+					|| !json.get("name").getClass().isAssignableFrom(JsonValue.class)) return false;
+			if (json.get("stateSetId") == null
+					|| !json.get("stateSetId").getClass().isAssignableFrom(JsonValue.class)
+					|| !App.isUnsignedInteger(json.getValue("stateSetId"))) return false;
+			if (json.get("vendorIANA") == null
+					|| !json.get("vendorIANA").getClass().isAssignableFrom(JsonValue.class)
+					|| !App.isUnsignedInteger(json.getValue("vendorIANA"))) return false;
+			if (json.get("vendorName") == null
+					|| !json.get("vendorName").getClass().isAssignableFrom(JsonValue.class)) return false;
+			if (json.get("oemStateValueRecords") == null
+					|| !json.get("oemStateValueRecords").getClass().isAssignableFrom(JsonArray.class)) return false;
+
+			JsonArray states = (JsonArray) json.get("oemStateValueRecords");
+			// verify that oemStateValueRecords has at least one object
+			if (states.isEmpty()) return false;
+			// verify the values in each state record
+			for (JsonAbstractValue state : states) {
+				JsonObject stateObj = (JsonObject) state;
+				if (stateObj.get("minStateValue") == null
+						|| !stateObj.get("minStateValue").getClass().isAssignableFrom(JsonValue.class)
+						|| !App.isUnsignedInteger(stateObj.getValue("minStateValue"))) return false;
+				if (stateObj.get("maxStateValue") == null
+						|| !stateObj.get("maxStateValue").getClass().isAssignableFrom(JsonValue.class)
+						|| !App.isUnsignedInteger(stateObj.getValue("maxStateValue"))) return false;
+				if (stateObj.get("languageTags") == null
+						|| !stateObj.get("languageTags").getClass().isAssignableFrom(JsonArray.class)
+						|| "".equals(stateObj.get("languageTags").getValue("0."))) return false;
+				if (stateObj.get("stateName") == null
+						|| !stateObj.get("stateName").getClass().isAssignableFrom(JsonArray.class)
+						|| "".equals(stateObj.get("stateName").getValue("0."))) return false;
+			}
+			return true;
+		}
+
+		private final void populate(JsonObject json) {
+			stateSetVendorName.set(json.getValue("vendorName"));
+			stateSetVendorIANA.set(json.getValue("vendorIANA"));
+			stateSetId.set(json.getValue("stateSetId"));
+
+			JsonArray states = (JsonArray)json.get("oemStateValueRecords");
+			List<OEMStateValueRecord> list = new LinkedList<>();
+			for (JsonAbstractValue jsonAbstractValue : states) {
+				if (!jsonAbstractValue.getClass().isAssignableFrom(JsonObject.class)) continue;
+				JsonObject state = (JsonObject) jsonAbstractValue;
+				list.add(new OEMStateValueRecord(state));
+			}
+			oemStateValueRecords.set(FXCollections.observableList(list));
+		}
+
+		public StateSetTableData() {
+			valid = false;
+		}
+
+		public ObservableList<OEMStateValueRecord> getOemStateValueRecords() {
+			return oemStateValueRecords.get();
+		}
+
+		public void setOemStateValueRecords(ObservableList<OEMStateValueRecord> oemStateValueRecords) {
+			this.oemStateValueRecords.set(oemStateValueRecords);
 		}
 
 		public String getStateSetId() {
 			return stateSetId.get();
 		}
-
 		public void setStateSetId(String stateSetId) {
 			this.stateSetId.set(stateSetId);
 		}
-
 		public void setStateSetVendorIANA(String stateSetVendorIANA) {
 			this.stateSetVendorIANA.set(stateSetVendorIANA);
 		}
-
+		public String getStateSetVendorIANA() {
+			return this.stateSetVendorIANA.get();
+		}
+		public String getStateSetVendorName() {
+			return this.stateSetVendorName.get();
+		}
 		public void setStateSetVendorName(String stateSetVendorName) {
 			this.stateSetVendorName.set(stateSetVendorName);
 		}
-	}
-	public class ValueRecords{
+		public Path getSavePath() {return savePath;}
+		public void setSavePath(Path savePath) {this.savePath = savePath;}
 
+		public void set(StateSetTableData selectedData) {
+			setStateSetVendorName(selectedData.getStateSetVendorName());
+			setStateSetVendorIANA(selectedData.getStateSetVendorIANA());
+			setStateSetId(selectedData.getStateSetId());
+
+			oemStateValueRecords.clear();
+			oemStateValueRecords.set(selectedData.getOemStateValueRecords());
+		}
 	}
 
 	@FXML
 	void onStateSetVendorNameAction(ActionEvent event) {
 		workingData.setStateSetVendorName(stateSetVendorNameTextField.getText());
-		saveChangesButton.setDisable(!isValid());
+		saveChangesButton.setDisable(!isValid() || workingData.getSavePath() == null);
 		saveAsChangesButton.setDisable(!isValid());
 	}
 	@FXML
 	void onStateSetVendorIANAAction(ActionEvent event) {
 		workingData.setStateSetVendorIANA(stateSetVendorIANATextField.getText());;
-		saveChangesButton.setDisable(!isValid());
+		saveChangesButton.setDisable(!isValid() || workingData.getSavePath() == null);
 		saveAsChangesButton.setDisable(!isValid());
 	}
 	@FXML
 	void onStateSetIDAction(ActionEvent event) {
 		workingData.setStateSetId(stateSetIdTextField.getText());;
-		saveChangesButton.setDisable(!isValid());
+		saveChangesButton.setDisable(!isValid() || workingData.getSavePath() == null);
 		saveAsChangesButton.setDisable(!isValid());
 	}
 	@FXML
@@ -136,8 +210,26 @@ public class StateSetTabController implements Initializable {
 	void onSaveAsChangesAction(ActionEvent event) {
 		//TODO: finish
 	}
+
+
+	public boolean isValid() {
+		if(vendorNameImage.isVisible()) return  false;
+		if(vendorIANAImage.isVisible()) return  false;
+		if(stateSetIDImage.isVisible()) return  false;
+		if(this.getWorkingData().getOemStateValueRecords() != null || this.getWorkingData().getOemStateValueRecords().size() == 0) return false;
+		return true;
+	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
+		vendorNameColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorName"));
+		vendorIANAColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorIANA"));
+		stateSetIDColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetId"));
+		stateName.setCellValueFactory(new PropertyValueFactory<>("stateName"));
+
+		initializeTable();
+		selectDefaultStateSet();
+
 		// fire action events if focus is lost on our text fields - this allows the normal action handler
 		// to update and check values.
 		stateSetVendorNameTextField.focusedProperty().addListener(new ChangeListener<Boolean>() {
@@ -163,16 +255,62 @@ public class StateSetTabController implements Initializable {
 				stateSetVendorIANATextField.textProperty()));
 
 		stateSetIDImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						stateSetIdTextField.textProperty().getValueSafe().isBlank() ||  !App.isInteger(stateSetIdTextField.textProperty().getValueSafe()),
+						stateSetIdTextField.textProperty().getValueSafe().isBlank() || !App.isInteger(stateSetIdTextField.textProperty().getValueSafe()),
 				stateSetIdTextField.textProperty()));
+		// TODO visibility should update on changes to list of given working data also
+		oemValueRecordImage.visibleProperty().bind(Bindings.createBooleanBinding(() -> getWorkingData().oemStateValueRecords.isEmpty(),
+				stateSetTableView.getSelectionModel().selectedItemProperty()));
+
+		ObservableList<StateSetTableData> tableSelection = stateSetTableView.getSelectionModel().getSelectedItems();
+		tableSelection.addListener(new ListChangeListener<StateSetTableData>() {
+			@Override
+			public void onChanged(Change<? extends StateSetTabController.StateSetTableData> c) {
+				// here if a new selection has been made from the table - populate the
+				// controls with the data
+				StateSetTabController.StateSetTableData data = stateSetTableView.getSelectionModel().getSelectedItem();
+				if (data==null) return;
+				workingData.set(data);
+				setStateSetData(workingData);
+
+//				modified = false;
+//				setSaveAvailability(false);
+			}
+		});
 	}
 
-	public boolean isValid() {
-		if(vendorNameImage.isVisible()) return  false;
-		if(vendorIANAImage.isVisible()) return  false;
-		if(stateSetIDImage.isVisible()) return  false;
-		if(this.getWorkingData().getOemStateValueRecords() != null || this.getWorkingData().getOemStateValueRecords().size() == 0) return false;
-		return true;
+	private void initializeTable() {
+		stateSetTableView.getItems().clear();
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/state_sets"))) {
+			for (Path path : stream) {
+				if (!Files.isDirectory(path)) {
+					StateSetTableData data = new StateSetTableData(path);
+					if (data.valid) {
+						// place the data in the table
+						stateSetTableView.getItems().add(data);
+					}
+				}
+			}
+		} catch (IOException e) {
+			// unable to find the directory
+		}
 	}
 
+	private void setStateSetData(StateSetTableData data) {
+		stateSetVendorNameTextField.setText(data.getStateSetVendorName());
+		stateSetVendorIANATextField.setText(data.getStateSetVendorIANA());
+		stateSetIdTextField.setText(data.getStateSetId());
+
+		stateSetValueRecords.getItems().clear();
+		stateSetValueRecords.getItems().addAll(data.getOemStateValueRecords());
+	}
+
+	private void selectDefaultStateSet() {
+		stateSetTableView.getSelectionModel().select(0);
+//		setSaveAvailability(false);
+//		modified = false;
+		StateSetTabController.StateSetTableData selectedData = stateSetTableView.getSelectionModel().getSelectedItem();
+		if (selectedData == null) return;
+		workingData.set(selectedData);
+		setStateSetData(selectedData);
+	}
 }

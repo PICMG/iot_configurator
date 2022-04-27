@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 
 public class RobotUtils {
     private static Robot robot = new Robot();
-    public static final boolean debug = true;
+    public static final boolean debug = false;
     private static final int OFFSET = 10;
 
     /**
