@@ -15,6 +15,7 @@ public class TestWriter {
     private TestContainer currentTestContainer;
     private static Path BASE_PATH = getBasePath();
     private static int TEST_DELAY = 8000;
+    private static int INITIAL_DELAY = 4000;
 
     private static Path getBasePath() {
         Path base = Paths.get(System.getProperty("user.dir"));
@@ -81,7 +82,7 @@ public class TestWriter {
     private void writeStart() throws IOException {
         outputWriter.write("\t@Override\n\tpublic void start(Stage stage) {\n\t\tParent root;\n\t\ttry \n\t\t{\n\t\t\troot = FXMLLoader.load(getClass().getClassLoader().getResource(\"" +
                 currentTestContainer.getFileToLoad() + "\"));\n");
-        outputWriter.write("\t\t\tScene scene = new Scene(root, 1024, 870);\n\t\t\tstage.setTitle(\"PICMG Configurator\");\n\t\t\tstage.setScene(scene);\n\t\t\tstage.show();\n\t\t\t\n");
+        outputWriter.write("\t\t\tScene scene = new Scene(root, 1024, 870);\n\t\t\tstage.setTitle(\"PICMG Configurator\");\n\t\t\tstage.setScene(scene);\n\t\t\tstage.show();\n\t\t\trobotCalls();\n");
         outputWriter.write("\t\t\n\t\t}\n\t\tcatch (IOException e) {\n\t\t\tSystem.out.println(e);\n\t\t}\n\t}\n");
 
     }
@@ -97,15 +98,15 @@ public class TestWriter {
 
     private void writeRobotMethods() throws IOException {
         ArrayList<Test> tests = currentTestContainer.getTests();
-        outputWriter.write("\t\t");
+        writeLine(2, "new RobotThread().wait(", String.valueOf(INITIAL_DELAY), ")");
+        outputWriter.write("\t\t\t\t.then(()->");
         for (Test t : tests) {
-            int index = tests.indexOf(t);
             outputWriter.write(t.getName().replaceAll(" ", "") + "()");
-            if (index < tests.size() - 1)
-                outputWriter.write(".then(()->");
+            outputWriter.write("\n\t\t\t\t.then(()->");
         }
+        outputWriter.write("RobotUtils.close()");
         if (tests.size() != 0) {
-            for (int i = 0; i < tests.size() - 1; i++)
+            for (int i = 0; i < tests.size() + 1; i++)
                 outputWriter.write(")");
             outputWriter.write(".run();\n");
         }
