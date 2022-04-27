@@ -178,7 +178,9 @@ public class StateSetTabController implements Initializable {
 
         public StateSet getStateSet() {
             ArrayList<OEMStateValueRecord> valueRecords = new ArrayList<>();
-            // TODO: Parse into ArrayList
+            for (int i = 0; i < oemStateValueRecords.size(); i++) {
+                valueRecords.add(oemStateValueRecords.get(i));
+            }
             return new StateSet(this.getStateSetName(), Integer.valueOf(this.getStateSetId()), this.getStateSetVendorName(), Integer.valueOf(this.getStateSetVendorIANA()), valueRecords);
         }
 
