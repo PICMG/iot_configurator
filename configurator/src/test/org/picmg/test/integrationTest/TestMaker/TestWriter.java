@@ -14,8 +14,8 @@ public class TestWriter {
     private BufferedWriter outputWriter;
     private TestContainer currentTestContainer;
     private static Path BASE_PATH = getBasePath();
-    private static int TEST_DELAY = 8000;
-    private static int INITIAL_DELAY = 4000;
+    private static int TEST_DELAY = 4000;
+    private static int INITIAL_DELAY = 5000;
 
     private static Path getBasePath() {
         Path base = Paths.get(System.getProperty("user.dir"));
@@ -99,17 +99,11 @@ public class TestWriter {
     private void writeRobotMethods() throws IOException {
         ArrayList<Test> tests = currentTestContainer.getTests();
         writeLine(2, "new RobotThread().wait(", String.valueOf(INITIAL_DELAY), ")");
-        outputWriter.write("\t\t\t\t.then(");
         for (Test t : tests) {
-            outputWriter.write(t.getName().replaceAll(" ", "") + "()");
-            outputWriter.write("\n\t\t\t\t.then(");
+            writeLine(4, ".wait(", String.valueOf(TEST_DELAY), ").then(", t.getName().replaceAll(" ", ""), "())");
         }
-        outputWriter.write("()->RobotUtils.close()");
-        if (tests.size() != 0) {
-            for (int i = 0; i < tests.size() + 1; i++)
-                outputWriter.write(")");
-            outputWriter.write(".run();\n");
-        }
+        writeLine(4,".then(", String.valueOf(TEST_DELAY / 3), ", RobotUtils::close)");
+        writeLine(4, ".run();");
     }
 
     private void writeLine(int indentNum, String ... messages) throws IOException {
