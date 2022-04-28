@@ -41,7 +41,7 @@ public class Test {
             this.type = jsonObject.getValue("Event");
             this.id = jsonObject.getValue("Location");
             this.data = jsonObject.getValue("Data");
-            this.data = jsonObject.getValue("Delay");
+            this.delay = jsonObject.getInteger("Delay");
         }
 
         /**

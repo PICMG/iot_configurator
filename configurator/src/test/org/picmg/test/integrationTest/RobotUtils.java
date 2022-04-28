@@ -18,6 +18,7 @@ import org.picmg.configurator.App;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -101,7 +102,10 @@ public class RobotUtils {
         if (node.get() instanceof TextField) {
             // if TextField, clear all text
             ((TextField) node.get()).setText("");
-        } else if (node.get() instanceof CheckBox) {
+        } else  if (node.get() instanceof TextArea) {
+            // if TextArea, clear all text
+            ((TextArea) node.get()).setText("");
+        }else if (node.get() instanceof CheckBox) {
             // if CheckBox, deselect to ensure state
             ((CheckBox) node.get()).setSelected(false);
         } else if (node.get() instanceof ChoiceBox) {
@@ -119,7 +123,7 @@ public class RobotUtils {
         System.out.println("Receiving and parsing command " + message);
         String[] messages = message.split(" ");
         if (messages.length < 2) {
-            switch(message) {
+            switch(message.toLowerCase()) {
                 case "clear":
                     boolean success = runClear();
                     if (success) System.out.println("Clear Failed");

@@ -289,6 +289,10 @@ public class TestMakerGUi extends Application {
             @Override
             public void handle(ActionEvent event) {
                 String id = (String) idList.getSelectionModel().getSelectedItem();
+                if(id == null) {
+                    idField.setText("");
+                    return;
+                }
                 String[] values = id.split(" from");
                 idField.setText("#" + values[0]);
             }
@@ -661,7 +665,6 @@ public class TestMakerGUi extends Application {
             for (Test.Step s : t.getSteps()) {
                 stepView.getItems().add(s);
             }
-            stepView.setItems(stepView.getItems());
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Empty test");
