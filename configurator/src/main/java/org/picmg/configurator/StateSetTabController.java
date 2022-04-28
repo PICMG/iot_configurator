@@ -36,17 +36,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.stage.FileChooser;
 import org.picmg.jsonreader.*;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.nio.file.Path;
 
 public class StateSetTabController implements Initializable {
@@ -88,6 +89,22 @@ public class StateSetTabController implements Initializable {
 			valid = isValid((JsonObject)json);
 			if (valid) populate((JsonObject)json);
 		}
+
+		public String getStateSetName() {
+			return stateSetId.getName();
+		}
+
+		public StateSet getStateSet() {
+			ArrayList<OEMStateValueRecord> valueRecords = new ArrayList<>();
+			for (int i = 0; i < oemStateValueRecords.size(); i++) {
+				valueRecords.add((OEMStateValueRecord) oemStateValueRecords.get(i));
+			}
+			return new StateSet(this.getStateSetName(), Integer.valueOf(this.getStateSetId()), this.getStateSetVendorName(), Integer.valueOf(this.getStateSetVendorIANA()), valueRecords);
+		}
+
+    	public void setSavePath(Path savePath) {this.savePath = savePath;}
+
+        public Path getSavePath() {return savePath;}
 
 		private static final boolean isValid(JsonObject json) {
 			if (json == null) return false;
@@ -171,8 +188,6 @@ public class StateSetTabController implements Initializable {
 		public void setStateSetVendorName(String stateSetVendorName) {
 			this.stateSetVendorName.set(stateSetVendorName);
 		}
-		public Path getSavePath() {return savePath;}
-		public void setSavePath(Path savePath) {this.savePath = savePath;}
 
 		public void set(StateSetTableData selectedData) {
 			setStateSetVendorName(selectedData.getStateSetVendorName());
@@ -202,15 +217,45 @@ public class StateSetTabController implements Initializable {
 		saveChangesButton.setDisable(!isValid() || workingData.getSavePath() == null);
 		saveAsChangesButton.setDisable(!isValid());
 	}
-	@FXML
-	void onSaveChangesAction(ActionEvent event) {
-		//TODO: finish
-	}
-	@FXML
-	void onSaveAsChangesAction(ActionEvent event) {
-		//TODO: finish
-	}
 
+    @FXML
+    void onSaveChangesAction(ActionEvent event) {
+        String fileName = workingData.getStateSetVendorName() + '_' + workingData.getStateSetId();
+        File defaultPath = (workingData.getSavePath() != null)
+                ? workingData.getSavePath().toFile()
+                : new File(System.getProperty("user.dir")+"/lib/state_sets/" + fileName+".json");
+        saveToFile(workingData.getStateSet(), defaultPath.toString());
+    }
+
+    @FXML
+    void onSaveAsChangesAction(ActionEvent event) {
+        File path = promptSavePath();
+        if (path == null) {
+            return;
+        }
+        workingData.setSavePath(path.toPath());
+        saveToFile(workingData.getStateSet(), path.toString());
+    }
+
+    private File promptSavePath() {
+        File defaultPath = (workingData.getSavePath() != null)
+                ? workingData.getSavePath().toFile()
+                : new File(System.getProperty("user.dir")+"/lib/state_sets/" + workingData.getStateSetVendorName() + '_' + workingData.getStateSetId()+".json");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
+        fileChooser.setTitle("Save As");
+        fileChooser.setInitialDirectory(defaultPath.getParentFile());
+        fileChooser.setInitialFileName(workingData.getStateSetVendorName() + '_' + workingData.getStateSetId() + ".json");
+        File result = fileChooser.showSaveDialog(saveChangesButton.getScene().getWindow());
+        if (result == null) {
+            return null;
+        }
+        if (result.canWrite()) {
+            System.out.println("Unable to save to readonly file.");
+            return null;
+        }
+        return result;
+    }
 
 	public boolean isValid() {
 		if(vendorNameImage.isVisible()) return  false;
@@ -312,5 +357,18 @@ public class StateSetTabController implements Initializable {
 		if (selectedData == null) return;
 		workingData.set(selectedData);
 		setStateSetData(selectedData);
+	}
+
+	public void saveToFile(StateSet stateSet, String path) {
+		try {
+			FileWriter fileWriter;
+			fileWriter = new FileWriter(path);
+			BufferedWriter br = new BufferedWriter(fileWriter);
+			stateSet.toJSON().writeToFile(br);
+			br.close();
+		} catch (IOException e) {
+			System.out.println("IOException occurred while writing to file");
+			e.printStackTrace();
+		}
 	}
 }
