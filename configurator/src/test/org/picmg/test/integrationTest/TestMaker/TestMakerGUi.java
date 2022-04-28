@@ -76,7 +76,7 @@ public class TestMakerGUi extends Application {
     private MenuItem exportOption;
 
 
-    // Middile components
+    // Middle components
     @FXML
     private RadioButton typeRadio;
     @FXML
@@ -148,7 +148,7 @@ public class TestMakerGUi extends Application {
             primaryStage.show();
 
             actionListeners(primaryStage);
-
+            clearParameters();
         } catch (Exception e) {
             System.out.println(e.toString());
         }
@@ -289,6 +289,10 @@ public class TestMakerGUi extends Application {
             @Override
             public void handle(ActionEvent event) {
                 String id = (String) idList.getSelectionModel().getSelectedItem();
+                if(id == null) {
+                    idField.setText("");
+                    return;
+                }
                 String[] values = id.split(" from");
                 idField.setText("#" + values[0]);
             }
@@ -298,18 +302,21 @@ public class TestMakerGUi extends Application {
         typeRadio.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                clearParameters();
                 stringInputField.setDisable(false);
             }
         });
         clickRadio.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                clearParameters();
                 stringInputField.setDisable(true);
             }
         });
         testRadio.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+                clearParameters();
                 stringInputField.setDisable(false);
             }
         });
@@ -404,6 +411,22 @@ public class TestMakerGUi extends Application {
     }
 
     /**
+     * This method clears the text fields
+     */
+    private void clearParameters(){
+        if(typeRadio.isSelected()){
+            selectIdButton.setDisable(true);
+            idField.setText("");
+            stringInputField.setText("");
+        }else if(clickRadio.isSelected()){
+            selectIdButton.setDisable(false);
+            stringInputField.setText("");
+        }else if(testRadio.isSelected()){
+            selectIdButton.setDisable(false);
+        }
+    }
+
+    /*
      * export to the specified output file.
      *
      * @param outputFile - the name of the file to output to
@@ -431,8 +454,7 @@ public class TestMakerGUi extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + file));
             try {
                 root = loader.load();
-            } catch (IOException e) {
-            }
+            } catch (Exception e) {}
             Map<String, Object> ids = loader.getNamespace();
 
             for (String key : ids.keySet()) {
@@ -455,6 +477,8 @@ public class TestMakerGUi extends Application {
         stringInputField.setText("");
         typeRadio.setSelected(true);
         delayField.setText("");
+        clearParameters();
+        stringInputField.setDisable(false);
     }
 
     /**
@@ -641,7 +665,6 @@ public class TestMakerGUi extends Application {
             for (Test.Step s : t.getSteps()) {
                 stepView.getItems().add(s);
             }
-            stepView.setItems(stepView.getItems());
         } else {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Empty test");
