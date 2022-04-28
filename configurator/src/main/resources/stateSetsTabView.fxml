@@ -53,9 +53,9 @@
                           <Label text="Vendor Name" GridPane.rowIndex="1" />
                           <Label text="Vendor IANA" GridPane.rowIndex="2" />
                           <Label text="State Set ID" GridPane.rowIndex="3" />
-                          <TextField fx:id="stateSetVendorNameTextfield" onAction="#onStateSetVendorNameAction" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                          <TextField fx:id="stateSetVendorIANA" onAction="#onStateSetVendorIANAAction" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                          <TextField fx:id="stateSetId" onAction="#onStateSetIDAction" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                          <TextField fx:id="stateSetVendorNameTextField" onAction="#onStateSetVendorNameAction" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                          <TextField fx:id="stateSetVendorIANATextField" onAction="#onStateSetVendorIANAAction" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                          <TextField fx:id="stateSetIdTextField" onAction="#onStateSetIDAction" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                           <TableView fx:id="stateSetValueRecords" maxWidth="250.0" prefWidth="335.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                               <columns>
                                   <TableColumn fx:id="stateName" prefWidth="${stateSetValueRecords.width}" text="State Name" />
@@ -77,7 +77,7 @@
                                 <Image url="@red_dot.png" />
                             </image>
                          </ImageView>
-                          <ImageView fx:id="oemStateSetValueRecordImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
+                          <ImageView fx:id="oemValueRecordImage" fitHeight="12.0" fitWidth="12.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4">
                              <image>
                                 <Image url="@red_dot.png" />
                             </image>
