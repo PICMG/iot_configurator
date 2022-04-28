@@ -30,7 +30,6 @@ public class TestWriter {
     }
 
     private TestWriter() {
-        System.out.println(BASE_PATH);
     }
 
     /**
@@ -109,7 +108,6 @@ public class TestWriter {
     private void writeLine(int indentNum, String ... messages) throws IOException {
         String out = "";
         for (int i = 0; i < indentNum; i++) out += "\t";
-        System.out.println(Arrays.toString(messages));
         for (String message : messages) out += message;
         outputWriter.write(out + "\n");
     }

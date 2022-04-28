@@ -69,7 +69,6 @@ public class TestContainer {
     public void print() {
         for (Test t : tests) {
             t.print();
-            System.out.println("");
         }
     }
 }
