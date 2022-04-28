@@ -13,8 +13,10 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.robot.Robot;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.picmg.configurator.App;
 
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -90,10 +92,94 @@ public class RobotUtils {
         robot.mousePress(MouseButton.PRIMARY);
         robot.mouseRelease(MouseButton.PRIMARY);
     }
+    private static boolean runClear() {
+        // clear selected item
+        Optional<Node> node = Stage.getWindows().stream()
+                .filter(Window::isFocused).findFirst()
+                .map(window -> window.getScene().getFocusOwner());
+        if (!node.isPresent()) return false;
+        if (node.get() instanceof TextField) {
+            // if TextField, clear all text
+            ((TextField) node.get()).setText("");
+        } else if (node.get() instanceof CheckBox) {
+            // if CheckBox, deselect to ensure state
+            ((CheckBox) node.get()).setSelected(false);
+        } else if (node.get() instanceof ChoiceBox) {
+            // if ChoiceBox, select first item (usually default/empty)
+            ((ChoiceBox) node.get()).getSelectionModel().selectFirst();
+        } else {
+            System.out.println("Unable to clear; focused node type " + node.get().getClass() + " not supported.");
+            return false;
+        }
 
+        return true;
+    }
 
-    
+    private static void runCommand(String message) {
+        System.out.println("Receiving and parsing command " + message);
+        String[] messages = message.split(" ");
+        if (messages.length < 2) {
+            switch(message) {
+                case "clear":
+                    boolean success = runClear();
+                    if (success) System.out.println("Clear Failed");
+                    break;
+                case "reset":
+                    try {
+                        Optional<Window> stage = Window.getWindows().stream()
+                                .filter(window -> window instanceof Stage).findFirst();
+                        if (stage.isPresent()) {
+                            App.load((Stage)stage.get());
+                        } else System.out.println("Could not find window to reset");
+                    } catch (IOException ex) {
+                        System.out.println("Reset command failed; could not reload resources");
+//                        ex.printStackTrace();
+                    }
+                    break;
+                case "enter":
+                    robot.keyType(KeyCode.ENTER);
+                    break;
+                case "escape":
+                    robot.keyType(KeyCode.ESCAPE);
+                    break;
+                case "shift":
+                    robot.keyPress(KeyCode.SHIFT);
+                    break;
+                case "unshift":
+                    robot.keyRelease(KeyCode.SHIFT);
+                    break;
+                case "alt":
+                    robot.keyPress(KeyCode.ALT);
+                    break;
+                case "unalt":
+                    robot.keyRelease(KeyCode.ALT);
+                    break;
+                case "ctrl":
+                    robot.keyPress(KeyCode.CONTROL);
+                    break;
+                case "unctrl":
+                    robot.keyRelease(KeyCode.CONTROL);
+                    break;
+
+                case "close":
+                    RobotUtils.close();
+                    break;
+                default:
+                    System.out.println("Unknown command");
+            }
+        } else {
+            if (messages[0].equals("key")) {
+                robot.keyType(KeyCode.getKeyCode(messages[1]));
+                return;
+            }
+        }
+    }
+
     public static void type(String message) {
+        if (message.startsWith("/")) {
+            runCommand(message.substring(1));
+            return;
+        }
         for (char c : message.toCharArray()) {
             String key = KeyEvent.getKeyText(KeyEvent.getExtendedKeyCodeForChar(c));
             KeyCode keyCode = KeyCode.getKeyCode(key);
