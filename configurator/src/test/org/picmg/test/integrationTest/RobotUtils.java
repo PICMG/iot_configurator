@@ -76,6 +76,7 @@ public class RobotUtils {
 
 
     public static void click(String value) {
+        System.out.println("Click");
         Optional<Node> lookup = lookup(value);
         if (lookup.isEmpty()) {
             System.out.println("Error: Unable to locate FXID " + value + " in any existing stage.");

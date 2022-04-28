@@ -57,7 +57,7 @@ public class TestWriter {
 
     private void writeClass() throws IOException {
         outputWriter.write("public class " + currentTestContainer.getTestContainerName() + " extends Application\n{\n");
-        writeLine(1, "volatile boolean hasRun = false;");
+        writeLine(1, "static volatile boolean hasRun = false;");
         writeExecutor();
         writeLaunch();
         writeTests();
@@ -99,12 +99,12 @@ public class TestWriter {
     private void writeRobotMethods() throws IOException {
         ArrayList<Test> tests = currentTestContainer.getTests();
         writeLine(2, "new RobotThread().wait(", String.valueOf(INITIAL_DELAY), ")");
-        outputWriter.write("\t\t\t\t.then(()->");
+        outputWriter.write("\t\t\t\t.then(");
         for (Test t : tests) {
             outputWriter.write(t.getName().replaceAll(" ", "") + "()");
-            outputWriter.write("\n\t\t\t\t.then(()->");
+            outputWriter.write("\n\t\t\t\t.then(");
         }
-        outputWriter.write("RobotUtils.close()");
+        outputWriter.write("()->RobotUtils.close()");
         if (tests.size() != 0) {
             for (int i = 0; i < tests.size() + 1; i++)
                 outputWriter.write(")");
