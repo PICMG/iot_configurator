@@ -98,10 +98,8 @@ public class RobotThread {
 
     private RobotThread getHead() {
         if (prev != null) {
-//            System.out.println(this.index + " is not head");
             return prev.getHead();
         }
-//        System.out.println(this.index + " is head");
         return this;
 
     }
@@ -131,9 +129,7 @@ public class RobotThread {
 
     public void printAll() {
         RobotThread head = getHead();
-        System.out.println(head.toString());
         while (head != null) {
-            System.out.println(head.toString());
             head = head.next;
         }
     }
