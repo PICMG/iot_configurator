@@ -61,7 +61,8 @@ public class TestMakerGUi extends Application {
     @FXML
     private TextField searchField;
 
-    @FXML MenuBar mainMenubar;
+    @FXML
+    MenuBar mainMenubar;
 
 
     // Components menus
@@ -128,6 +129,7 @@ public class TestMakerGUi extends Application {
 
 
     ListView<String> tempList = new ListView<>();
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Stage temp = new Stage();
@@ -164,6 +166,7 @@ public class TestMakerGUi extends Application {
                 }
             }
         });
+
 
         recallB.setOnAction(new EventHandler<ActionEvent>() {
             @Override
@@ -264,27 +267,28 @@ public class TestMakerGUi extends Application {
         exportOption.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                // Pass to test reader HERE TODO
-                // You need a file system TODO
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
-                File selectedFile = fileChooser.showSaveDialog(primaryStage);
-                if (selectedFile != null) {
-                    try {
-                        export(selectedFile);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                File file = new File(System.getProperty("user.dir") + "/temp.json");
+                try {
+                    export(file);
+                    TestReader reader = TestReader.getInstance();
+                    reader.readFromFile(file);
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Export completed");
+                    alert.setContentText(file.getName() + " was exported as GeneratedTest");
+                    alert.showAndWait();
+                } catch (IOException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Export erroor");
+                    alert.setContentText(e.toString());
+                    alert.showAndWait();
                 }
-                TestReader reader = TestReader.getInstance();
-                reader.readFromFile(selectedFile);
             }
         });
 
         selectIdButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                String id= (String) idList.getSelectionModel().getSelectedItem();
+                String id = (String) idList.getSelectionModel().getSelectedItem();
                 String[] values = id.split(" from");
                 idField.setText("#" + values[0]);
             }
@@ -313,22 +317,16 @@ public class TestMakerGUi extends Application {
         searchField.textProperty().addListener(new ChangeListener<String>() {
             @Override
             public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
-                if(newValue.equals(""))
-                {
+                if (newValue.equals("")) {
                     idList.getItems().clear();
-                    for(String s : tempList.getItems())
-                    {
+                    for (String s : tempList.getItems()) {
                         idList.getItems().add(s);
                     }
                     idList.setItems(idList.getItems());
-                }
-                else
-                {
+                } else {
                     idList.getItems().clear();
-                    for(String s : tempList.getItems())
-                    {
-                        if(s.toLowerCase(Locale.ROOT).contains(newValue.toLowerCase(Locale.ROOT)))
-                        {
+                    for (String s : tempList.getItems()) {
+                        if (s.toLowerCase(Locale.ROOT).contains(newValue.toLowerCase(Locale.ROOT))) {
                             idList.getItems().add(s);
                         }
                     }
@@ -342,14 +340,13 @@ public class TestMakerGUi extends Application {
             public void handle(ActionEvent event) {
                 int index = stepView.getSelectionModel().getSelectedIndex();
                 Test.Step temp;
-                if(index > 0)
-                {
+                if (index > 0) {
                     ObservableList values = stepView.getItems();
-                    temp = (Test.Step) values.get(index-1);
-                    values.set(index-1, values.get(index));
+                    temp = (Test.Step) values.get(index - 1);
+                    values.set(index - 1, values.get(index));
                     values.set(index, temp);
                     stepView.setItems(values);
-                    stepView.getSelectionModel().select(index-1);
+                    stepView.getSelectionModel().select(index - 1);
                 }
             }
         });
@@ -359,14 +356,13 @@ public class TestMakerGUi extends Application {
             public void handle(ActionEvent event) {
                 int index = stepView.getSelectionModel().getSelectedIndex();
                 Test.Step temp;
-                if(index+1 < stepView.getItems().size())
-                {
+                if (index + 1 < stepView.getItems().size()) {
                     ObservableList values = stepView.getItems();
-                    temp = (Test.Step) values.get(index+1);
-                    values.set(index+1, values.get(index));
+                    temp = (Test.Step) values.get(index + 1);
+                    values.set(index + 1, values.get(index));
                     values.set(index, temp);
                     stepView.setItems(values);
-                    stepView.getSelectionModel().select(index+1);
+                    stepView.getSelectionModel().select(index + 1);
 
                 }
             }
@@ -377,14 +373,13 @@ public class TestMakerGUi extends Application {
             public void handle(ActionEvent event) {
                 int index = testView.getSelectionModel().getSelectedIndex();
                 Test temp;
-                if(index > 0)
-                {
+                if (index > 0) {
                     ObservableList values = testView.getItems();
-                    temp = (Test) values.get(index-1);
-                    values.set(index-1, values.get(index));
+                    temp = (Test) values.get(index - 1);
+                    values.set(index - 1, values.get(index));
                     values.set(index, temp);
                     testView.setItems(values);
-                    testView.getSelectionModel().select(index-1);
+                    testView.getSelectionModel().select(index - 1);
 
                 }
             }
@@ -395,14 +390,13 @@ public class TestMakerGUi extends Application {
             public void handle(ActionEvent event) {
                 int index = testView.getSelectionModel().getSelectedIndex();
                 Test temp;
-                if(index+1 < testView.getItems().size())
-                {
+                if (index + 1 < testView.getItems().size()) {
                     ObservableList values = testView.getItems();
-                    temp = (Test) values.get(index+1);
-                    values.set(index+1, values.get(index));
+                    temp = (Test) values.get(index + 1);
+                    values.set(index + 1, values.get(index));
                     values.set(index, temp);
                     testView.setItems(values);
-                    testView.getSelectionModel().select(index+1);
+                    testView.getSelectionModel().select(index + 1);
 
                 }
             }
@@ -411,6 +405,7 @@ public class TestMakerGUi extends Application {
 
     /**
      * export to the specified output file.
+     *
      * @param outputFile - the name of the file to output to
      */
     public void export(File outputFile) throws IOException {
@@ -419,12 +414,11 @@ public class TestMakerGUi extends Application {
         for (int i = 0; i < testView.getItems().size(); i++) {
             testJson.add(((Test) testView.getItems().get(i)).toJson());
         }
-        jsonObject.put("Name", new JsonValue(outputFile.getName()));
+        jsonObject.put("Name", new JsonValue("GeneratedTest"));
         jsonObject.put("Tests", testJson);
         BufferedWriter bw = new BufferedWriter(new FileWriter(outputFile.getName()));
-        boolean good = jsonObject.writeToFile(bw);
+        jsonObject.writeToFile(bw);
         bw.close();
-
     }
 
     /**
@@ -437,7 +431,8 @@ public class TestMakerGUi extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/" + file));
             try {
                 root = loader.load();
-            } catch (IOException e) {}
+            } catch (IOException e) {
+            }
             Map<String, Object> ids = loader.getNamespace();
 
             for (String key : ids.keySet()) {
@@ -446,8 +441,7 @@ public class TestMakerGUi extends Application {
         }
         FXCollections.sort(idList.getItems());
         idList.setItems(idList.getItems());
-        for(String s : idList.getItems())
-        {
+        for (String s : idList.getItems()) {
             tempList.getItems().add(s);
         }
         tempList.setItems(tempList.getItems());

@@ -47,11 +47,35 @@ public class TestReader {
         return container;
     }
 
-    public TestContainer readFromFile(File inputFile){
-        JsonResultFactory factory = new JsonResultFactory();
-        JsonObject json = (JsonObject)factory.buildFromFile(inputFile.toPath());
-        return reader.read(json);
+    public boolean readFromFile(File inputFile) {
+
+        try {
+            Path path = Paths.get(inputFile.toURI());
+            if (!path.toFile().exists() || !path.toFile().canRead()) {
+                System.out.println("Cannot open " + inputFile + "; skipping.");
+            }
+            JsonResultFactory jsonResultFactory = new JsonResultFactory();
+            JsonObject json = (JsonObject) jsonResultFactory.buildFromFile(Paths.get(inputFile.toURI()));
+            if (json == null) {
+                System.out.println("Failed to load json");
+                return false;
+            }
+            TestContainer container = getInstance().read(json);
+            if (container == null) {
+                System.out.println("Failed to read tests");
+                return false;
+            }
+            TestWriter.getInstance().createTest(container);
+            System.out.println("Successfully generated the following tests:");
+            container.print();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
+
 
     private Test readTest(JsonObject testObj) {
         JsonArray stepsArr = (JsonArray) testObj.get("Steps");
@@ -78,7 +102,6 @@ public class TestReader {
     }
 
 
-
     public static void main(String[] args) {
         try {
             for (String arg : args) {
@@ -88,7 +111,7 @@ public class TestReader {
                     continue;
                 }
                 JsonResultFactory jsonResultFactory = new JsonResultFactory();
-                JsonObject json = (JsonObject)jsonResultFactory.buildFromFile(Paths.get(arg));
+                JsonObject json = (JsonObject) jsonResultFactory.buildFromFile(Paths.get(arg));
                 if (json == null) {
                     System.out.println("Failed to load json");
                     return;
@@ -99,7 +122,8 @@ public class TestReader {
                     return;
                 }
                 TestWriter.getInstance().createTest(container);
-                System.out.println("Successfully generated the following tests:"); container.print();
+                System.out.println("Successfully generated the following tests:");
+                container.print();
             }
         } catch (Exception e) {
             e.printStackTrace();
