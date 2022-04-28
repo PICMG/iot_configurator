@@ -8,7 +8,7 @@ import org.picmg.jsonreader.JsonValue;
 
 import java.util.ArrayList;
 
-public class OEMStateValueRecord {
+public class OEMStateValueRecord implements StateSetTabController.ValueRecord {
 
     private int minStateValue;
     private int maxStateValue;

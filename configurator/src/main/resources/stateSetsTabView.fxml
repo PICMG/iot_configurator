@@ -58,7 +58,7 @@
                           <TextField fx:id="stateSetId" onAction="#onStateSetIDAction" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                           <TableView fx:id="stateSetValueRecords" maxWidth="250.0" prefWidth="335.0" GridPane.columnIndex="2" GridPane.rowIndex="4">
                               <columns>
-                                  <TableColumn fx:id="stateName" prefWidth="${stateSetValueRecords.width}" text="State Name" />
+                                  <TableColumn fx:id="stateName" onEditCommit="#valueCellCommit" prefWidth="${stateSetValueRecords.width}" text="State Name" />
                               </columns>
                               <GridPane.margin>
                                   <Insets top="10.0" />

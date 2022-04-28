@@ -30,6 +30,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import org.picmg.jsonreader.*;
 
@@ -40,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 public class StateSetTabController implements Initializable {
 	@FXML private TableView<StateSetTableData> stateSetTableView;
@@ -47,8 +49,8 @@ public class StateSetTabController implements Initializable {
 	@FXML private TableColumn<StateSetTableData, String> vendorIANA;
 	@FXML private TableColumn<StateSetTableData, String> stateSetID;
 
-	@FXML private TableView<OEMStateValueRecord> stateSetValueRecords;
-	@FXML private TableColumn<OEMStateValueRecord, String> stateName;
+	@FXML private TableView<ValueRecord> stateSetValueRecords;
+	@FXML private TableColumn<ValueRecord, String> stateName;
 
 	@FXML private TextField stateSetId;
 	@FXML private TextField stateSetVendorNameTextfield;
@@ -68,7 +70,45 @@ public class StateSetTabController implements Initializable {
 	//TODO:change to use state sensor data class
 	StateSetTableData workingData = new StateSetTableData();
 
-	public StateSetTableData getSensorTableData() {
+	UnaryOperator<TextFormatter.Change> decimalOnlyOperator = change -> {
+		int selectedRow = stateSetValueRecords.getSelectionModel().getSelectedIndex();
+		ValueRecord info = stateSetValueRecords.getSelectionModel().getSelectedItem();
+
+		if (info!=null) {
+			// change is allowed
+			System.out.println("Value Record=" + info.toString());
+			return change;
+		}
+		System.out.println("Value Record =  null");
+		// make no change
+		change.setText("");
+		change.setRange( change.getRangeStart(),change.getRangeStart());
+		return change;
+	};
+
+	private final static String VALUE_PLACEHOLDER = "Insert";
+
+	public interface ValueRecord {
+		String getStateName();
+		void setStateName(String stateName);
+	}
+
+	public class EmptyValueRecord implements ValueRecord {
+		public SimpleStringProperty stateName = new SimpleStringProperty(VALUE_PLACEHOLDER);
+		@Override public String getStateName() { return VALUE_PLACEHOLDER; }
+		@Override public void setStateName(String stateName) {
+			System.out.println("set the state name " + stateName);
+			// add an state value record
+//			List list = getStateSetTableData().getOemStateValueRecords();
+//			list.add(new OEMStateValueRecord(-1, -1, "en", stateName));
+//			getStateSetTableData().setOemStateValueRecords(list);
+		}
+	}
+
+	public static EmptyValueRecord EMPTY_STATE_NAME;
+
+
+	public StateSetTableData getStateSetTableData() {
 		return workingData;
 	}
 	public class StateSetTableData{
@@ -76,7 +116,7 @@ public class StateSetTabController implements Initializable {
 		SimpleStringProperty stateSetVendorName = new SimpleStringProperty();
 		SimpleStringProperty stateSetVendorIANA = new SimpleStringProperty();
 		SimpleStringProperty stateSetId = new SimpleStringProperty();
-		List<OEMStateValueRecord> oemStateValueRecords = new LinkedList<>();
+		List<ValueRecord> oemStateValueRecords = new LinkedList<>();
 		Path savePath = null;
 
 		boolean valid;
@@ -136,21 +176,21 @@ public class StateSetTabController implements Initializable {
 				JsonObject state = (JsonObject) jsonAbstractValue;
 				oemStateValueRecords.add(new OEMStateValueRecord(state));
 			}
+			addEmptyStateName();
 		}
 
 		public StateSetTableData() {
 			valid = false;
 		}
 
-		public List<OEMStateValueRecord> getOemStateValueRecords() {
+		public List<ValueRecord> getOemStateValueRecords() {
 			return oemStateValueRecords;
 		}
 
-		public void setOemStateValueRecords(List<OEMStateValueRecord> oemStateValueRecords) {
+		public void setOemStateValueRecords(List<ValueRecord> oemStateValueRecords) {
 			this.oemStateValueRecords.clear();
 			this.oemStateValueRecords.addAll(oemStateValueRecords);
-			// add empty slot
-//			this.oemStateValueRecords.add(null);
+			addEmptyStateName();
 		}
 
 		public String getStateSetId() {
@@ -184,6 +224,28 @@ public class StateSetTabController implements Initializable {
 
 			oemStateValueRecords.clear();
 			oemStateValueRecords.addAll(selectedData.getOemStateValueRecords());
+			addEmptyStateName();
+		}
+
+		private void addEmptyStateName() {
+			if (oemStateValueRecords.contains(EMPTY_STATE_NAME)) {
+				oemStateValueRecords.add(EMPTY_STATE_NAME);
+			}
+		}
+	}
+
+	/**
+	 * valueCellCommit()
+	 * The value of the value cell has been committed - update the json value field
+	 *
+	 * @param e - a Cell Edit Event for the cell.
+	 * TODO: validate the new value to make sure it matches the specified format
+	 */
+	@FXML private void valueCellCommit(TableColumn.CellEditEvent e) {
+		// get item from selected row, manually set ValueRecord name
+		if (e.getRowValue() != null && e.getRowValue() instanceof ValueRecord) {
+			String value = (String) e.getNewValue();
+			((ValueRecord) e.getRowValue()).setStateName(value);
 		}
 	}
 
@@ -209,11 +271,13 @@ public class StateSetTabController implements Initializable {
 	}
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
-		//TODO: fill out with needed initialize
 		vendorNameColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorName"));
 		vendorIANAColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorIANA"));
 		stateSetIDColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetId"));
 		stateName.setCellValueFactory(new PropertyValueFactory<>("stateName"));
+		stateName.setCellFactory(TextFieldTableCell.forTableColumn());
+//		stateName.setCellFactory(ValidatedTextFieldTableCell.forTableColumn(change -> change));
+		stateSetValueRecords.setEditable(true);
 
 		initializeTable();
 		selectDefaultStateSet();
