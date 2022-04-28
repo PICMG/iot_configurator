@@ -14,7 +14,8 @@ public class TestWriter {
     private BufferedWriter outputWriter;
     private TestContainer currentTestContainer;
     private static Path BASE_PATH = getBasePath();
-    private static int TEST_DELAY = 8000;
+    private static int TEST_DELAY = 4000;
+    private static int INITIAL_DELAY = 5000;
 
     private static Path getBasePath() {
         Path base = Paths.get(System.getProperty("user.dir"));
@@ -56,6 +57,7 @@ public class TestWriter {
 
     private void writeClass() throws IOException {
         outputWriter.write("public class " + currentTestContainer.getTestContainerName() + " extends Application\n{\n");
+        writeLine(1, "static volatile boolean hasRun = false;");
         writeExecutor();
         writeLaunch();
         writeTests();
@@ -80,7 +82,7 @@ public class TestWriter {
     private void writeStart() throws IOException {
         outputWriter.write("\t@Override\n\tpublic void start(Stage stage) {\n\t\tParent root;\n\t\ttry \n\t\t{\n\t\t\troot = FXMLLoader.load(getClass().getClassLoader().getResource(\"" +
                 currentTestContainer.getFileToLoad() + "\"));\n");
-        outputWriter.write("\t\t\tScene scene = new Scene(root, 1024, 870);\n\t\t\tstage.setTitle(\"PICMG Configurator\");\n\t\t\tstage.setScene(scene);\n\t\t\tstage.show();\n\t\t\t\n");
+        outputWriter.write("\t\t\tScene scene = new Scene(root, 1024, 870);\n\t\t\tstage.setTitle(\"PICMG Configurator\");\n\t\t\tstage.setScene(scene);\n\t\t\tstage.show();\n\t\t\trobotCalls();\n");
         outputWriter.write("\t\t\n\t\t}\n\t\tcatch (IOException e) {\n\t\t\tSystem.out.println(e);\n\t\t}\n\t}\n");
 
     }
@@ -88,24 +90,20 @@ public class TestWriter {
     private void writeExecutor() throws IOException {
         writeLine(1, "@Test");
         writeLine(1, "public void robotCalls() {");
+        writeLine(2, "if (hasRun) return;");
         writeRobotMethods();
+        writeLine(2, "hasRun = true;");
         writeLine(1, "}");
     }
 
     private void writeRobotMethods() throws IOException {
         ArrayList<Test> tests = currentTestContainer.getTests();
-        outputWriter.write("\t\t");
+        writeLine(2, "new RobotThread().wait(", String.valueOf(INITIAL_DELAY), ")");
         for (Test t : tests) {
-            int index = tests.indexOf(t);
-            outputWriter.write(t.getName().replaceAll(" ", "") + "()");
-            if (index < tests.size() - 1)
-                outputWriter.write(".then(()->");
+            writeLine(4, ".wait(", String.valueOf(TEST_DELAY), ").then(", t.getName().replaceAll(" ", ""), "())");
         }
-        if (tests.size() != 0) {
-            for (int i = 0; i < tests.size() - 1; i++)
-                outputWriter.write(")");
-            outputWriter.write(".run();\n");
-        }
+        writeLine(4,".then(", String.valueOf(TEST_DELAY / 3), ", RobotUtils::close)");
+        writeLine(4, ".run();");
     }
 
     private void writeLine(int indentNum, String ... messages) throws IOException {

@@ -75,7 +75,7 @@ public class TestReader {
             for (String arg : args) {
                 Path path = Paths.get(arg);
                 if (!path.toFile().exists() || !path.toFile().canRead()) {
-                    System.out.println("Cannot open " + arg + "; skipping.");
+                    System.out.println("Cannot find or open " + arg + "; skipping.");
                     continue;
                 }
                 JsonResultFactory jsonResultFactory = new JsonResultFactory();
