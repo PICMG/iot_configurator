@@ -126,7 +126,7 @@ public class RobotUtils {
             switch(message.toLowerCase()) {
                 case "clear":
                     boolean success = runClear();
-                    if (success) System.out.println("Clear Failed");
+                    if (!success) System.out.println("Clear Failed");
                     break;
                 case "reset":
                     try {
