@@ -421,6 +421,8 @@ public class TestMakerGUi extends Application {
             selectIdButton.setDisable(false);
         }
     }
+
+    /*
      * export to the specified output file.
      *
      * @param outputFile - the name of the file to output to
@@ -471,6 +473,8 @@ public class TestMakerGUi extends Application {
         stringInputField.setText("");
         typeRadio.setSelected(true);
         delayField.setText("");
+        clearParameters();
+        stringInputField.setDisable(false);
     }
 
     /**
