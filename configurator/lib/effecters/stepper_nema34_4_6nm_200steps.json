@@ -10,7 +10,7 @@
 	"rateUnit":0,
 	"auxUnit":0,
 	"auxUnitModifier":0,
-	"rel":"multipledBy",
+	"rel":"multipliedBy",
 	"auxRateUnit":0,
 	"plusAccuracy":0.005,
 	"minusAccuracy":0.005,

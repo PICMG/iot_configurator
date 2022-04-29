@@ -106,7 +106,6 @@ public class App extends Application {
 	 * @param args - the command line arguments for the program
 	 */
 	public static void main(String[] args) {
-		//TestReader.getInstance().read("Name,Test1:File,topTabScene.fxml:Steps,Start:Name,Test Box Test:Click,ID:Type,Temp:Check,ID,Data:Steps,End:Steps,Start:Name,Test Box BRO:Click,ID:Type,Temp:Check,ID,Data:Steps,End");
 		launch();
     }
 }
