@@ -78,6 +78,9 @@ public class StateSet {
         jsonObject.put("stateSetId", new JsonValue(String.valueOf(id)));
         JsonArray oemStateValueRecords = new JsonArray();
         for (OEMStateValueRecord oemStateValueRecord : this.oemStateValueRecords) {
+            if (oemStateValueRecord == null) {
+                continue;
+            }
             oemStateValueRecords.add(oemStateValueRecord.toJSON());
         }
         jsonObject.put("oemStateValueRecords", oemStateValueRecords);

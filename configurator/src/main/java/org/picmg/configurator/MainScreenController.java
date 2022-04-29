@@ -807,14 +807,16 @@ public class MainScreenController implements Initializable {
 		// Load the libraries from the resource folders - these are the default
 		// picmg libraries and sensors
 		sensorLib = new JsonObject();
-		addLibrariesFromResourceFolder(sensorLib,"sensors","sensors");
-		effecterLib = new JsonObject();
-		addLibrariesFromResourceFolder(effecterLib,"effecters","effecters");
-		stateLib = new JsonObject();
-		addLibrariesFromResourceFolder(stateLib,"stateSets","state_sets");
-		deviceLib = new JsonObject();
-		addLibrariesFromResourceFolder(deviceLib,"devices","devices");
-		treeView.setEditable(true);
+		try{
+			addLibrariesFromResourceFolder(sensorLib,"sensors","sensors");
+			effecterLib = new JsonObject();
+			addLibrariesFromResourceFolder(effecterLib,"effecters","effecters");
+			stateLib = new JsonObject();
+			addLibrariesFromResourceFolder(stateLib,"stateSets","state_sets");
+			deviceLib = new JsonObject();
+			addLibrariesFromResourceFolder(deviceLib,"devices","devices");
+			treeView.setEditable(true);
+		}catch (Exception e){}
 		newDevice();
 		treeView.setCellFactory(new Callback<>() {
 			@Override

@@ -155,8 +155,10 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
                             }
                             else
                             {
-                                getTableView().getSelectionModel().select(0);
-                                getTableView().getFocusModel().focus(0, getTableColumn());
+                                if (getTableView().getItems().size() > 0) {
+                                    getTableView().getSelectionModel().select(0);
+                                    getTableView().getFocusModel().focus(0, getTableColumn());
+                                }
                             }
 
                             event.consume();

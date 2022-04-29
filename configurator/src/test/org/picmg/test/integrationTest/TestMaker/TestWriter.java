@@ -3,6 +3,9 @@ package org.picmg.test.integrationTest.TestMaker;
 import java.io.*;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 public class TestWriter {
 
@@ -11,13 +14,15 @@ public class TestWriter {
     private BufferedWriter outputWriter;
     private TestContainer currentTestContainer;
     private static Path BASE_PATH = getBasePath();
-    private static int STEP_DELAY = 400;
+    private static int TEST_DELAY = 4000;
+    private static int INITIAL_DELAY = 5000;
 
     private static Path getBasePath() {
         Path base = Paths.get(System.getProperty("user.dir"));
         if (base.endsWith("iot_configurator")) {
             base = base.resolve("configurator");
-        } else if (!base.endsWith("configurator")) {
+        }
+        if (!base.endsWith("configurator")) {
             System.out.println("ERROR: Unable to resolve proper directory layout. Test output will resort to run directory until fixe.d");
             return base;
         }
@@ -25,7 +30,6 @@ public class TestWriter {
     }
 
     private TestWriter() {
-        System.out.println(BASE_PATH);
     }
 
     /**
@@ -52,8 +56,9 @@ public class TestWriter {
 
     private void writeClass() throws IOException {
         outputWriter.write("public class " + currentTestContainer.getTestContainerName() + " extends Application\n{\n");
-        writeRobotMethods();
-        writeSetup();
+        writeLine(1, "static volatile boolean hasRun = false;");
+        writeExecutor();
+        writeLaunch();
         writeTests();
         outputWriter.write("}");
         outputWriter.close();
@@ -66,25 +71,45 @@ public class TestWriter {
         }
     }
 
-    private void writeSetup() throws IOException {
-        outputWriter.write("\t@BeforeClass\n\tpublic static void setup() {\n\t\tlaunch();\n\t}\n\n");
+    private void writeLaunch() throws IOException {
+        writeLine(1, "@BeforeClass");
+        writeLine(1, "public static void setup() {");
+        writeLine(2, "launch();");
+        writeLine(1, "}\n");
     }
 
     private void writeStart() throws IOException {
         outputWriter.write("\t@Override\n\tpublic void start(Stage stage) {\n\t\tParent root;\n\t\ttry \n\t\t{\n\t\t\troot = FXMLLoader.load(getClass().getClassLoader().getResource(\"" +
                 currentTestContainer.getFileToLoad() + "\"));\n");
-
-        outputWriter.write("\t\t\tScene scene = new Scene(root, 1024, 768);\n\t\t\tstage.setTitle(\"PICMG Configurator\");\n\t\t\tstage.setScene(scene);\n\t\t\tstage.show();\n\t\t\trobotCalls();\n");
+        outputWriter.write("\t\t\tScene scene = new Scene(root, 1024, 870);\n\t\t\tstage.setTitle(\"PICMG Configurator\");\n\t\t\tstage.setScene(scene);\n\t\t\tstage.show();\n\t\t\trobotCalls();\n");
         outputWriter.write("\t\t\n\t\t}\n\t\tcatch (IOException e) {\n\t\t\tSystem.out.println(e);\n\t\t}\n\t}\n");
 
     }
 
+    private void writeExecutor() throws IOException {
+        writeLine(1, "@Test");
+        writeLine(1, "public void robotCalls() {");
+        writeLine(2, "if (hasRun) return;");
+        writeRobotMethods();
+        writeLine(2, "hasRun = true;");
+        writeLine(1, "}");
+    }
+
     private void writeRobotMethods() throws IOException {
-        outputWriter.write("\tpublic void robotCalls() {\n");
-        for (Test t : currentTestContainer.getTests()) {
-            outputWriter.write("\t\t" + t.getName().replaceAll(" ", "") + "();" + "\n");
+        ArrayList<Test> tests = currentTestContainer.getTests();
+        writeLine(2, "new RobotThread().wait(", String.valueOf(INITIAL_DELAY), ")");
+        for (Test t : tests) {
+            writeLine(4, ".wait(", String.valueOf(TEST_DELAY), ").then(", t.getName().replaceAll(" ", ""), "())");
         }
-        outputWriter.write("\t}\n");
+        writeLine(4,".then(", String.valueOf(TEST_DELAY / 3), ", RobotUtils::close)");
+        writeLine(4, ".run();");
+    }
+
+    private void writeLine(int indentNum, String ... messages) throws IOException {
+        String out = "";
+        for (int i = 0; i < indentNum; i++) out += "\t";
+        for (String message : messages) out += message;
+        outputWriter.write(out + "\n");
     }
 
     private void writeImports() throws IOException {
@@ -106,24 +131,23 @@ public class TestWriter {
     }
 
     private void writeTest(Test t) throws IOException {
-        outputWriter.write("\t@Test\n\tpublic void " + t.getName().replaceAll(" ", "") + "()\n\t{\n");
-        outputWriter.write("\tSystem.out.println(\"Executing integration test " + t.getName() + "\");\n");
-        outputWriter.write("\t\tnew RobotThread()");
+        outputWriter.write("\tpublic RobotThread " + t.getName().replaceAll(" ", "") + "()\n\t{\n");
+        outputWriter.write("\t\tSystem.out.println(\"Executing integration test " + t.getName() + "\");\n");
+        outputWriter.write("\t\treturn new RobotThread()\n");
         for (Test.Step s : t.getSteps()) {
             switch (s.type) {
                 case "Click":
-                    outputWriter.write("\t\t\t.then(" + STEP_DELAY + ", ()->RobotUtils.click(" + "\"" + s.id + "\"" + "))\n");
+                    outputWriter.write("\t\t\t\t.then(" + s.getDelay() + ", ()->RobotUtils.click(" + "\"" + s.id + "\"" + "))\n");
                     break;
                 case "Type":
-                    outputWriter.write("\t\t\t.then(" + STEP_DELAY +  ", ()->RobotUtils.type(\"" + s.data + "\"" + "))\n");
+                    outputWriter.write("\t\t\t\t.then(" + s.getDelay() +  ", ()->RobotUtils.type(\"" + s.data + "\"" + "))\n");
                     break;
-                case "Check":
-                    outputWriter.write("\t\t\t.then(" + STEP_DELAY + ", ()->RobotUtils.check(" + "\"" + s.id + "\"" + "," + "\"" + s.data + "\"" + "))\n");
+                case "Test":
+                    outputWriter.write("\t\t\t\t.then(" + s.getDelay() + ", ()->RobotUtils.check(" + "\"" + s.id + "\"" + "," + "\"" + s.data + "\"" + "))\n");
                     break;
             }
         }
-        outputWriter.write("\t\t\t.wait(5000)\n");
-        outputWriter.write("\t\t\t.run();\n");
+        outputWriter.write("\t\t\t\t.wait(" + TEST_DELAY + ");\n");
         outputWriter.write("\t}\n");
     }
 

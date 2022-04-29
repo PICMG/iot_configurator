@@ -2,12 +2,17 @@ package org.picmg.test.integrationTest;
 
 import javafx.application.Platform;
 
+import java.awt.*;
+
 public class RobotThread {
+    private static int I = 0;
+    private static boolean isDevelop = false;
     private final Runnable runnable;
     private int delay;
     private RobotThread next = null;
     private RobotThread prev = null;
     private volatile boolean wasStarted = false;
+    private int index = I++;
 
     /**
      * Starts a thread chain with no runner. This is intended as the optional head of a new chain.
@@ -38,6 +43,10 @@ public class RobotThread {
         this.prev = prev;
     }
 
+    private void devlog(String message) {
+        if (isDevelop) System.out.println(message);
+    }
+
     /**
      * Run the given function with FX threading after delaying on a generic Java thread. This threading hot potato
      * gives the FX threads processing time so UI components can catch up before the function is added to the FX thread
@@ -50,16 +59,19 @@ public class RobotThread {
             prev.run();
             return;
         }
-
+        devlog("FOUND HEAD TO RUN");
         // lock to execute new thread only once
         if (wasStarted) {
             return;
         }
         wasStarted = true;
+        devlog("HEAD WASNT STARTED");
 
-        // skip if head empty
+        // skip threading if empty and no delay
         if (runnable == null && delay == 0) {
+            devlog("EMPTY");
             if (next != null) {
+                devlog("RUNNING NEXXT");
                 next.run();
             }
             return;
@@ -68,10 +80,14 @@ public class RobotThread {
                 try {
                     Thread.sleep(delay);
                     Platform.runLater(() -> {
-                        if (runnable != null) runnable.run();
-                        if (next != null) {
-                            next.run();
+                        if (runnable != null) {
+                            devlog("RUNNING RUNNABLE");
+                            runnable.run();
                         }
+                        if (next != null) {
+                            devlog("running next");
+                            next.run();
+                        } else System.out.println("NOT RUNNING NEXT");
                     });
                 } catch (InterruptedException e) {
                     System.out.println("Exception in wait queue. "); e.printStackTrace();
@@ -80,23 +96,48 @@ public class RobotThread {
         }
     }
 
-    public RobotThread then(Runnable runnable) {
-        return then(0, runnable);
+    private RobotThread getHead() {
+        if (prev != null) {
+            return prev.getHead();
+        }
+        return this;
+
+    }
+
+    private RobotThread getTail() {
+        if (next != null) {
+            return next.getTail();
+        }
+        return this;
+    }
+
+    public RobotThread then(RobotThread robotThread) {
+        RobotThread thisTail = getTail();
+        RobotThread thatHead = robotThread.getHead();
+        thisTail.next = thatHead;
+        thatHead.prev = thisTail;
+        return getHead();
     }
 
     public RobotThread then(int delay, Runnable runnable) {
-        // pass down chain until end
-        if (next != null) {
-            return next.then(delay, runnable);
-        }
-        // append to end of chain
-        next = new RobotThread(delay, runnable, this);
-        return next;
+        return then(new RobotThread(delay, runnable));
     }
 
     public RobotThread wait(int delay) {
-        next = new RobotThread(delay, null, this);
-        return next;
+        return then(new RobotThread(delay, null));
+    }
+
+    public void printAll() {
+        RobotThread head = getHead();
+        while (head != null) {
+            head = head.next;
+        }
+    }
+
+    public String toString() {
+        String out = this.index + "\t" + "delay= " + delay + "\trunnable= " + (runnable == null ? "???" : runnable.toString());
+        out += "\tNEXT = " + (next == null ? "???" : next.index) + "\tPREVIOUS = " + (prev == null ? "???" : prev.index);
+        return out;
     }
 
 }

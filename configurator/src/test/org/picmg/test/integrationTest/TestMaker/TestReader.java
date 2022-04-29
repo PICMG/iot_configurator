@@ -5,6 +5,7 @@ import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonResultFactory;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,10 +30,10 @@ public class TestReader {
             // read test file header
             container.setTestContainerName(json.getValue("Name").replaceAll(" ", ""));
             container.setFileToLoad("topTabScene.fxml"); // TODO replace with findFilesForFXIDS?
-            JsonArray testObj = (JsonArray) json.get("Test");
+            JsonArray testObj = (JsonArray) json.get("Tests");
             // read test file body
             if (testObj == null) {
-                System.out.println("");
+                System.out.println("Could not find any tests");
                 return null;
             }
             for (JsonAbstractValue t : testObj) {
@@ -45,6 +46,36 @@ public class TestReader {
         }
         return container;
     }
+
+    public boolean readFromFile(File inputFile) {
+
+        try {
+            Path path = Paths.get(inputFile.toURI());
+            if (!path.toFile().exists() || !path.toFile().canRead()) {
+                System.out.println("Cannot open " + inputFile + "; skipping.");
+            }
+            JsonResultFactory jsonResultFactory = new JsonResultFactory();
+            JsonObject json = (JsonObject) jsonResultFactory.buildFromFile(Paths.get(inputFile.toURI()));
+            if (json == null) {
+                System.out.println("Failed to load json");
+                return false;
+            }
+            TestContainer container = getInstance().read(json);
+            if (container == null) {
+                System.out.println("Failed to read tests");
+                return false;
+            }
+            TestWriter.getInstance().createTest(container);
+            System.out.println("Successfully generated the following tests:");
+            container.print();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
 
     private Test readTest(JsonObject testObj) {
         JsonArray stepsArr = (JsonArray) testObj.get("Steps");
@@ -59,7 +90,7 @@ public class TestReader {
                 case "Type":
                     newTest.addStep(eventType, "", stepObj.getValue("Data"));
                     break;
-                case "Check":
+                case "Test":
                     newTest.addStep(eventType, stepObj.getValue("Location"), stepObj.getValue("Data"));
                     break;
                 default:
@@ -70,16 +101,17 @@ public class TestReader {
         return newTest;
     }
 
+
     public static void main(String[] args) {
         try {
             for (String arg : args) {
                 Path path = Paths.get(arg);
                 if (!path.toFile().exists() || !path.toFile().canRead()) {
-                    System.out.println("Cannot open " + arg + "; skipping.");
+                    System.out.println("Cannot find or open " + arg + "; skipping.");
                     continue;
                 }
                 JsonResultFactory jsonResultFactory = new JsonResultFactory();
-                JsonObject json = (JsonObject)jsonResultFactory.buildFromFile(Paths.get(arg));
+                JsonObject json = (JsonObject) jsonResultFactory.buildFromFile(Paths.get(arg));
                 if (json == null) {
                     System.out.println("Failed to load json");
                     return;
@@ -90,7 +122,8 @@ public class TestReader {
                     return;
                 }
                 TestWriter.getInstance().createTest(container);
-                System.out.println("Successfully generated the following tests:"); container.print();
+                System.out.println("Successfully generated the following tests:");
+                container.print();
             }
         } catch (Exception e) {
             e.printStackTrace();

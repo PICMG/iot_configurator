@@ -17,9 +17,14 @@ public class Test {
         public String id;
         public String data;
         public String type;
-        public String name;
-        public int delay = 25;
+        private int delay = 1000;
 
+        /**
+         * Step class for the different robot methods called
+         * @param type
+         * @param id
+         * @param data
+         */
         public Step(String type, String id, String data)
         {
             this.id = id;
@@ -27,34 +32,97 @@ public class Test {
             this.type = type;
         }
 
+        /**
+         * Step from a json object
+         * @param jsonObject
+         */
+        public Step(JsonObject jsonObject)
+        {
+            this.type = jsonObject.getValue("Event");
+            this.id = jsonObject.getValue("Location");
+            this.data = jsonObject.getValue("Data");
+            this.delay = jsonObject.getInteger("Delay");
+        }
+
+        /**
+         * Step with delay as a parameter
+         * @param type
+         * @param id
+         * @param data
+         * @param delay
+         */
         public Step(String type, String id, String data, int delay) {
             this(type, id, data);
             this.delay = delay;
         }
 
+        /**
+         * Returns the current delay
+         * @return
+         */
+        public int getDelay() {
+            return delay;
+        }
+
+        /**
+         * Prints the data, this is a debug method
+         */
         public void print()
         {
-            System.out.println("Method = " + type + " Id = " + id + " Data =" + data);
+            if(delay == 0) {
+                System.out.println("Method = " + type + " Id = " + id + " Data =" + data);
+            }
+            else
+            {
+                System.out.println("Method = " + type + " Id = " + id + " Data =" + data + " Delay = " + delay);
+            }
         }
 
         @Override
-        public String toString()
-        {
+        public String toString() {
 
-            return "Method = " + type + " Id = " + id + " Data =" + data;
+            if (delay == 0) {
+                return "Method = " + type + " Id = " + id + " Data = " + data;
+            } else {
+                return "Method = " + type + " Id = " + id + " Data = " + data + " Delay = " + delay;
+            }
         }
 
+        /**
+         * Convert the object to json format
+         * @return
+         */
         public JsonObject toJson()
         {
             JsonObject stepObject = new JsonObject();
             stepObject.put("Event", new JsonValue(type));
             stepObject.put("Location", new JsonValue(id));
-            if(!data.equals(""))
+            stepObject.put("Delay", new JsonValue(String.valueOf(delay)));
+            if(data != null && !data.equals(""))
                 stepObject.put("Data", new JsonValue(data));
             return stepObject;
         }
     }
 
+    /**
+     * Create object from json
+     * @param jsonValue
+     */
+    public Test(JsonObject jsonValue)
+    {
+        this.name = jsonValue.getValue("name");
+        steps = new ArrayList<>();
+        JsonArray jsonSteps = (JsonArray) jsonValue.get("Steps");
+        for(int i = 0; i < jsonSteps.size(); i++)
+        {
+            Step step = new Step((JsonObject) jsonSteps.get(i));
+            steps.add(step);
+        }
+    }
+
+    /**
+     * Default
+     */
     public Test()
     {
         steps = new ArrayList<Step>();
@@ -90,6 +158,10 @@ public class Test {
         steps.add(newStep);
     }
 
+    /**
+     * Add a step to the list
+     * @param step
+     */
     public void addStep(Step step)
     {
         steps.add(step);
@@ -108,14 +180,17 @@ public class Test {
      */
     public void print()
     {
-        System.out.println("Test Name is " + name);
-        System.out.println("Test Steps \n");
+
         for(Step s : steps)
         {
             s.print();
         }
     }
 
+    /**
+     * To string method
+     * @return
+     */
     @Override
     public String toString()
     {
@@ -137,5 +212,4 @@ public class Test {
         testObject.put("Steps", steps);
         return testObject;
     }
-
 }
