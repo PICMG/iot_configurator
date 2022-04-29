@@ -1,21 +1,32 @@
 {
-	"name":"stepper_nema34_4_6nm_200steps",
-	"manufacturer":"BuildYourCNC.com",
-	"partNumber":"85bygh450a-47-80",
-	"description":"Motor, stepper, 4.6nm, nema 34, 200 steps per revolution",
-	"supportedInterfaces":["step_dir_out"],
-	"maxSampleRate":null,
-	"baseUnit":38,
-	"unitModifier":0,
-	"rateUnit":0,
-	"auxUnit":0,
-	"auxUnitModifier":0,
-	"rel":"multipliedBy",
-	"auxRateUnit":0,
-	"plusAccuracy":0.005,
-	"minusAccuracy":0.005,
-	"inputUnits":"Counts",
-	"responseCurve":[{"in":0,"out":0},{"in":200,"out":1}],
-	"ratedMax":null,
-	"nominalValue":null
+  "auxRateUnit": 0,
+  "auxUnit": 0,
+  "auxUnitModifier": 0,
+  "baseUnit": 38,
+  "description": "Motor, stepper, 4.6nm, nema 34, 200 steps per revolution",
+  "inputUnits": "Counts",
+  "manufacturer": "BuildYourCNC.com",
+  "maxSampleRate": null,
+  "minusAccuracy": 0.005,
+  "name": "BuildYourCNC_com_85bygh450a_47_80_Revolutions",
+  "nominalValue": null,
+  "partNumber": "85bygh450a-47-80",
+  "plusAccuracy": 0.005,
+  "rateUnit": 0,
+  "ratedMax": null,
+  "rel": "multipliedBy",
+  "responseCurve": [
+    {
+      "in": 0.0,
+      "out": 0.0
+    },
+    {
+      "in": 200.0,
+      "out": 1.0
+    }
+  ],
+  "supportedInterfaces": [
+    "analog_out"
+  ],
+  "unitModifier": 0
 }
