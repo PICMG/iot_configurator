@@ -314,6 +314,7 @@ public class StateSetTabController implements Initializable {
         saveToFile(workingData.getStateSet(), defaultPath.toString());
 		modified = false;
 		refreshSave();
+		initializeTable();
     }
 
     @FXML
