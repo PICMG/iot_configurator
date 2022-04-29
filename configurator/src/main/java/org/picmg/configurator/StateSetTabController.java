@@ -31,12 +31,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import org.picmg.jsonreader.*;
 
@@ -253,7 +255,6 @@ public class StateSetTabController implements Initializable {
 	 * The value of the value cell has been committed - update the json value field
 	 *
 	 * @param e - a Cell Edit Event for the cell.
-	 * TODO: validate the new value to make sure it matches the specified format
 	 */
 	@FXML private void valueCellCommit(TableColumn.CellEditEvent e) {
 		updateCell((OEMStateValueRecord) e.getRowValue(), (String) e.getNewValue());
@@ -281,6 +282,8 @@ public class StateSetTabController implements Initializable {
 //		updateCell(record, stateSetName);
 		modified = true;
 		refreshSave();
+		stateSetValueRecords.refresh();
+		stateSetValueRecords.setItems(getWorkingData().getOemStateValueRecords());
 	}
 
 	@FXML
@@ -363,7 +366,23 @@ public class StateSetTabController implements Initializable {
 
 		initializeTable();
 		selectDefaultStateSet();
-		refreshSave();
+
+		stateSetTableView.addEventFilter(
+				MouseEvent.MOUSE_PRESSED,
+				new EventHandler<MouseEvent>() {
+					public void handle(final MouseEvent mouseEvent) {
+						if (modified) {
+							Alert alert = new Alert(Alert.AlertType.WARNING,
+									"If you select a new effecter now, unsaved work on the existing effecter will be lost.",
+									ButtonType.OK, ButtonType.CANCEL);
+							alert.setTitle("Loss of Data Warning");
+							Optional<ButtonType> result = alert.showAndWait();
+							if (result.get() != ButtonType.OK) {
+								mouseEvent.consume();
+							}
+						}
+					}
+				});
 
 		// fire action events if focus is lost on our text fields - this allows the normal action handler
 		// to update and check values.
