@@ -226,6 +226,9 @@ public class RobotUtils {
 
     public static void close()
     {
+        robot.keyRelease(KeyCode.ALT);
+        robot.keyRelease(KeyCode.CONTROL);
+        robot.keyRelease(KeyCode.SHIFT);
         Platform.exit();
     }
 
