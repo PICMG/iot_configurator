@@ -624,7 +624,7 @@ public class EffectersTabController implements Initializable {
 	}
 
 	private void setSaveAvailability(boolean b) {
-		saveChangesButton.setDisable(!b || workingData.getSavePath() == null);
+		saveChangesButton.setDisable(!b || !modified || workingData.getSavePath() == null);
 		saveAsChangesButton.setDisable(!b);
 	}
 

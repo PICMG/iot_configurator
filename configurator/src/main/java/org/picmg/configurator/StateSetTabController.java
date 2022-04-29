@@ -22,6 +22,7 @@
 //
 package org.picmg.configurator;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -30,6 +31,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -229,9 +231,20 @@ public class StateSetTabController implements Initializable {
 			setOemStateValueRecords(selectedData.getOemStateValueRecords());
 		}
 
-		public void addState(String name) {
-			oemStateValueRecords.add(new OEMStateValueRecord(
-					oemStateValueRecords.size(), oemStateValueRecords.size(), "en", name));
+		public void addState(OEMStateValueRecord record) {
+			oemStateValueRecords.add(record);
+			resetStateValues(oemStateValueRecords);
+		}
+
+		public void removeState(OEMStateValueRecord record) {
+			// add default state if
+			if (!oemStateValueRecords.contains(record)) return;
+			if (oemStateValueRecords.size() == 1) {
+				addState(new OEMStateValueRecord("Default"));
+			}
+			oemStateValueRecords.remove(record);
+
+			resetStateValues(oemStateValueRecords);
 		}
 	}
 
@@ -243,11 +256,17 @@ public class StateSetTabController implements Initializable {
 	 * TODO: validate the new value to make sure it matches the specified format
 	 */
 	@FXML private void valueCellCommit(TableColumn.CellEditEvent e) {
+		updateCell((OEMStateValueRecord) e.getRowValue(), (String) e.getNewValue());
+	}
+
+	private void updateCell(OEMStateValueRecord row, String newValue) {
 		// get item from selected row, manually set OEMStateValueRecord name
-		if (e.getRowValue() != null && e.getRowValue() instanceof OEMStateValueRecord) {
-			String value = (String) e.getNewValue();
-			System.out.println("SET " + value);
-			((OEMStateValueRecord) e.getRowValue()).setStateName(value);
+		if (row != null) {
+			if ("".equals(newValue)) {
+				Platform.runLater(() -> getWorkingData().removeState(row));
+			} else {
+				row.setStateName(newValue);
+			}
 			modified = true;
 		}
 		refreshSave();
@@ -255,7 +274,11 @@ public class StateSetTabController implements Initializable {
 
 	@FXML
 	public void onAddStateAction(ActionEvent actionEvent) {
-		getWorkingData().addState(addStateTextField.getText());
+		String stateSetName = addStateTextField.getText();
+		if("".equals(stateSetName)) return;
+		OEMStateValueRecord record = new OEMStateValueRecord(stateSetName);
+		getWorkingData().addState(record);
+//		updateCell(record, stateSetName);
 		modified = true;
 		refreshSave();
 	}
