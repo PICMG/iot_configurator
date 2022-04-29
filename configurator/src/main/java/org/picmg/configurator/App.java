@@ -85,17 +85,20 @@ public class App extends Application {
 	@Override
     public void start(Stage stage) {
 		Stage temp = new Stage();
-		Parent root;
 		try {
-			root = FXMLLoader.load(getClass().getClassLoader().getResource("topTabScene.fxml"));
-			Scene scene = new Scene(root, 1024, 870);
-			stage.getIcons().add(new Image(getClass().getClassLoader().getResourceAsStream("picmg_logo.png")));
-			stage.setTitle("PICMG Configurator");
-			stage.setScene(scene);
+			load(stage);
 			stage.show();
 		} catch (IOException e) {
 			System.out.println(e);
 		}
+	}
+
+	public static void load(Stage stage) throws IOException {
+		Parent root = FXMLLoader.load(App.class.getClassLoader().getResource("topTabScene.fxml"));
+		Scene scene = new Scene(root, 1024, 870);
+		stage.getIcons().add(new Image(App.class.getClassLoader().getResourceAsStream("picmg_logo.png")));
+		stage.setTitle("PICMG Configurator");
+		stage.setScene(scene);
 	}
 
 	/**

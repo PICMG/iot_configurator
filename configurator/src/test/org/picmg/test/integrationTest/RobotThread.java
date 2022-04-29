@@ -6,7 +6,7 @@ import java.awt.*;
 
 public class RobotThread {
     private static int I = 0;
-    private static boolean isDevelop = true;
+    private static boolean isDevelop = false;
     private final Runnable runnable;
     private int delay;
     private RobotThread next = null;
@@ -27,7 +27,6 @@ public class RobotThread {
      * @param runnable Function to execute.
      */
     public RobotThread(int delay, Runnable runnable) {
-        System.out.println(index +"\tCREATING HEAD WITH " + delay);
         this.runnable = runnable;
         this.delay = delay;
     }
@@ -39,7 +38,6 @@ public class RobotThread {
      * @param prev The previous threaded item that will execute this item after completing.
      */
     private RobotThread(int delay, Runnable runnable, RobotThread prev) {
-        System.out.println(index + "\tCREATING TAIL WITH " + delay);
         this.runnable = runnable;
         this.delay = delay;
         this.prev = prev;
@@ -100,10 +98,8 @@ public class RobotThread {
 
     private RobotThread getHead() {
         if (prev != null) {
-//            System.out.println(this.index + " is not head");
             return prev.getHead();
         }
-//        System.out.println(this.index + " is head");
         return this;
 
     }
@@ -133,9 +129,7 @@ public class RobotThread {
 
     public void printAll() {
         RobotThread head = getHead();
-        System.out.println(head.toString());
         while (head != null) {
-            System.out.println(head.toString());
             head = head.next;
         }
     }
