@@ -68,7 +68,7 @@
       <items>
         <AnchorPane fx:id="idPane" maxWidth="300">
           <children>
-            <Label alignment="CENTER" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="Tabs" wrapText="false">
+            <Label alignment="CENTER" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="IDs" wrapText="false">
               <font>
                 <Font size="18.0" fx:id="x1" />
               </font>

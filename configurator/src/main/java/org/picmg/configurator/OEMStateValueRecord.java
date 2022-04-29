@@ -1,5 +1,6 @@
 package org.picmg.configurator;
 
+import javafx.beans.property.SimpleStringProperty;
 import org.picmg.jsonreader.JsonAbstractValue;
 import org.picmg.jsonreader.JsonArray;
 import org.picmg.jsonreader.JsonObject;
@@ -11,31 +12,29 @@ public class OEMStateValueRecord {
 
     private int minStateValue;
     private int maxStateValue;
-    private ArrayList<String> languageTags;
-    private ArrayList<String> stateName;
+    // TODO: these should redefined as lists if many languages are ever expected
+    private SimpleStringProperty languageTags = new SimpleStringProperty();
+    private SimpleStringProperty stateName = new SimpleStringProperty();
 
     public OEMStateValueRecord(JsonObject json) {
         this.minStateValue = json.getInteger("minStateValue");
         this.maxStateValue = json.getInteger("maxStateValue");
-        this.languageTags = new ArrayList<>();
-        this.stateName = new ArrayList<>();
 
-        for (JsonAbstractValue abstractValue : ((JsonArray) json.get("languageTags"))) {
-            JsonValue languageTagJSON = (JsonValue) abstractValue;
-            languageTags.add(languageTagJSON.getValue(""));
-        }
+        JsonArray abstractValue = ((JsonArray) json.get("languageTags"));
+        languageTags.set(abstractValue.getValue("0."));
 
-        for (JsonAbstractValue abstractValue : ((JsonArray) json.get("stateName"))) {
-            JsonValue stateNameJSON = (JsonValue) abstractValue;
-            stateName.add(stateNameJSON.getValue(""));
-        }
+        abstractValue = ((JsonArray) json.get("stateName"));
+        stateName.set(abstractValue.getValue("0."));
     }
 
-    public OEMStateValueRecord(int minStateValue, int maxStateValue, ArrayList<String> languageTags, ArrayList<String> stateName) {
+    public OEMStateValueRecord(int minStateValue, int maxStateValue, String languageTags, String stateName) {
         this.minStateValue = minStateValue;
         this.maxStateValue = maxStateValue;
-        this.languageTags = languageTags;
-        this.stateName = stateName;
+        this.languageTags.set(languageTags);
+        this.stateName.set(stateName);
+    }
+    public OEMStateValueRecord(String stateName) {
+        this(0, 0, "en", stateName);
     }
 
     public int getMinStateValue() {
@@ -54,20 +53,20 @@ public class OEMStateValueRecord {
         this.maxStateValue = maxStateValue;
     }
 
-    public ArrayList<String> getLanguageTags() {
-        return languageTags;
+    public String getLanguageTags() {
+        return languageTags.get();
     }
 
-    public void setLanguageTags(ArrayList<String> languageTags) {
-        this.languageTags = languageTags;
+    public void setLanguageTags(String languageTags) {
+        this.languageTags.set(languageTags);
     }
 
-    public ArrayList<String> getStateName() {
-        return stateName;
+    public String getStateName() {
+        return stateName.get();
     }
 
-    public void setStateName(ArrayList<String> stateName) {
-        this.stateName = stateName;
+    public void setStateName(String stateName) {
+        this.stateName.set(stateName);
     }
 
     public JsonObject toJSON() {
@@ -76,15 +75,11 @@ public class OEMStateValueRecord {
         jsonObject.put("maxStateValue", new JsonValue(String.valueOf(maxStateValue)));
 
         JsonArray languageTagsJSON = new JsonArray();
-        for (String tag : languageTags) {
-            languageTagsJSON.add(new JsonValue(tag));
-        }
+        languageTagsJSON.add(new JsonValue(languageTags.get()));
         jsonObject.put("languageTags", languageTagsJSON);
 
         JsonArray stateNameJSON = new JsonArray();
-        for (String state : stateName) {
-            stateNameJSON.add(new JsonValue(state));
-        }
+        stateNameJSON.add(new JsonValue(stateName.get()));
         jsonObject.put("stateName", stateNameJSON);
 
         return jsonObject;

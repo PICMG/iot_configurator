@@ -50,18 +50,14 @@ public class StateSetTest {
         OEMStateValueRecord record0 = oemStateValueRecords.get(0);
         assertEquals(1, record0.getMinStateValue());
         assertEquals(1, record0.getMaxStateValue());
-        assertEquals("en", record0.getLanguageTags().get(0));
-        assertEquals(1, record0.getLanguageTags().size());
-        assertEquals("Normal", record0.getStateName().get(0));
-        assertEquals(1, record0.getStateName().size());
+        assertEquals("en", record0.getLanguageTags());
+        assertEquals("Normal", record0.getStateName());
 
         OEMStateValueRecord record1 = oemStateValueRecords.get(1);
         assertEquals(2, record1.getMinStateValue());
         assertEquals(2, record1.getMaxStateValue());
-        assertEquals("en", record1.getLanguageTags().get(0));
-        assertEquals(1, record1.getLanguageTags().size());
-        assertEquals("Non-Critical", record1.getStateName().get(0));
-        assertEquals(1, record1.getStateName().size());
+        assertEquals("en", record1.getLanguageTags());
+        assertEquals("Non-Critical", record1.getStateName());
     }
 
     @Test

@@ -41,6 +41,7 @@ public class Test {
             this.type = jsonObject.getValue("Event");
             this.id = jsonObject.getValue("Location");
             this.data = jsonObject.getValue("Data");
+            this.delay = jsonObject.getInteger("Delay");
         }
 
         /**
@@ -68,7 +69,6 @@ public class Test {
          */
         public void print()
         {
-            System.out.println(delay);
             if(delay == 0) {
                 System.out.println("Method = " + type + " Id = " + id + " Data =" + data);
             }
@@ -97,6 +97,7 @@ public class Test {
             JsonObject stepObject = new JsonObject();
             stepObject.put("Event", new JsonValue(type));
             stepObject.put("Location", new JsonValue(id));
+            stepObject.put("Delay", new JsonValue(String.valueOf(delay)));
             if(data != null && !data.equals(""))
                 stepObject.put("Data", new JsonValue(data));
             return stepObject;
@@ -115,7 +116,6 @@ public class Test {
         for(int i = 0; i < jsonSteps.size(); i++)
         {
             Step step = new Step((JsonObject) jsonSteps.get(i));
-            System.out.println(step);
             steps.add(step);
         }
     }
@@ -180,8 +180,7 @@ public class Test {
      */
     public void print()
     {
-        System.out.println("Test Name is " + name);
-        System.out.println("Test Steps \n");
+
         for(Step s : steps)
         {
             s.print();
