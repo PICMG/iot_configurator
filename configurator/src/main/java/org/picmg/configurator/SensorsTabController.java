@@ -513,6 +513,7 @@ public class SensorsTabController implements Initializable {
 			plusAccuracy.set(data.plusAccuracy.get());
 			minusAccuracy.set(data.minusAccuracy.get());
 			outputUnits.set(data.outputUnits.get());
+			savePath = data.getSavePath();
 
 			outputCurve.clear();
 

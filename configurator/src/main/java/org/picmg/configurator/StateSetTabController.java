@@ -250,6 +250,7 @@ public class StateSetTabController implements Initializable {
 			setStateSetVendorName(selectedData.getStateSetVendorName());
 			setStateSetVendorIANA(selectedData.getStateSetVendorIANA());
 			setStateSetId(selectedData.getStateSetId());
+			setSavePath(selectedData.getSavePath());
 
 			setOemStateValueRecords(selectedData.getOemStateValueRecords());
 		}
