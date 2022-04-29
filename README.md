@@ -30,9 +30,11 @@ An example controller capabilities file can be found in the repository at ./conf
 The configurator was developed using Maven, the IntelliJ Idea IDE, and Java 16 on Microsoft Windows
 
 ## Test Config
-Add this line to the maven commands in the configuration section on Intellij
- clean install test
+Add this line to the maven commands in the configuration section on IntelliJ
+
+`clean install test`
 
 ## Run Config
-Add this line to the maven commands in the configuration section on Intellij
-clean javafx:run -f pom.xml
+Add this line to the maven commands in the configuration section on IntelliJ
+
+`clean javafx:run -f pom.xml`
