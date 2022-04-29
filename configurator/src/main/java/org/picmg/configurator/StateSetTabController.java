@@ -314,6 +314,8 @@ public class StateSetTabController implements Initializable {
         saveToFile(workingData.getStateSet(), defaultPath.toString());
 		modified = false;
 		refreshSave();
+		initializeTable();
+		selectDefaultStateSet();
     }
 
     @FXML
@@ -326,6 +328,8 @@ public class StateSetTabController implements Initializable {
         saveToFile(workingData.getStateSet(), path.toString());
 		modified = false;
 		refreshSave();
+		initializeTable();
+		selectDefaultStateSet();
     }
 
     private File promptSavePath() {
