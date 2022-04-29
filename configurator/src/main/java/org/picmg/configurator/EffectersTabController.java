@@ -550,6 +550,7 @@ public class EffectersTabController implements Initializable {
 			outputUnits.set(data.outputUnits.get());
 			ratedMax.set(data.ratedMax.get());
 			nominalValue.set(data.nominalValue.get());
+			savePath = data.getSavePath();
 
 			outputCurve.clear();
 
@@ -623,7 +624,7 @@ public class EffectersTabController implements Initializable {
 	}
 
 	private void setSaveAvailability(boolean b) {
-		saveChangesButton.setDisable(!b || workingData.getSavePath() == null);
+		saveChangesButton.setDisable(!b || !modified || workingData.getSavePath() == null);
 		saveAsChangesButton.setDisable(!b);
 	}
 

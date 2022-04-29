@@ -33,6 +33,9 @@ public class OEMStateValueRecord {
         this.languageTags.set(languageTags);
         this.stateName.set(stateName);
     }
+    public OEMStateValueRecord(String stateName) {
+        this(0, 0, "en", stateName);
+    }
 
     public int getMinStateValue() {
         return minStateValue;
