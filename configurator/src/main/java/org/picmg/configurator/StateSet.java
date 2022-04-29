@@ -77,11 +77,11 @@ public class StateSet {
         jsonObject.put("vendorIANA", new JsonValue(String.valueOf(vendorIANA)));
         jsonObject.put("stateSetId", new JsonValue(String.valueOf(id)));
         JsonArray oemStateValueRecords = new JsonArray();
-        for (StateSetTabController.ValueRecord oemStateValueRecord : this.oemStateValueRecords) {
+        for (OEMStateValueRecord oemStateValueRecord : this.oemStateValueRecords) {
             if (oemStateValueRecord == null) {
                 continue;
             }
-            oemStateValueRecords.add(((OEMStateValueRecord) oemStateValueRecord).toJSON());
+            oemStateValueRecords.add(oemStateValueRecord.toJSON());
         }
         jsonObject.put("oemStateValueRecords", oemStateValueRecords);
         return jsonObject;
