@@ -23,7 +23,6 @@
 package org.picmg.configurator;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleListProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -35,7 +34,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import org.picmg.jsonreader.*;
@@ -50,6 +48,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.UnaryOperator;
 
 public class StateSetTabController implements Initializable {
 	@FXML private TableView<StateSetTableData> stateSetTableView;
@@ -73,6 +72,27 @@ public class StateSetTabController implements Initializable {
 
 	StateSetTabController.StateSetTableData workingData = new StateSetTableData();
 
+	UnaryOperator<TextFormatter.Change> valueRecordOperator = change -> {
+		int selectedRow = stateSetValueRecords.getSelectionModel().getSelectedIndex();
+		ValueRecord info = stateSetValueRecords.getSelectionModel().getSelectedItem();
+
+		if (info!=null) {
+			// change is allowed because it matches the regex
+			if (info instanceof EmptyValueRecord) {
+				System.out.println("Empty value record committed");
+//				change.setText(VALUE_PLACEHOLDER);
+//				return new ValueRecord();
+			} else {
+				System.out.println("Value record committed");
+			}
+			return change;
+		}
+		// make no change
+		change.setText("");
+		change.setRange( change.getRangeStart(),change.getRangeStart());
+		return change;
+	};
+
 	private final static String VALUE_PLACEHOLDER = "-- Insert --";
 
 	public interface ValueRecord {
@@ -84,16 +104,27 @@ public class StateSetTabController implements Initializable {
 		public SimpleStringProperty stateName = new SimpleStringProperty(VALUE_PLACEHOLDER);
 		@Override public String getStateName() { return VALUE_PLACEHOLDER; }
 		@Override public void setStateName(String stateName) {
-			System.out.println("set the state name " + stateName);
 			// add an state value record
-//			List list = getStateSetTableData().getOemStateValueRecords();
-//			list.add(new OEMStateValueRecord(-1, -1, "en", stateName));
-//			getStateSetTableData().setOemStateValueRecords(list);
+			List list = getWorkingData().getOemStateValueRecords();
+			list.add(new OEMStateValueRecord(list.size(), list.size(), "en", stateName));
+			getWorkingData().setOemStateValueRecords(list);
+		}
+	}
+
+	private static void resetStateValues(List<ValueRecord> stateNames) {
+		int index = 0;
+		for (ValueRecord stateName : stateNames) {
+			if (stateName instanceof OEMStateValueRecord) {
+				((OEMStateValueRecord)stateName).setMinStateValue(index);
+				((OEMStateValueRecord)stateName).setMaxStateValue(index);
+			}
+			index++;
 		}
 	}
 
 	public static EmptyValueRecord EMPTY_STATE_NAME;
 
+	boolean modified = false;
 
 	public StateSetTableData getWorkingData() {
 		return workingData;
@@ -244,7 +275,6 @@ public class StateSetTabController implements Initializable {
 			if (e.getRowValue() instanceof EmptyValueRecord) {
 				((ValueRecord) e.getRowValue()).setStateName(VALUE_PLACEHOLDER);
 			}
-			System.out.println("NEW VALUE = " + value);
 			((ValueRecord) e.getRowValue()).setStateName(value);
 		}
 	}
@@ -252,20 +282,20 @@ public class StateSetTabController implements Initializable {
 	@FXML
 	void onStateSetVendorNameAction(ActionEvent event) {
 		workingData.setStateSetVendorName(stateSetVendorNameTextField.getText());
-		saveChangesButton.setDisable(!isValid() || workingData.getSavePath() == null);
-		saveAsChangesButton.setDisable(!isValid());
+		modified = true;
+		refreshSave();
 	}
 	@FXML
 	void onStateSetVendorIANAAction(ActionEvent event) {
-		workingData.setStateSetVendorIANA(stateSetVendorIANATextField.getText());;
-		saveChangesButton.setDisable(!isValid() || workingData.getSavePath() == null);
-		saveAsChangesButton.setDisable(!isValid());
+		workingData.setStateSetVendorIANA(stateSetVendorIANATextField.getText());
+		modified = true;
+		refreshSave();
 	}
 	@FXML
 	void onStateSetIDAction(ActionEvent event) {
-		workingData.setStateSetId(stateSetIdTextField.getText());;
-		saveChangesButton.setDisable(!isValid() || workingData.getSavePath() == null);
-		saveAsChangesButton.setDisable(!isValid());
+		workingData.setStateSetId(stateSetIdTextField.getText());
+		modified = true;
+		refreshSave();
 	}
 
     @FXML
@@ -311,7 +341,7 @@ public class StateSetTabController implements Initializable {
 		if(vendorNameImage.isVisible()) return  false;
 		if(vendorIANAImage.isVisible()) return  false;
 		if(stateSetIDImage.isVisible()) return  false;
-		if(this.getWorkingData().getOemStateValueRecords() != null || this.getWorkingData().getOemStateValueRecords().size() == 0) return false;
+		if(this.getWorkingData().getOemStateValueRecords() != null && this.getWorkingData().getOemStateValueRecords().size() == 0) return false;
 		return true;
 	}
 
@@ -321,11 +351,11 @@ public class StateSetTabController implements Initializable {
 		vendorIANAColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetVendorIANA"));
 		stateSetIDColumn.setCellValueFactory(new PropertyValueFactory<>("stateSetId"));
 		stateName.setCellValueFactory(new PropertyValueFactory<>("stateName"));
-		stateName.setCellFactory(TextFieldTableCell.forTableColumn());
-		stateSetValueRecords.setEditable(true);
+		stateName.setCellFactory(ValidatedTextFieldTableCell.forTableColumn(valueRecordOperator));
 
 		initializeTable();
 		selectDefaultStateSet();
+		refreshSave();
 
 		// fire action events if focus is lost on our text fields - this allows the normal action handler
 		// to update and check values.
@@ -357,6 +387,7 @@ public class StateSetTabController implements Initializable {
 		// TODO visibility should update on changes to list of given working data also
 		oemValueRecordImage.visibleProperty().bind(Bindings.createBooleanBinding(() -> getWorkingData().oemStateValueRecords.isEmpty(),
 				stateSetTableView.getSelectionModel().selectedItemProperty()));
+		refreshSave();
 
 		ObservableList<StateSetTableData> tableSelection = stateSetTableView.getSelectionModel().getSelectedItems();
 		tableSelection.addListener(new ListChangeListener<StateSetTableData>() {
@@ -369,10 +400,16 @@ public class StateSetTabController implements Initializable {
 				workingData.set(data);
 				setStateSetData(workingData);
 
-//				modified = false;
-//				setSaveAvailability(false);
+				modified = false;
+				refreshSave();
 			}
 		});
+	}
+
+	private void refreshSave() {
+		if (modified) return;
+		saveChangesButton.setDisable(!isValid() || getWorkingData().getSavePath() == null);
+		saveAsChangesButton.setDisable(!isValid());
 	}
 
 	private void initializeTable() {
@@ -396,15 +433,13 @@ public class StateSetTabController implements Initializable {
 		stateSetVendorNameTextField.setText(data.getStateSetVendorName());
 		stateSetVendorIANATextField.setText(data.getStateSetVendorIANA());
 		stateSetIdTextField.setText(data.getStateSetId());
-
-		stateSetValueRecords.getItems().clear();
 		stateSetValueRecords.setItems(FXCollections.observableList(data.getOemStateValueRecords()));
+		refreshSave();
 	}
 
 	private void selectDefaultStateSet() {
 		stateSetTableView.getSelectionModel().select(0);
-//		setSaveAvailability(false);
-//		modified = false;
+		modified = false;
 		StateSetTabController.StateSetTableData selectedData = stateSetTableView.getSelectionModel().getSelectedItem();
 		if (selectedData == null) return;
 		workingData.set(selectedData);
