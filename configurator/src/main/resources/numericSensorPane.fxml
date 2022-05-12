@@ -56,7 +56,7 @@
                         <Image url="@red_dot.png" />
                      </image>
                   </ImageView>
-                  <ComboBox fx:id="physicalAuxRate" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="9" />
+                  <ComboBox fx:id="physicalAuxRate" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="9" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                   <Label prefHeight="32.0" prefWidth="166.0" text="  Physical Aux Modifier" GridPane.rowIndex="10">
                      <font>
                         <Font size="13.0" />
@@ -68,7 +68,7 @@
                      </image>
                   </ImageView>
                   <TextField fx:id="physicalAuxUnitModifier" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="10" />
-                  <ComboBox fx:id="rel" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+                  <ComboBox fx:id="rel" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="8" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                   <Label prefHeight="32.0" prefWidth="166.0" text="  Rel" GridPane.rowIndex="8">
                      <font>
                         <Font size="13.0" />
@@ -79,7 +79,7 @@
                         <Image url="@red_dot.png" />
                      </image>
                   </ImageView>
-                  <ComboBox fx:id="physicalAux" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+                  <ComboBox fx:id="physicalAux" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="7" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                   <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Aux" GridPane.rowIndex="7">
                      <font>
                         <Font size="13.0" />
@@ -90,7 +90,7 @@
                         <Image url="@red_dot.png" />
                      </image>
                   </ImageView>
-                  <ComboBox fx:id="physicalRate" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                  <ComboBox fx:id="physicalRate" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="6" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                   <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Rate" GridPane.rowIndex="6">
                      <font>
                         <Font size="13.0" />
@@ -112,7 +112,7 @@
                         <Image url="@red_dot.png" />
                      </image>
                   </ImageView>
-                  <ComboBox fx:id="physicalBaseUnit" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                  <ComboBox fx:id="physicalBaseUnit" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="4" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                   <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Base Unit" GridPane.rowIndex="4">
                      <font>
                         <Font size="13.0" />
@@ -134,7 +134,7 @@
                         <Image url="@red_dot.png" />
                      </image>
                   </ImageView>
-                  <ComboBox fx:id="physicalSensor" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                  <ComboBox fx:id="physicalSensor" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" GridPane.rowIndex="1" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                   <Label prefHeight="32.0" prefWidth="146.0" text="  Physical Sensor" GridPane.rowIndex="1">
                      <font>
                         <Font size="13.0" />
@@ -145,7 +145,7 @@
                         <Image url="@red_dot.png" />
                      </image>
                   </ImageView>
-                  <ComboBox fx:id="boundChannel" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" />
+                  <ComboBox fx:id="boundChannel" prefHeight="26.0" prefWidth="230.0" GridPane.columnIndex="2" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                   <Label prefHeight="32.0" prefWidth="146.0" text="  Bound Channel">
                      <font>
                         <Font size="13.0" />
@@ -168,11 +168,11 @@
                   </ImageView>
                   <FlowPane hgap="8.0" prefHeight="33.0" prefWidth="518.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="selectCurve" mnemonicParsing="false" prefHeight="26.0" prefWidth="118.0" text="Select From File" />
-                        <Button fx:id="view" mnemonicParsing="false" prefHeight="26.0" prefWidth="67.0" text="View" />
+                        <Button fx:id="selectCurve" mnemonicParsing="false" prefHeight="26.0" prefWidth="118.0" text="Select From File" stylesheets="ButtonDecor.css" styleClass="button"/>
+                        <Button fx:id="view" mnemonicParsing="false" prefHeight="26.0" prefWidth="67.0" text="View" stylesheets="ButtonDecor.css" styleClass="button"/>
                      </children>
                   </FlowPane>
-                  <Button fx:id="restoreButton" mnemonicParsing="false" text="Restore Defaults" GridPane.columnIndex="2" GridPane.rowIndex="12" />
+                  <Button fx:id="restoreButton" mnemonicParsing="false" text="Restore Defaults" GridPane.columnIndex="2" GridPane.rowIndex="12" stylesheets="ButtonDecor.css" styleClass="button"/>
                </children>
             </GridPane>
          </children>

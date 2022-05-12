@@ -1,0 +1,385 @@
+{
+  "Name": "GeneratedTest",
+  "Tests": [
+    {
+      "Steps": [
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#sensorTab"
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#manufacturerTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "/shift",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "picmg",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "/unshift",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#partNumberTextField"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#descriptionTextArea"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "Sensor Information",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#digitalCheckbox"
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#maxSampleRateTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#plusAccuracyTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#minusAccuracyTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#outputUnitsTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "Amps",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        }
+      ],
+      "name": "SensorTabTest"
+    },
+    {
+      "Steps": [
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#effectersTab"
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#manufacturerTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "/shift",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "picmg",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "/unshift",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#partNumberTextField"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#descriptionTextArea"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "Effecter Information",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#digitalCheckbox"
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#maxSampleRateTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#plusAccuracyTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#minusAccuracyTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#inputUnitsTextfield"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "Amps",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        }
+      ],
+      "name": "EffecterTabTest"
+    },
+    {
+      "Steps": [
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#stateSetsTab"
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#stateSetVendorNameTextField"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "/shift",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "picmg",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": "/unshift",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#stateSetVendorIANATextField"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#stateSetIdTextField"
+        },
+        {
+          "Data": "/clear",
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        },
+        {
+          "Data": 1,
+          "Delay": 1000,
+          "Event": "Type",
+          "Location": ""
+        }
+      ],
+      "name": "StateSetTabTest"
+    },
+    {
+      "Steps": [
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#deviceTab"
+        },
+        {
+          "Delay": 1000,
+          "Event": "Click",
+          "Location": "#newDeviceMenu"
+        }
+      ],
+      "name": "DeviceTabTest"
+    }
+  ]
+}

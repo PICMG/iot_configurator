@@ -47,12 +47,12 @@
                         <Font name="System Bold" size="13.0" />
                      </font>
                   </Label>
-                  <ChoiceBox fx:id="choiceBoxFruType" prefHeight="24.0" prefWidth="253.0" GridPane.columnIndex="1" />
+                  <ChoiceBox fx:id="choiceBoxFruType" prefHeight="24.0" prefWidth="253.0" GridPane.columnIndex="1" stylesheets="ButtonDecor.css" styleClass="choiceBox"/>
                   <TextField fx:id="textFieldOemId" prefHeight="24.0" prefWidth="233.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <FlowPane prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="2">
                      <children>
-                        <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#addRow" text="+" />
-                        <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#deleteRow" text=" - " />
+                        <Button fx:id="buttonAdd" mnemonicParsing="false" onAction="#addRow" text="+" stylesheets="ButtonDecor.css" styleClass="button"/>
+                        <Button fx:id="buttonDelete" mnemonicParsing="false" onAction="#deleteRow" text=" - " stylesheets="ButtonDecor.css" styleClass="button"/>
                      </children>
                   </FlowPane>
                </children>

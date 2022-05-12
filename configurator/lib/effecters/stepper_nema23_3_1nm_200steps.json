@@ -1,21 +1,32 @@
 {
-	"name":"stepper_nema23_3_1nm_200steps",
-	"manufacturer":"BuildYourCNC.com",
-	"partNumber":"60bygh303-13",
-	"description":"Motor, stepper, 3.1nm, nema 23, 200 steps per revolution",
-	"supportedInterfaces":["step_dir_out"],
-	"maxSampleRate":null,
-	"baseUnit":38,
-	"unitModifier":0,
-	"rateUnit":0,
-	"auxUnit":0,
-	"auxUnitModifier":0,
-	"rel":"multipledBy",
-	"auxRateUnit":0,
-	"plusAccuracy":0.005,
-	"minusAccuracy":0.005,
-	"inputUnits":"Counts",
-	"responseCurve":[{"in":0,"out":0},{"in":200,"out":1}],
-	"ratedMax":null,
-	"nominalValue":null
+  "auxRateUnit": 0,
+  "auxUnit": 0,
+  "auxUnitModifier": 0,
+  "baseUnit": 38,
+  "description": "Motor, stepper, 3.1nm, nema 23, 200 steps per revolution",
+  "inputUnits": "Counts",
+  "manufacturer": "BuildYourCNC.com",
+  "maxSampleRate": null,
+  "minusAccuracy": 0.005,
+  "name": "BuildYourCNC_com_60bygh303_13_Revolutions",
+  "nominalValue": null,
+  "partNumber": "60bygh303-13",
+  "plusAccuracy": 0.005,
+  "rateUnit": 0,
+  "ratedMax": null,
+  "rel": "multipliedBy",
+  "responseCurve": [
+    {
+      "in": 0.0,
+      "out": 0.0
+    },
+    {
+      "in": 200.0,
+      "out": 1.0
+    }
+  ],
+  "supportedInterfaces": [
+    "rate_out"
+  ],
+  "unitModifier": 0
 }
