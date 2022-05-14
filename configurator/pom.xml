@@ -21,12 +21,6 @@
 			<artifactId>javafx-fxml</artifactId>
 			<version>16</version>
 		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-			<scope>compile</scope>
-		</dependency>
 	</dependencies>
 	<build>
 		<!-- Unit test -->
@@ -46,9 +40,9 @@
 			<plugin>
 	        	<groupId>org.openjfx</groupId>
 	        	<artifactId>javafx-maven-plugin</artifactId>
-	        	<version>0.0.4</version>
+	        	<version>0.0.8</version>
 				<configuration>
-	            	<mainClass>org.picmg.configurator.Main</mainClass>
+	            	<mainClass>configurator/org.picmg.configurator.Main</mainClass>
 					<compress>2</compress>
 					<noHeaderFiles>true</noHeaderFiles>
 					<stripDebug>true</stripDebug>
@@ -56,6 +50,7 @@
 					<launcher>configurator</launcher>
 					<jlinkImageName>configurator</jlinkImageName>
 					<jlinkZipName>configurator</jlinkZipName>
+					<jlinkVerbose>true</jlinkVerbose>
 	        	</configuration>
 	    	</plugin>
 	    	<plugin>
