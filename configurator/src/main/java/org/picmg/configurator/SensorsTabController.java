@@ -22,6 +22,7 @@
 //
 package org.picmg.configurator;
 
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -38,6 +39,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
@@ -83,22 +85,18 @@ public class SensorsTabController implements Initializable {
 	@FXML private Button selectCurveButton;
 	@FXML private Button viewCurveButton;
 	@FXML private Button saveChangesButton;
+	@FXML private Button saveAsChangesButton;
 	@FXML private ImageView manufacturerImage;
-	@FXML private ImageView unitModifierImage;
 	@FXML private ImageView baseUnitImage;
 	@FXML private ImageView maxSampleRateImage;
 	@FXML private ImageView interfacesImage;
 	@FXML private ImageView descriptionImage;
 	@FXML private ImageView modelImage;
-	@FXML private ImageView rateUnitImage;
-	@FXML private ImageView relImage;
-	@FXML private ImageView auxUnitModifierImage;
 	@FXML private ImageView auxUnitImage;
 	@FXML private ImageView minusAccuracyImage;
 	@FXML private ImageView outputCurveImage;
 	@FXML private ImageView outputUnitsImage;
 	@FXML private ImageView plusAccuracyImage;
-	@FXML private ImageView auxRateUnitImage;
 
 	// choice box choices
 	final String[] unitsChoices = {
@@ -119,12 +117,18 @@ public class SensorsTabController implements Initializable {
 		"None","Per_MicroSecond","Per_MilliSecond","Per_Second","Per_Minute","Per_Hour",
 		"Per_Day","Per_Week","Per_Month","Per_Year"
 	};
+
+	private final static String NO_AUX = "(No Aux)";
 	final String[] relChoices = {
-		"dividedBy","multipliedBy"
+		NO_AUX, "dividedBy","multipliedBy"
 	};
 	boolean modified;
 	boolean valid;
 	SensorTableData workingData = new SensorTableData();
+
+	public SensorTableData getSensorTableData() {
+		return workingData;
+	}
 
 	/**
 	 * This inner class describes the data model for the sensor table
@@ -152,6 +156,7 @@ public class SensorsTabController implements Initializable {
 		SimpleStringProperty minusAccuracy = new SimpleStringProperty();
 		SimpleStringProperty outputUnits = new SimpleStringProperty();
 		ArrayList<Point2D> outputCurve = new ArrayList<>();
+		Path savePath = null;
 		boolean valid;
 
 		// getters and setters
@@ -196,25 +201,27 @@ public class SensorsTabController implements Initializable {
 		public String getOutputUnits() {return outputUnits.get();}
 		public void setOutputUnits(String outputUnits) {this.outputUnits.set(outputUnits);}
 		public ArrayList<Point2D> getOutputCurve() {return outputCurve;}
+		public Path getSavePath() {return savePath;}
+		public void setSavePath(Path savePath) {this.savePath = savePath;}
 
 		public String getType() {
 			StringBuilder sb = new StringBuilder();
-			sb.append(baseUnit.get());
-			if ((!auxUnit.get().equals("None"))&&(!auxUnit.get().equals("Unspecified"))) {
-				if (rel.get().equals("multipliedBy")) {
+			sb.append(baseUnit.getValueSafe());
+			if ((!"None".equals(auxUnit.getValueSafe()))&&(!"Unspecified".equals(auxUnit.getValueSafe()))) {
+				if ("multipliedBy".equals(rel.getValueSafe())) {
 					sb.append("_");
 				} else {
 					sb.append("_per_");
 				}
-				sb.append(auxUnit.get());
+				sb.append(auxUnit.getValueSafe());
 			}
-			if (!rateUnit.get().equals("None")) {
+			if (!"None".equals(rateUnit.getValueSafe())) {
 				sb.append("_");
-				sb.append(rateUnit.get());
+				sb.append(rateUnit.getValueSafe());
 			}
-			if (!auxRateUnit.get().equals("None")) {
+			if (!"None".equals(auxRateUnit.getValueSafe())) {
 				sb.append("_");
-				sb.append(auxRateUnit.get());
+				sb.append(auxRateUnit.getValueSafe());
 			}
 			// remove any special characters from the string
 			String type = sb.toString();
@@ -231,6 +238,7 @@ public class SensorsTabController implements Initializable {
 		 */
 		public SensorTableData(Path path) {
 			valid = false;
+			savePath = path;
 
 			// attempt to load the json
 			JsonResultFactory factory = new JsonResultFactory();
@@ -289,7 +297,7 @@ public class SensorsTabController implements Initializable {
 			if (!App.isFloat(json.getValue("minusAccuracy"))) return;
 			if ((json.getValue("maxSampleRate")!=null)&&
 				   (!App.isUnsignedInteger(json.getValue("maxSampleRate")))) return;
-			
+
 			// check the values of the enumerated fields to make sure they match one of the
 			// possible selections
 			if ((json.getInteger("baseUnit"))>=unitsChoices.length) return;
@@ -321,7 +329,11 @@ public class SensorsTabController implements Initializable {
 			rateUnit.set(rateChoices[json.getInteger("rateUnit")]);
 			auxUnit.set(unitsChoices[json.getInteger("auxUnit")]);
 			auxModifier.set(json.getValue("auxUnitModifier"));
-			rel.set(json.getValue("rel"));
+			if ("0".equals(json.getValue("auxUnit")) && "0".equals(json.getValue("auxRateUnit")) && "0".equals(json.getValue("auxUnitModifier"))) {
+				rel.set(NO_AUX);
+			} else {
+				rel.set(json.getValue("rel"));
+			}
 			auxRateUnit.set(rateChoices[json.getInteger("auxRateUnit")]);
 			plusAccuracy.set(json.getValue("plusAccuracy"));
 			minusAccuracy.set(json.getValue("minusAccuracy"));
@@ -379,7 +391,7 @@ public class SensorsTabController implements Initializable {
 		public void SaveToFile(String path) {
 			// create the Json Object
 			JsonObject json = new JsonObject();
-			
+
 			// check to make sure the json has all the right fields
 			json.put("name", new JsonValue(name.get()));
 			json.put("manufacturer", new JsonValue(manufacturer.get()));
@@ -421,7 +433,11 @@ public class SensorsTabController implements Initializable {
 				json.put("auxUnit", new JsonValue(str));
 			}
 			json.put("auxUnitModifier", new JsonValue(auxModifier.get()));
-			json.put("rel", new JsonValue(rel.get()));
+			if (NO_AUX.equals(rel.getValueSafe())) {
+				json.put("rel", new JsonValue("multipliedBy"));
+			} else {
+				json.put("rel", new JsonValue(rel.get()));
+			}
 			{
 				String str = "0";
 				for (int i=0;i<rateChoices.length;i++) {
@@ -497,6 +513,7 @@ public class SensorsTabController implements Initializable {
 			plusAccuracy.set(data.plusAccuracy.get());
 			minusAccuracy.set(data.minusAccuracy.get());
 			outputUnits.set(data.outputUnits.get());
+			savePath = data.getSavePath();
 
 			outputCurve.clear();
 
@@ -505,7 +522,7 @@ public class SensorsTabController implements Initializable {
 				outputCurve.add(newPoint);
 			}
 		}
-			
+
 		/**
 		 * loadPointsFromCsvFile()
 		 * load points from the specified csv file into the data array for this object
@@ -559,6 +576,11 @@ public class SensorsTabController implements Initializable {
 		workingData.setName(name.replaceAll("[^a-z,A-Z,0-9]","_"));
 	}
 
+	private void setSaveAvailability(boolean b) {
+		saveChangesButton.setDisable(!b || workingData.getSavePath() == null);
+		saveAsChangesButton.setDisable(!b);
+	}
+
 	/**
 	 * isValid()
 	 * return true if the current working data set is valid.  This check is performed by
@@ -567,166 +589,110 @@ public class SensorsTabController implements Initializable {
 	 */
 	public boolean isValid() {
 		if (manufacturerImage.isVisible()) return false;
-		if (unitModifierImage.isVisible()) return false;
 		if (baseUnitImage.isVisible()) return false;
-		if (maxSampleRateImage.isVisible()) return false;
+		if (maxSampleRateImage.isVisible() && maxSampleRateImage.imageProperty().getName().equals("red_dot.png")) return false;
 		if (interfacesImage.isVisible()) return false;
 		if (descriptionImage.isVisible()) return false;
 		if (modelImage.isVisible()) return false;
-		if (rateUnitImage.isVisible()) return false;
-		if (relImage.isVisible()) return false;
-		if (auxUnitModifierImage.isVisible()) return false;
 		if (auxUnitImage.isVisible()) return false;
 		if (minusAccuracyImage.isVisible()) return false;
 		if (outputCurveImage.isVisible()) return false;
 		if (outputUnitsImage.isVisible()) return false;
 		if (plusAccuracyImage.isVisible()) return false;
-		if (auxRateUnitImage.isVisible()) return false;
 		return true;
 	}
-	
+
 	@FXML
 	void onManufacturerAction(ActionEvent event) {
-		if (manufacturerTextfield.getText().isBlank()) manufacturerImage.setVisible(true);
-		else manufacturerImage.setVisible(false);
 		workingData.setManufacturer(manufacturerTextfield.getText());
 		modified = true;
 		updateName();
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onPartNumberAction(ActionEvent event) {
-		if (partNumberTextField.getText().isBlank()) modelImage.setVisible(true);
-		else modelImage.setVisible(false);
 		workingData.setModel(partNumberTextField.getText());
 		modified = true;
 		updateName();
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onAnalogAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setAnalog(analogCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onDigitalAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-			&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-			&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setDigital(digitalCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onCountAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setCount(countCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onRateAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setRate(rateCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onQuadratureAction(ActionEvent event) {
-		if ((!digitalCheckbox.isSelected())&&(!analogCheckbox.isSelected())
-				&&(!countCheckbox.isSelected())&&(!rateCheckbox.isSelected())
-				&&(!quadratureCheckbox.isSelected())) {
-			interfacesImage.setVisible(true);
-		} else {
-			interfacesImage.setVisible(false);
-		}
 		workingData.setQuadrature(quadratureCheckbox.isSelected());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onMaxSampleRateAction(ActionEvent event) {
-		if ((!maxSampleRateTextfield.getText().isBlank())&&
-		   (!App.isUnsignedInteger(maxSampleRateTextfield.getText()))) maxSampleRateImage.setVisible(true);
-		else maxSampleRateImage.setVisible(false);
 		workingData.setMaxSampleRate(maxSampleRateTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(unitModifierTextField.getText())) unitModifierImage.setVisible(true);
-		else unitModifierImage.setVisible(false);
 		workingData.setUnitModifier(unitModifierTextField.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onAuxUnitModifierAction(ActionEvent event) {
-		if (!App.isUnsignedInteger(auxUnitModifierTextfield.getText())) auxUnitModifierImage.setVisible(true);
-		else auxUnitModifierImage.setVisible(false);
 		workingData.setAuxModifier(auxUnitModifierTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onPlusAccuractyAction(ActionEvent event) {
-		if (!App.isFloat(plusAccuracyTextfield.getText())) plusAccuracyImage.setVisible(true);
-		else plusAccuracyImage.setVisible(false);
 		workingData.setPlusAccuracy(plusAccuracyTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onMinusAccuracyAction(ActionEvent event) {
-		if (!App.isFloat(minusAccuracyTextfield.getText())) minusAccuracyImage.setVisible(true);
-		else minusAccuracyImage.setVisible(false);
 		workingData.setMinusAccuracy(minusAccuracyTextfield.getText());
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
 	void onOutputUnitsAction(ActionEvent event) {
 		workingData.setOutputUnits(outputUnitsTextfield.getText());
-		outputUnitsImage.setVisible(false);
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
@@ -737,7 +703,7 @@ public class SensorsTabController implements Initializable {
 		boolean result = workingData.loadPointsFromCsvFile(datafile);
 		outputCurveImage.setVisible(!result);
 		modified = true;
-		saveChangesButton.setDisable(!isValid());
+		setSaveAvailability(isValid());
 	}
 
 	@FXML
@@ -763,12 +729,48 @@ public class SensorsTabController implements Initializable {
 		stage.showAndWait();
 	}
 
+	private File promptSavePath() {
+		File defaultPath = (workingData.getSavePath() != null)
+				? workingData.getSavePath().toFile()
+				: new File(System.getProperty("user.dir")+"/lib/sensors/" + workingData.getName()+".json");
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
+		fileChooser.setTitle("Save As");
+		fileChooser.setInitialDirectory(defaultPath.getParentFile());
+		fileChooser.setInitialFileName(workingData.getName() + ".json");
+		File result = fileChooser.showSaveDialog(saveChangesButton.getScene().getWindow());
+		if (result == null) {
+			return null;
+		}
+		if (result.canWrite()) {
+			System.out.println("Unable to save to readonly file.");
+			return null;
+		}
+		return result;
+	}
+
 	@FXML
 	void onSaveChangesAction(ActionEvent event) {
-		String path = System.getProperty("user.dir")+"/lib/sensors/" + workingData.getName()+".json";
-		workingData.SaveToFile(path);
+		File defaultPath = (workingData.getSavePath() != null)
+				? workingData.getSavePath().toFile()
+				: new File(System.getProperty("user.dir")+"/lib/sensors/" + workingData.getName()+".json");
+		workingData.SaveToFile(defaultPath.toString());
 		modified = false;
-		saveChangesButton.setDisable(true);
+		setSaveAvailability(false);
+		initializeTable();
+		selectDefaultSensor();
+	}
+
+	@FXML
+	void onSaveAsChangesAction(ActionEvent event) {
+		File path = promptSavePath();
+		if (path == null) {
+			return;
+		}
+		workingData.setSavePath(path.toPath());
+		workingData.SaveToFile(path.toString());
+		modified = false;
+		setSaveAvailability(false);
 		initializeTable();
 		selectDefaultSensor();
 	}
@@ -804,7 +806,7 @@ public class SensorsTabController implements Initializable {
 		minusAccuracyTextfield.setTooltip(createTooltip("The absolute value of the negative accuracy of the sensor"));
 		outputUnitsTextfield.setTooltip(createTooltip("The output electrical units of the sensor"));
 	}
-	
+
 	/**
 	 * initializeTable()
 	 * initialize the contents of the table with contents from the library folder
@@ -847,34 +849,37 @@ public class SensorsTabController implements Initializable {
 		plusAccuracyTextfield.setText(data.getPlusAccuracy());
 		minusAccuracyTextfield.setText(data.getMinusAccuracy());
 		outputUnitsTextfield.setText(data.getOutputUnits());
-	}
-
-	public void clearIndicators() {
-		manufacturerImage.setVisible(false);
-		unitModifierImage.setVisible(false);
-		baseUnitImage.setVisible(false);
-		maxSampleRateImage.setVisible(false);
-		interfacesImage.setVisible(false);
-		descriptionImage.setVisible(false);
-		modelImage.setVisible(false);
-		rateUnitImage.setVisible(false);
-		relImage.setVisible(false);
-		auxUnitModifierImage.setVisible(false);
-		auxUnitImage.setVisible(false);
-		minusAccuracyImage.setVisible(false);
-		outputCurveImage.setVisible(false);
-		outputUnitsImage.setVisible(false);
-		plusAccuracyImage.setVisible(false);
-		auxRateUnitImage.setVisible(false);
+		refreshAuxState(data.getRel());
 	}
 
 	private void selectDefaultSensor() {
 		SensorTableView.getSelectionModel().select(0);
+		setSaveAvailability(false);
 		SensorTableData selecteddata = SensorTableView.getSelectionModel().getSelectedItem();
+		if (selecteddata == null) {
+			refreshAuxState(NO_AUX);
+			return;
+		}
 		workingData.set(selecteddata);
 		setSensorData(selecteddata);
 		modified = false;
-		saveChangesButton.setDisable(true);
+	}
+
+	private void refreshAuxState(String status) {
+		if (status.equals(NO_AUX)) {
+			// if no aux, disable and default aux inputs
+			auxUnitChoicebox.getSelectionModel().select(0);
+			workingData.setAuxModifier("0");
+			auxUnitModifierTextfield.setText("0");
+			auxRateChoicebox.getSelectionModel().select(0);
+			auxUnitChoicebox.setDisable(true);
+			auxUnitModifierTextfield.setDisable(true);
+			auxRateChoicebox.setDisable(true);
+		} else {
+			auxUnitChoicebox.setDisable(false);
+			auxUnitModifierTextfield.setDisable(false);
+			auxRateChoicebox.setDisable(false);
+		}
 	}
 
 	@Override
@@ -892,15 +897,13 @@ public class SensorsTabController implements Initializable {
 		for (String choice:rateChoices) rateUnitChoicebox.getItems().add(choice);
 		for (String choice:rateChoices) auxRateChoicebox.getItems().add(choice);
 		for (String choice:relChoices) relChoicebox.getItems().add(choice);
+		relChoicebox.setValue(NO_AUX);
 
 		// set up parameters for other controls
 		descriptionTextArea.setWrapText(true);
 
 		// set up the sensor configuration with default data
 		selectDefaultSensor();
-
-		// clear error indicators
-		clearIndicators();
 
 		// set tooltips for each control
 		setTooltips();
@@ -917,6 +920,7 @@ public class SensorsTabController implements Initializable {
 							Alert alert = new Alert(Alert.AlertType.WARNING,
 									"If you select a new sensor now, unsaved work on the existing sensor will be lost.",
 									ButtonType.OK, ButtonType.CANCEL);
+							((Stage)alert.getDialogPane().getScene().getWindow()).setAlwaysOnTop(true);
 							alert.setTitle("Loss of Data Warning");
 							Optional<ButtonType> result = alert.showAndWait();
 							if (result.get() != ButtonType.OK) {
@@ -936,9 +940,8 @@ public class SensorsTabController implements Initializable {
 				if (data==null) return;
 				workingData.set(data);
 				setSensorData(workingData);
-				clearIndicators();
 				modified = false;
-				saveChangesButton.setDisable(true);
+				setSaveAvailability(false);
 			}
 		});
 
@@ -949,7 +952,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setBaseUnit(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		auxUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -958,7 +961,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setAuxUnit(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		rateUnitChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -967,7 +970,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setRateUnit(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		auxRateChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -976,7 +979,7 @@ public class SensorsTabController implements Initializable {
 				workingData.setAuxRateUnit(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSaveAvailability(isValid());
 			}
 		});
 		relChoicebox.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
@@ -985,7 +988,8 @@ public class SensorsTabController implements Initializable {
 				workingData.setRel(newString);
 				updateName();
 				modified = true;
-				saveChangesButton.setDisable(!isValid());
+				setSaveAvailability(isValid());
+				refreshAuxState(newString);
 			}
 		});
 
@@ -1012,20 +1016,77 @@ public class SensorsTabController implements Initializable {
 		minusAccuracyTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { minusAccuracyTextfield.fireEvent(new ActionEvent()); }}});
-		outputUnitsImage.focusedProperty().addListener(new ChangeListener<Boolean>() {
+		outputUnitsTextfield.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) { outputUnitsTextfield.fireEvent(new ActionEvent()); }}});
 		descriptionTextArea.focusedProperty().addListener(new ChangeListener<Boolean>() {
 			@Override public void changed(ObservableValue<? extends Boolean> arg0, Boolean oldValue, Boolean newValue) {
 				if (!newValue) {
-					if (descriptionTextArea.getText().isBlank()) descriptionImage.setVisible(true);
-					else descriptionImage.setVisible(false);
 					workingData.setDescription(descriptionTextArea.getText());
-					saveChangesButton.setDisable(!isValid());
+					setSaveAvailability(isValid());
 					modified = true;
 				}
 			}
 		});
+
+		// set yellow image for nullable values
+		maxSampleRateImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
+			if (maxSampleRateTextfield.textProperty().getValueSafe().isBlank()) {
+				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
+				if (yellowDot != null) return new Image(yellowDot);
+			} else {
+				java.io.InputStream redDot = getClass().getClassLoader().getResourceAsStream("red_dot.png");
+				if (redDot != null) return new Image(redDot);
+			}
+			return null;
+		}, maxSampleRateTextfield.textProperty()));
+
+		// bind images to their input constraints
+		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						manufacturerTextfield.textProperty().getValueSafe().isBlank(),
+				manufacturerTextfield.textProperty()));
+		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						partNumberTextField.textProperty().getValueSafe().isBlank(),
+				partNumberTextField.textProperty()));
+		descriptionImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						descriptionTextArea.textProperty().getValueSafe().isBlank(),
+				descriptionTextArea.textProperty()));
+		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not()
+				.and(analogCheckbox.selectedProperty().not()
+						.and(countCheckbox.selectedProperty().not()
+								.and(rateCheckbox.selectedProperty().not()
+										.and(quadratureCheckbox.selectedProperty().not())))));
+		maxSampleRateImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isUnsignedInteger(maxSampleRateTextfield.textProperty().getValueSafe()),
+				maxSampleRateTextfield.textProperty()));
+		baseUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+								!App.isUnsignedInteger(unitModifierTextField.textProperty().getValueSafe()),
+						unitModifierTextField.textProperty())
+				.or(Bindings.createBooleanBinding(() ->
+										baseUnitChoicebox.getSelectionModel().isEmpty(),
+								baseUnitChoicebox.getSelectionModel().selectedItemProperty())
+						.or(Bindings.createBooleanBinding(() ->
+										rateUnitChoicebox.getSelectionModel().isEmpty(),
+								rateUnitChoicebox.getSelectionModel().selectedItemProperty()))));
+		auxUnitImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+								!App.isUnsignedInteger(auxUnitModifierTextfield.textProperty().getValueSafe()),
+						auxUnitModifierTextfield.textProperty())
+				.or(Bindings.createBooleanBinding(() ->
+										auxUnitChoicebox.getSelectionModel().isEmpty(),
+								auxUnitChoicebox.getSelectionModel().selectedItemProperty())
+						.or(Bindings.createBooleanBinding(() ->
+										auxRateChoicebox.getSelectionModel().isEmpty(),
+								auxRateChoicebox.getSelectionModel().selectedItemProperty()))));
+		outputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						outputUnitsTextfield.textProperty().getValueSafe().isBlank(),
+				outputUnitsTextfield.textProperty()));
+		plusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isFloat(plusAccuracyTextfield.textProperty().getValueSafe()),
+				plusAccuracyTextfield.textProperty()));
+		minusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
+						!App.isFloat(minusAccuracyTextfield.textProperty().getValueSafe()),
+				minusAccuracyTextfield.textProperty()));
+		outputCurveImage.setVisible(false);
 		modified = false;
 
 	}

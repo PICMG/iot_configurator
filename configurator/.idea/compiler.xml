@@ -10,8 +10,8 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="16">
-      <module name="configurator" target="16" />
-      <module name="configurator (1)" target="16" />
+      <module name="configurator" target="11" />
+      <module name="configurator (1)" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

@@ -1,0 +1,2 @@
+ -  State set value records (state names) appear temporarily invisible after clicking away mid-edit
+Steps to reproduce: Open a state set, click to begin editing a cell, and click away before the cell is done editing.

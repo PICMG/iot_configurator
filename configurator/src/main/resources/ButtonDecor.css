@@ -1,0 +1,32 @@
+.button{
+    -fx-background-color: #808080;
+    -fx-text-fill: #ffffff
+}
+.button:hover{
+    -fx-background-color: #707070;
+    -fx-text-fill: #ffffff;
+}
+.button:pressed{
+    -fx-background-color: #808080;
+    -fx-text-fill: #ffffff;
+}
+.choiceBox{
+    -fx-background-color: #808080;
+    -fx-control-inner-background: #808080;
+    -fx-mark-color: #000000;
+    -fx-text-fill: #ffffff;
+}
+.choiceBox .label{
+    -fx-text-fill: #ffffff;
+}
+.choiceBox:hover{
+    -fx-background-color:  #707070;
+    -fx-text-fill: #ffffff;
+}
+.choiceBox .list-cell{
+    -fx-text-fill: #ffffff;
+}
+.tab{
+    -fx-background-color: #808080;
+    -fx-text-fill: #ffffff;
+}

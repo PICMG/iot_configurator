@@ -22,24 +22,18 @@
 //
 package org.picmg.configurator;
 
-import java.io.File;
 import java.io.IOException;
 
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 
 public class App extends Application {	
 	
 	private static Scene scene;
-
 	/**
 	 * isInteger()
 	 * A helper that returns true if the string parameter represents
@@ -87,20 +81,24 @@ public class App extends Application {
 		}
 	}
 
+
 	@Override
-    public void start(Stage stage) { 
-	    Parent root;
-	    try {
-			root = FXMLLoader.load(getClass().getClassLoader().getResource("topTabScene.fxml"));
-			Scene scene = new Scene(root, 1024, 768);
-
-			stage.setTitle("PICMG Configurator");
-			stage.setScene(scene);
+    public void start(Stage stage) {
+		Stage temp = new Stage();
+		try {
+			load(stage);
 			stage.show();
-
 		} catch (IOException e) {
-	    	System.out.println(e);
+			System.out.println(e);
 		}
+	}
+
+	public static void load(Stage stage) throws IOException {
+		Parent root = FXMLLoader.load(App.class.getClassLoader().getResource("topTabScene.fxml"));
+		Scene scene = new Scene(root, 1024, 870);
+		stage.getIcons().add(new Image(App.class.getClassLoader().getResourceAsStream("picmg_logo.png")));
+		stage.setTitle("PICMG Configurator");
+		stage.setScene(scene);
 	}
 
 	/**
