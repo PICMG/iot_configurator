@@ -141,7 +141,7 @@ public class StateSetTabController implements Initializable {
 
         public Path getSavePath() {return savePath;}
 
-		private static final boolean isValid(JsonObject json) {
+		private final boolean isValid(JsonObject json) {
 			if (json == null) return false;
 			if (json.get("name") == null
 					|| !json.get("name").getClass().isAssignableFrom(JsonValue.class)) return false;

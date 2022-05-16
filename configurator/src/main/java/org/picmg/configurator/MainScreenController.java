@@ -48,6 +48,8 @@ import java.util.Random;
 import java.util.ResourceBundle;
 
 public class MainScreenController implements Initializable {
+	static Image redDotImage;
+	static Image yellowDotImage;
 	JsonObject hardware;
 	JsonObject sensorLib;
 	JsonObject effecterLib;
@@ -95,8 +97,6 @@ public class MainScreenController implements Initializable {
 
 	private final class JsonTreeCell extends TreeCell<TreeData> {
 		private ContextMenu contextMenu;
-		static Image redDotImage;
-		static Image yellowDotImage;
 
 		// JsonTreeCell
 		//
@@ -842,25 +842,26 @@ public class MainScreenController implements Initializable {
 						String name = selectedNode.getValue().leaf.getValue("name");
 						String bindingType = device.getBindingValueFromKey(selectedNode.getValue().name, "bindingType");
 						switch (bindingType) {
-							case "stateEffecter" -> {
+							case "stateEffecter":
 								clearPanes();
 								stateEffecterContent.setVisible(true);
-							}
-							case "stateSensor" -> {
+								break;
+							case "stateSensor":
 								clearPanes();
 								stateSensorContent.setVisible(true);
 								stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray) stateLib.get("stateSets"));
-							}
-							case "numericEffecter" -> {
+								break;
+							case "numericEffecter":
 								clearPanes();
 								numericEffecterContent.setVisible(true);
-							}
-							case "numericSensor" -> {
+								break;
+							case "numericSensor":
 								clearPanes();
 								numericSensorContent.setVisible(true);
 								numericSensorController.update(device, treeView.getSelectionModel().getSelectedItem());
-							}
-							default -> clearPanes();
+								break;
+							default:
+								clearPanes();
 						}
 
 					} else if (selectedNode.getValue().nodeType.equals("parameters")) {

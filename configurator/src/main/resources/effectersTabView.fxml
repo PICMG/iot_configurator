@@ -20,7 +20,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="739.0" prefWidth="1025.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.picmg.configurator.EffectersTabController">
+<AnchorPane prefHeight="739.0" prefWidth="1025.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.picmg.configurator.EffectersTabController">
    <children>
       <SplitPane dividerPositions="0.49021909233176836" prefHeight="738.0" prefWidth="1024.0">
          <items>
