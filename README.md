@@ -38,3 +38,6 @@ Add this line to the maven commands in the configuration section on IntelliJ
 Add this line to the maven commands in the configuration section on IntelliJ
 
 `clean javafx:run -f pom.xml`
+
+## Packaging
+To package the program in a device-independent jar, use the maven 'package' goal.
