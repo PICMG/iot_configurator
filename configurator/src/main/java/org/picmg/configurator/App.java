@@ -22,7 +22,9 @@
 //
 package org.picmg.configurator;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 import javafx.application.Application;
 import javafx.scene.Parent;
@@ -84,6 +86,11 @@ public class App extends Application {
 
 	@Override
     public void start(Stage stage) {
+		// get the path for this program and change our path to match it
+		String path = Paths.get("").toAbsolutePath().toString();
+		System.out.println(path);
+		System.setProperty("user.dir",path);
+
 		Stage temp = new Stage();
 		try {
 			load(stage);

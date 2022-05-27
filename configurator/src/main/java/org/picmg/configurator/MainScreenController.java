@@ -24,6 +24,7 @@ package org.picmg.configurator;
 
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -162,7 +163,7 @@ public class MainScreenController implements Initializable {
 			});
 
 			// set the behavior when the cell is clicked by the mouse
-			setOnMouseClicked(new EventHandler<>() {
+			setOnMouseClicked(new EventHandler<MouseEvent>() {
 				public void handle(MouseEvent t) {
 					//TODO: add code to set up the context pane for the io binding
 
@@ -193,7 +194,7 @@ public class MainScreenController implements Initializable {
 			});
 
 			// set the handler for the menu item
-			mi.setOnAction(new EventHandler<>() {
+			mi.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent t) {
 					// get the name of the entity that was selected
@@ -217,7 +218,7 @@ public class MainScreenController implements Initializable {
 			setContextMenu(null);
 
 			// set the behavior when the cell is clicked by the mouse
-			setOnMouseClicked(new EventHandler<>() {
+			setOnMouseClicked(new EventHandler<MouseEvent>() {
 				public void handle(MouseEvent t) {
 					//TODO: add code to set up the context pane for the parameters
 				}
@@ -235,7 +236,7 @@ public class MainScreenController implements Initializable {
 			}
 			contextMenu.getItems().add(mi);
 			// set the handler for the menu item
-			mi.setOnAction(new EventHandler<>() {
+			mi.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent t) {
 					// get the name of the entity that was selected
@@ -274,7 +275,7 @@ public class MainScreenController implements Initializable {
 					contextMenu.getItems().add(mi);
 
 					// set the handler for the menu item
-					mi.setOnAction(new EventHandler<>() {
+					mi.setOnAction(new EventHandler<ActionEvent>() {
 						@Override
 						public void handle(ActionEvent t) {
 							// get the name of the entity that was selected
@@ -355,7 +356,7 @@ public class MainScreenController implements Initializable {
 			setContextMenu(contextMenu);
 
 			// set the handler for the menu item
-			mi.setOnAction(new EventHandler<>() {
+			mi.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent t) {
 					// create a new fru record entry
@@ -381,7 +382,7 @@ public class MainScreenController implements Initializable {
 					getTreeItem().getChildren().add(fruRecordItem);
 				}
 			});
-			mi2.setOnAction(new EventHandler<>() {
+			mi2.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent t) {
 					// create a new fru record entry
@@ -818,7 +819,7 @@ public class MainScreenController implements Initializable {
 			treeView.setEditable(true);
 		}catch (Exception e){}
 		newDevice();
-		treeView.setCellFactory(new Callback<>() {
+		treeView.setCellFactory(new Callback<TreeView<TreeData>, TreeCell<TreeData>>() {
 			@Override
 			public TreeCell<TreeData> call(TreeView<TreeData> p) {
 				return new JsonTreeCell();
@@ -826,7 +827,7 @@ public class MainScreenController implements Initializable {
 		});
 
 		//treeview logic is contained in this event listener
-		treeView.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<>() {
+		treeView.addEventFilter(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			public void handle(MouseEvent event) {
 				Node treeNode = event.getPickResult().getIntersectedNode();
 

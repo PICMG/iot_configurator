@@ -361,7 +361,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
         if ((!this.isEditable()) || (!this.getTableColumn().isEditable()) || (!this.getTableView().isEditable()))
             return;
         // get a fresh copy of the item from the table
-        item.set(getTableRow().getItem());
+        item.set((S) getTableRow().getItem());
 
         // create a combo box for the cell if one doesn't already exist
         if (this.cb == null) {
@@ -539,7 +539,7 @@ public class UniqueComboBoxTableCell<S, T> extends TableCell<S, T> {
             setText(null);
             setGraphic(null);
         } else if (!isEditing()) {
-            this.item.set(getTableRow().getItem());
+            this.item.set((S) getTableRow().getItem());
             if ((this.item != null) && (this.item.get() != null)) {
                 // disable the control if it is not editable.
                 if (!isEditable()) {

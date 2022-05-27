@@ -142,7 +142,11 @@ public class StateSetSearchController implements Initializable {
 		} catch (IOException e) {
 			// unable to find the directory
 		}
-        stateSets = list.toArray(File[]::new);
+		//stateSets = list.toArray(File[]::new);
+		stateSets = new File[list.size()];
+        for (int i=0;i<list.size();i++) {
+        	stateSets[i] = list.get(i);
+		}
 
         ArrayList<String> vendorList = new ArrayList<String>();
         ArrayList<String> nameList   = new ArrayList<String>();

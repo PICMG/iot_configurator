@@ -405,15 +405,15 @@ public class StateSetTabController implements Initializable {
 
 		// bind images to their input constraints
 		vendorNameImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						stateSetVendorNameTextField.textProperty().getValueSafe().isBlank(),
+						stateSetVendorNameTextField.textProperty().getValueSafe().trim().isEmpty(),
 				stateSetVendorNameTextField.textProperty()));
 
 		vendorIANAImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						stateSetVendorIANATextField.textProperty().getValueSafe().isBlank() ||  !App.isInteger(stateSetVendorIANATextField.textProperty().getValueSafe()),
+						stateSetVendorIANATextField.textProperty().getValueSafe().trim().isEmpty() ||  !App.isInteger(stateSetVendorIANATextField.textProperty().getValueSafe()),
 				stateSetVendorIANATextField.textProperty()));
 
 		stateSetIDImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						stateSetIdTextField.textProperty().getValueSafe().isBlank() || !App.isInteger(stateSetIdTextField.textProperty().getValueSafe()),
+						stateSetIdTextField.textProperty().getValueSafe().trim().isEmpty() || !App.isInteger(stateSetIdTextField.textProperty().getValueSafe()),
 				stateSetIdTextField.textProperty()));
 		// TODO visibility should update on changes to list of given working data also
 		oemValueRecordImage.visibleProperty().bind(Bindings.createBooleanBinding(() -> getWorkingData().oemStateValueRecords.isEmpty(),

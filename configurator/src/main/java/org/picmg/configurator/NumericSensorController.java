@@ -234,7 +234,9 @@ public class NumericSensorController implements Initializable {
 		// select curve button on click listener
 		selectCurve.setOnAction(new EventHandler<ActionEvent>(){
 			@Override public void handle(ActionEvent e) {
+				File defaultPath = new File(System.getProperty("user.dir")+"/lib/device_curves/");
 				FileChooser fileChooser = new FileChooser();
+				fileChooser.setInitialDirectory(defaultPath);
 				fileChooser.setTitle("Open Resource File");
 				File datafile = fileChooser.showOpenDialog(selectCurve.getScene().getWindow());
 				loadPointsFromCsvFile(datafile);

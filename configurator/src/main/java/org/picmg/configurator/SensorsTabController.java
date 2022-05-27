@@ -408,7 +408,7 @@ public class SensorsTabController implements Initializable {
 				}
 				json.put("baseUnit", new JsonValue(str));
 			}
-			if ((maxSampleRate.get().isBlank())||((App.isFloat(maxSampleRate.get())&&(Double.parseDouble(maxSampleRate.get())<=0)))) {
+			if ((maxSampleRate.get().trim().isEmpty())||((App.isFloat(maxSampleRate.get())&&(Double.parseDouble(maxSampleRate.get())<=0)))) {
 				json.put("maxSampleRate", new JsonValue("null"));
 			} else json.put("maxSampleRate", new JsonValue(maxSampleRate.get()));
 			json.put("unitModifier", new JsonValue(unitModifier.get()));
@@ -697,7 +697,9 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onOutputCurveSelectAction(ActionEvent event) {
+		File defaultPath = new File(System.getProperty("user.dir")+"/lib/device_curves/");
 		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(defaultPath);
 		fileChooser.setTitle("Open Resource File");
 		File datafile = fileChooser.showOpenDialog(nameTextField.getScene().getWindow());
 		boolean result = workingData.loadPointsFromCsvFile(datafile);
@@ -813,6 +815,7 @@ public class SensorsTabController implements Initializable {
 	 */
 	private void initializeTable() {
 		SensorTableView.getItems().clear();
+		String p = System.getProperty("user.dir")+"/lib/sensors";
 		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/sensors"))) {
 			for (Path path : stream) {
 				if (!Files.isDirectory(path)) {
@@ -1031,7 +1034,7 @@ public class SensorsTabController implements Initializable {
 
 		// set yellow image for nullable values
 		maxSampleRateImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
-			if (maxSampleRateTextfield.textProperty().getValueSafe().isBlank()) {
+			if (maxSampleRateTextfield.textProperty().getValueSafe().trim().isEmpty()) {
 				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
@@ -1043,13 +1046,13 @@ public class SensorsTabController implements Initializable {
 
 		// bind images to their input constraints
 		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						manufacturerTextfield.textProperty().getValueSafe().isBlank(),
+						manufacturerTextfield.textProperty().getValueSafe().trim().isEmpty(),
 				manufacturerTextfield.textProperty()));
 		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						partNumberTextField.textProperty().getValueSafe().isBlank(),
+						partNumberTextField.textProperty().getValueSafe().trim().isEmpty(),
 				partNumberTextField.textProperty()));
 		descriptionImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						descriptionTextArea.textProperty().getValueSafe().isBlank(),
+						descriptionTextArea.textProperty().getValueSafe().trim().isEmpty(),
 				descriptionTextArea.textProperty()));
 		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not()
 				.and(analogCheckbox.selectedProperty().not()
@@ -1078,7 +1081,7 @@ public class SensorsTabController implements Initializable {
 										auxRateChoicebox.getSelectionModel().isEmpty(),
 								auxRateChoicebox.getSelectionModel().selectedItemProperty()))));
 		outputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-						outputUnitsTextfield.textProperty().getValueSafe().isBlank(),
+						outputUnitsTextfield.textProperty().getValueSafe().trim().isEmpty(),
 				outputUnitsTextfield.textProperty()));
 		plusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 						!App.isFloat(plusAccuracyTextfield.textProperty().getValueSafe()),

@@ -120,10 +120,10 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
 
     public void cancelEdit() {
         super.cancelEdit();
-        setText(getValue(getTableRow().getItem()));
+        setText(getValue((S) getTableRow().getItem()));
         if (cancel) {
             clickCommit(getConverter().fromString(tf.getText()));
-            setValue(getTableRow().getItem(), tf.getText());
+            setValue((S) getTableRow().getItem(), tf.getText());
             cancel = false;
         }
         cancel = true;
@@ -148,7 +148,7 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
                         if (event.getCode() == KeyCode.ENTER || event.getCode() == KeyCode.TAB) {
                             this.cancel = false;
                             commitEdit(getConverter().fromString(tf.getText()));
-                            setValue(getTableRow().getItem(), tf.getText());
+                            setValue((S) getTableRow().getItem(), tf.getText());
                             if(getIndex() + 1 < getTableView().getItems().size()) {
                                 getTableView().getSelectionModel().select(getIndex() + 1);
                                 getTableView().getFocusModel().focus(getIndex() + 1, getTableColumn());
@@ -165,7 +165,7 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
                         } else if (event.getCode() == KeyCode.ESCAPE) {
                             this.cancel = false;
                             commitEdit(getConverter().fromString(previousText));
-                            setValue(getTableRow().getItem(), previousText);
+                            setValue((S) getTableRow().getItem(), previousText);
                             cancelEdit();
                             event.consume();
 

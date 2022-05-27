@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <option name="USE_RELEASE_OPTION" value="false" />
     <annotationProcessing>
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -9,9 +10,9 @@
         <module name="configurator" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="16">
-      <module name="configurator" target="11" />
-      <module name="configurator (1)" target="11" />
+    <bytecodeTargetLevel>
+      <module name="configurator" target="1.8" />
+      <module name="configurator (1)" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

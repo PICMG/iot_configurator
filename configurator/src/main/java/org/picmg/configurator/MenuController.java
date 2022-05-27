@@ -71,12 +71,14 @@ public class MenuController implements Initializable {
 
 	@FXML void notifyExport(Event event) {
 		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
 	}
 
 	void importFile()
 	{
 		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
 		mainController.loadDevice(selectedFile);
 	}
@@ -84,6 +86,7 @@ public class MenuController implements Initializable {
 	void importConfig()
 	{
 		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
 		mainController.loadConfig(selectedFile);
 	}

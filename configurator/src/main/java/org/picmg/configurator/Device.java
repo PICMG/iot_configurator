@@ -27,6 +27,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 import org.picmg.jsonreader.*;
@@ -750,9 +751,9 @@ public class Device {
     public void setSensorFromFile(String bindingName, String filename) {
         JsonResultFactory factory = new JsonResultFactory();
 
-        String fullFilename = System.getProperty("user.dir") + "/lib/sensors/" + filename + ".json";
+        String filePath = System.getProperty("user.dir") + "/lib/sensors/" + filename + ".json";
 
-        JsonAbstractValue sensor = factory.buildFromFile(Path.of(fullFilename));
+        JsonAbstractValue sensor = factory.buildFromFile(Paths.get(filePath));
         if (sensor == null) return;
 
         JsonObject binding = getConfiguredBindingFromName(bindingName);

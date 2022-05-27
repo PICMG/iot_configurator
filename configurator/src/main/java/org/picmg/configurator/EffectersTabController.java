@@ -437,7 +437,7 @@ public class EffectersTabController implements Initializable {
 				}
 				json.put("baseUnit", new JsonValue(str));
 			}
-			if ((maxSampleRate.getValueSafe().isBlank()) || ((App.isFloat(maxSampleRate.get()) && (Double.parseDouble(maxSampleRate.get())<=0)))) {
+			if ((maxSampleRate.getValueSafe().trim().isEmpty()) || ((App.isFloat(maxSampleRate.get()) && (Double.parseDouble(maxSampleRate.get())<=0)))) {
 				json.put("maxSampleRate", new JsonValue("null"));
 			} else json.put("maxSampleRate", new JsonValue(maxSampleRate.get()));
 			json.put("unitModifier", new JsonValue(unitModifier.get()));
@@ -480,10 +480,10 @@ public class EffectersTabController implements Initializable {
 			json.put("plusAccuracy", new JsonValue(plusAccuracy.get()));
 			json.put("minusAccuracy", new JsonValue(minusAccuracy.get()));
 			json.put("inputUnits", new JsonValue(outputUnits.get()));
-			if ((ratedMax.getValueSafe().isBlank()) || ((App.isFloat(ratedMax.get()) && (Double.parseDouble(ratedMax.get())<=0)))) {
+			if ((ratedMax.getValueSafe().trim().isEmpty()) || ((App.isFloat(ratedMax.get()) && (Double.parseDouble(ratedMax.get())<=0)))) {
 				json.put("ratedMax", new JsonValue("null"));
 			} else json.put("ratedMax", new JsonValue(ratedMax.get()));
-			if ((nominalValue.getValueSafe().isBlank()) || ((App.isFloat(nominalValue.get()) && (Double.parseDouble(nominalValue.get())<=0)))) {
+			if ((nominalValue.getValueSafe().trim().isEmpty()) || ((App.isFloat(nominalValue.get()) && (Double.parseDouble(nominalValue.get())<=0)))) {
 				json.put("nominalValue", new JsonValue("null"));
 			} else json.put("nominalValue", new JsonValue(nominalValue.get()));
 			JsonArray responseData = new JsonArray();
@@ -620,7 +620,7 @@ public class EffectersTabController implements Initializable {
 	}
 
 	private String parseName(String name) {
-		return name == null || name.isBlank() ? "none" : name;
+		return name == null || name.trim().isEmpty() ? "none" : name;
 	}
 
 	private void setSaveAvailability(boolean b) {
@@ -746,7 +746,9 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onOutputCurveSelectAction(ActionEvent event) {
+		File defaultPath = new File(System.getProperty("user.dir")+"/lib/device_curves/");
 		FileChooser fileChooser = new FileChooser();
+		fileChooser.setInitialDirectory(defaultPath);
 		fileChooser.setTitle("Open Resource File");
 		File datafile = fileChooser.showOpenDialog(nameTextField.getScene().getWindow());
 		boolean result = workingData.loadPointsFromCsvFile(datafile);
@@ -1104,7 +1106,7 @@ public class EffectersTabController implements Initializable {
 
 		// set yellow image for nullable values
 		maxSampleRateImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
-			if (maxSampleRateTextfield.textProperty().getValueSafe().isBlank()) {
+			if (maxSampleRateTextfield.textProperty().getValueSafe().trim().isEmpty()) {
 				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
@@ -1114,7 +1116,7 @@ public class EffectersTabController implements Initializable {
 			return null;
 		}, maxSampleRateTextfield.textProperty()));
 		ratedMaxImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
-			if (ratedMaxTextfield.textProperty().getValueSafe().isBlank()) {
+			if (ratedMaxTextfield.textProperty().getValueSafe().trim().isEmpty()) {
 				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
@@ -1124,7 +1126,7 @@ public class EffectersTabController implements Initializable {
 			return null;
 		}, ratedMaxTextfield.textProperty()));
 		nominalValueImage.imageProperty().bind(Bindings.createObjectBinding(() -> {
-			if (nominalValueTextfield.textProperty().getValueSafe().isBlank()) {
+			if (nominalValueTextfield.textProperty().getValueSafe().trim().isEmpty()) {
 				java.io.InputStream yellowDot = getClass().getClassLoader().getResourceAsStream("yellow_dot.png");
 				if (yellowDot != null) return new Image(yellowDot);
 			} else {
@@ -1136,13 +1138,13 @@ public class EffectersTabController implements Initializable {
 		
 		// bind images to their input constraints
 		manufacturerImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				manufacturerTextfield.textProperty().getValueSafe().isBlank(),
+				manufacturerTextfield.textProperty().getValueSafe().trim().isEmpty(),
 				manufacturerTextfield.textProperty()));
 		modelImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				partNumberTextField.textProperty().getValueSafe().isBlank(),
+				partNumberTextField.textProperty().getValueSafe().trim().isEmpty(),
 				partNumberTextField.textProperty()));
 		descriptionImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				descriptionTextArea.textProperty().getValueSafe().isBlank(),
+				descriptionTextArea.textProperty().getValueSafe().trim().isEmpty(),
 				descriptionTextArea.textProperty()));
 		interfacesImage.visibleProperty().bind(digitalCheckbox.selectedProperty().not()
 				.and(analogCheckbox.selectedProperty().not()
@@ -1171,7 +1173,7 @@ public class EffectersTabController implements Initializable {
 										auxRateChoicebox.getSelectionModel().isEmpty(),
 								auxRateChoicebox.getSelectionModel().selectedItemProperty()))));
 		inputUnitsImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
-				inputUnitsTextfield.textProperty().getValueSafe().isBlank(),
+				inputUnitsTextfield.textProperty().getValueSafe().trim().isEmpty(),
 				inputUnitsTextfield.textProperty()));
 		plusAccuracyImage.visibleProperty().bind(Bindings.createBooleanBinding(() ->
 						!App.isFloat(plusAccuracyTextfield.textProperty().getValueSafe()),
