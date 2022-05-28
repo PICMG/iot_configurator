@@ -73,10 +73,10 @@ public class Device {
 
         // -> If config, fail
         JsonObject configuration = new JsonObject();
-        configuration.put("stateSets", new JsonArray());
         configuration.put("fruRecords", new JsonArray());
         configuration.put("logicalEntities", new JsonArray());
         this.jdev.put("configuration", configuration);
+        this.jdev.put("oemStateSets", new JsonArray());
 
         allUsedPins = getAllUsedPins();
         allUsedChannels = getAllBoundChannels();
@@ -932,10 +932,10 @@ public class Device {
     public void writeToFile(String filename) {
         try {
             JsonObject configuration = new JsonObject();
-            configuration.put("stateSets", new JsonArray());
             configuration.put("fruRecords", new JsonArray());
             configuration.put("logicalEntities", new JsonArray());
             jdev.put("configuration", configuration);
+            jdev.put("oemStateSets", new JsonArray());
             FileWriter file = new FileWriter(filename);
             file.write(jdev.toString());
             file.close();
@@ -1485,6 +1485,7 @@ public class Device {
         JsonObject configuration = (JsonObject) cleanDevice.get("configuration");
         JsonArray fruRecords = (JsonArray) configuration.get("fruRecords");
         JsonArray logicalEntities = (JsonArray) configuration.get("logicalEntities");
+        JsonArray stateSets = (JsonArray) cleanDevice.get("oemStateSets");
 
         // strip out any incomplete FRU records
         for (int i = fruRecords.size() - 1; i >= 0; i--) {
@@ -1506,6 +1507,53 @@ public class Device {
             for (int j = ioBindings.size() - 1; j >= 0; j--) {
                 JsonObject binding = (JsonObject) ioBindings.get(j);
                 if (!isBindingValid(binding)) ioBindings.remove(binding);
+            }
+        }
+
+        // find any oem state sets and add them to the collection.
+        for (int i = 0; i < logicalEntities.size(); i++) {
+            JsonObject entity = (JsonObject) logicalEntities.get(i);
+            // loop for each IO Binding
+            JsonArray ioBindings = (JsonArray) entity.get("ioBindings");
+            for (int j = 0; j<ioBindings.size(); j++) {
+                JsonObject binding = (JsonObject) ioBindings.get(j);
+
+                // check to see if there is an state set and it is an oem state set
+                if (!binding.containsKey("stateSetVendorIANA")) continue;
+                if (!binding.containsKey("stateSet")) continue;
+                int iana = binding.getInteger("stateSetVendorIANA");
+                if (iana == 412) continue;
+                int setnum = binding.getInteger("stateSet");
+
+                // see if the state set already exists in the state set collection
+                boolean found = false;
+                for (int k = 0; k<stateSets.size(); k++) {
+                    JsonObject set = (JsonObject) stateSets.get(k);
+                    if ((set.getInteger("vendorIANA")==iana)&&(set.getInteger("stateSet")==setnum)) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (found) continue;
+
+                // here if the state set did not exist already in the state set collection
+                // add the contents from the state set library
+                String path = System.getProperty("user.dir")+"/lib/state_sets/";
+                JsonResultFactory factory = new JsonResultFactory();
+                File   fileobj = new File(path);
+                File[] files = fileobj.listFiles();
+                for (File value : files) {
+                    String file = path + value.getName();
+                    JsonObject obj = (JsonObject) factory.buildFromFile(Paths.get(file));
+
+                    // check to see if the object matches the vendor ID and state set
+                    if (obj.getInteger("stateSetId") != setnum) continue;
+                    if (obj.getInteger("vendorIANA") != iana) continue;
+
+                    // here if the object is a match -- add it to the state set array
+                    stateSets.add(obj);
+                    break;
+                }
             }
         }
 

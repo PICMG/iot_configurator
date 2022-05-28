@@ -1,0 +1,172 @@
+{
+  "capabilities":
+  {
+	"device": "atmega4809", 
+    "pins": [
+      "J1.1",
+      "J1.2",
+      "J1.3",
+      "J1.6",
+      "J1.7",
+      "J1.8",
+      "J1.10",
+      "J1.14",
+      "J1.16",
+      "J1.17",
+      "J1.18",
+      "J3.1.i",
+      "J3.4.i",
+      "J3.1.o",
+      "J3.4.o"
+    ],
+
+    "channels": [
+      {
+        "name"  : "digital_in1",
+        "type": "digital_in",
+        "description":null,
+        "pins": [{"name":"J1.1","function":"in"}]
+      },
+      {
+        "name": "digital_in2",
+        "type": "digital_in",
+        "description":null,
+        "pins": [{"name":"J1.2","function":"in"}]
+      },
+      {
+        "name": "digital_out1",
+        "type": "digital_out",
+        "description":null,
+        "pins": [{"name":"J1.3","function":"out"}]
+      },
+      {
+        "name": "analog_out1",
+        "type": "analog_out",
+        "description":null,
+        "pins": [{"name":"J1.10","function":"aout"}]
+      },
+      {
+        "name": "ain5v",
+        "type": "analog_in",
+        "description":null,
+        "pins": [{"name":"J1.16","function":"ain"}],
+		"precision": 10,
+		"maxValue": 5,
+		"minValue": 0
+      },
+      {
+        "name"  : "interlock_in",
+        "type": "digital_in",
+        "description":null,
+        "pins": [{"name":"J3.1.i","function":"in"}]
+      },
+      {
+        "name"  : "interlock_out",
+        "type": "digital_out",
+        "description":null,
+        "pins": [{"name":"J3.1.o","function":"in"}]
+      }
+    ],
+    "fruRecords": [
+      {
+        "name": "default",
+        "vendorIANA": 412,
+        "required": true,
+        "description":null,
+        "fields": [
+          {
+            "description":"",
+            "format":"string",
+            "length":null,
+            "required":"true",
+            "type":7,
+            "value":"PICMG"
+          },
+          {
+            "description":"",
+            "format":"string",
+            "length":null,
+            "required":"true",
+            "type":12,
+            "value":"Smart Sensor"
+          }
+        ]
+      }
+    ],
+    "logicalEntities": [
+      {
+        "entityVendorIANA" : 12634,
+        "vendorEntityID" : 1,
+        "name": "simple1",
+        "required": false,
+        "description": "PICMG Simple Sensor/Effecter",
+        "ioBindings" : [
+          {
+            "bindingType": "stateSensor",
+            "name": "GlobalInterlockSensor",
+			"sensorID": 1,
+            "includeInPdr": true,
+            "required": true,
+            "isVirtual": false,
+            "description": "Global interlock input binding",
+            "allowedInterfaceTypes": ["digital_in"],
+            "boundChannel": "interlock_in",
+            "stateSetVendorIANA": 412,
+            "stateSet": 96,
+			"usedStates": 3,
+            "stateWhenLow": 1,
+            "stateWhenHigh": 2
+          },
+          {
+            "bindingType": "stateSensor",
+            "name": "TriggerSensor",
+			"sensorID": 2,
+            "includeInPdr": true,
+            "required": true,
+            "isVirtual": false,
+            "description": "Trigger input binding",
+            "allowedInterfaceTypes": ["digital_in"],
+            "boundChannel": "trigger_in",
+            "stateSetVendorIANA": 12634,
+            "stateSet": 1,
+			"usedStates": 3,
+            "stateWhenLow": 1,
+            "stateWhenHigh": 2
+          },
+          {
+            "bindingType": "numericSensor",
+            "name": "Sensor1",
+			"sensorID": 3,
+            "includeInPdr": true,
+            "required": false,
+            "isVirtual": false,
+            "description": "generic numeric sensor",
+            "allowedInterfaceTypes": ["analog_in"],
+            "sensor": null,
+            "inputCurve": null,
+            "boundChannel": null,
+            "inputGearingRatio": null,
+            "physicalBaseUnit": null,
+            "rel": null,
+            "physicalUnitModifier": null,
+            "physicalRateUnit": null,
+            "physicalAuxUnit": null,
+            "physicalAuxUnitModifier": null,
+            "physicalAuxRateUnit": null
+          }
+        ],
+        "parameters": [
+          {
+            "name": "SampleRate",
+            "description": "The system sampling rate in Hz.",
+            "type": "integer",
+            "minValue": 4000,
+            "maxValue": 5000,
+            "value": null,
+            "defaultValue": 4000
+          }
+        ]
+      }
+    ]
+  }
+}
