@@ -310,7 +310,7 @@ public class StateSetTabController implements Initializable {
         String fileName = workingData.getStateSetVendorName() + '_' + workingData.getStateSetId();
         File defaultPath = (workingData.getSavePath() != null)
                 ? workingData.getSavePath().toFile()
-                : new File(System.getProperty("user.dir")+"/lib/state_sets/" + fileName+".json");
+                : new File(App.getBasePath()+"/lib/state_sets/" + fileName+".json");
         saveToFile(workingData.getStateSet(), defaultPath.toString());
 		modified = false;
 		refreshSave();
@@ -335,7 +335,7 @@ public class StateSetTabController implements Initializable {
     private File promptSavePath() {
         File defaultPath = (workingData.getSavePath() != null)
                 ? workingData.getSavePath().toFile()
-                : new File(System.getProperty("user.dir")+"/lib/state_sets/" + workingData.getStateSetVendorName() + '_' + workingData.getStateSetId()+".json");
+                : new File(App.getBasePath()+"/lib/state_sets/" + workingData.getStateSetVendorName() + '_' + workingData.getStateSetId()+".json");
         FileChooser fileChooser = new FileChooser();
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
         fileChooser.setTitle("Save As");
@@ -444,7 +444,7 @@ public class StateSetTabController implements Initializable {
 
 	private void initializeTable() {
 		stateSetTableView.getItems().clear();
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/state_sets"))) {
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(App.getBasePath()+"/lib/state_sets"))) {
 			for (Path path : stream) {
 				if (!Files.isDirectory(path)) {
 					StateSetTableData data = new StateSetTableData(path);

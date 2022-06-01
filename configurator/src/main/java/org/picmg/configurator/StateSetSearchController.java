@@ -132,7 +132,7 @@ public class StateSetSearchController implements Initializable {
 		//create vendor and name arraylists
 		File[] stateSets;
 		ArrayList<File> list = new ArrayList<File>();
-        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/state_sets"))) {
+        try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(App.getBasePath()+"/lib/state_sets"))) {
 			int i = 0;
 			for (Path path : stream) {
 				if (!Files.isDirectory(path)) {

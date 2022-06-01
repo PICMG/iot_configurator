@@ -751,7 +751,7 @@ public class Device {
     public void setSensorFromFile(String bindingName, String filename) {
         JsonResultFactory factory = new JsonResultFactory();
 
-        String filePath = System.getProperty("user.dir") + "/lib/sensors/" + filename + ".json";
+        String filePath = App.getBasePath() + "/lib/sensors/" + filename + ".json";
 
         JsonAbstractValue sensor = factory.buildFromFile(Paths.get(filePath));
         if (sensor == null) return;
@@ -1538,7 +1538,7 @@ public class Device {
 
                 // here if the state set did not exist already in the state set collection
                 // add the contents from the state set library
-                String path = System.getProperty("user.dir")+"/lib/state_sets/";
+                String path = App.getBasePath()+"/lib/state_sets/";
                 JsonResultFactory factory = new JsonResultFactory();
                 File   fileobj = new File(path);
                 File[] files = fileobj.listFiles();

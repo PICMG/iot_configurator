@@ -234,7 +234,7 @@ public class NumericSensorController implements Initializable {
 		// select curve button on click listener
 		selectCurve.setOnAction(new EventHandler<ActionEvent>(){
 			@Override public void handle(ActionEvent e) {
-				File defaultPath = new File(System.getProperty("user.dir")+"/lib/device_curves/");
+				File defaultPath = new File(App.getBasePath()+"/lib/device_curves/");
 				FileChooser fileChooser = new FileChooser();
 				fileChooser.setInitialDirectory(defaultPath);
 				fileChooser.setTitle("Open Resource File");
@@ -366,7 +366,7 @@ public class NumericSensorController implements Initializable {
 		physicalSensor.getItems().clear();
 
 		if (boundChannel.getValue() != null) {
-			try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir") + "/lib/sensors"))) {
+			try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(App.getBasePath() + "/lib/sensors"))) {
 				for (Path path : stream) {
 					if (!Files.isDirectory(path)) {
 						JsonAbstractValue json = factory.buildFromFile(path);

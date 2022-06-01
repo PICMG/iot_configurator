@@ -24,6 +24,7 @@ package org.picmg.configurator;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
 import javafx.application.Application;
@@ -83,13 +84,35 @@ public class App extends Application {
 		}
 	}
 
+	static String getBasePath() {
+		String path = null;
+		try {
+			path = Main.class
+					.getProtectionDomain()
+					.getCodeSource()
+					.getLocation()
+					.toURI()
+					.getPath();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		if (path.contains(":")) {
+			path = path.substring(path.indexOf(':')+1,path.length());
+		}
+		if (path.lastIndexOf('/') ==path.length()-1) {
+			path = path.substring(0,path.length()-1);
+		}
+		if (path.contains(".jar")) {
+			path = path.substring(0,path.lastIndexOf('/'));
+		}
+		return path;
+	}
 
 	@Override
     public void start(Stage stage) {
 		// get the path for this program and change our path to match it
-		String path = Paths.get("").toAbsolutePath().toString();
-		System.out.println(path);
-		System.setProperty("user.dir",path);
+		String path = App.getBasePath();
+ 		System.setProperty("user.dir",path);
 
 		Stage temp = new Stage();
 		try {

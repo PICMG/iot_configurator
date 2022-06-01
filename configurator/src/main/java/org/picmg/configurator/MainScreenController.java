@@ -525,7 +525,7 @@ public class MainScreenController implements Initializable {
 		JsonArray ary = (JsonArray)lib.get(key);
 
 		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-		String path = System.getProperty("user.dir")+"/lib/"+folder+"/";
+		String path = App.getBasePath()+"/lib/"+folder+"/";
 		File   fileobj = new File(path);
 		File[] files = fileobj.listFiles();
 		for (File value : files) {

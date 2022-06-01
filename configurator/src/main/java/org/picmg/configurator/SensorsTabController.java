@@ -697,7 +697,7 @@ public class SensorsTabController implements Initializable {
 
 	@FXML
 	void onOutputCurveSelectAction(ActionEvent event) {
-		File defaultPath = new File(System.getProperty("user.dir")+"/lib/device_curves/");
+		File defaultPath = new File(App.getBasePath()+"/lib/device_curves/");
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(defaultPath);
 		fileChooser.setTitle("Open Resource File");
@@ -734,7 +734,7 @@ public class SensorsTabController implements Initializable {
 	private File promptSavePath() {
 		File defaultPath = (workingData.getSavePath() != null)
 				? workingData.getSavePath().toFile()
-				: new File(System.getProperty("user.dir")+"/lib/sensors/" + workingData.getName()+".json");
+				: new File(App.getBasePath()+"/lib/sensors/" + workingData.getName()+".json");
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
 		fileChooser.setTitle("Save As");
@@ -755,7 +755,7 @@ public class SensorsTabController implements Initializable {
 	void onSaveChangesAction(ActionEvent event) {
 		File defaultPath = (workingData.getSavePath() != null)
 				? workingData.getSavePath().toFile()
-				: new File(System.getProperty("user.dir")+"/lib/sensors/" + workingData.getName()+".json");
+				: new File(App.getBasePath()+"/lib/sensors/" + workingData.getName()+".json");
 		workingData.SaveToFile(defaultPath.toString());
 		modified = false;
 		setSaveAvailability(false);
@@ -815,8 +815,10 @@ public class SensorsTabController implements Initializable {
 	 */
 	private void initializeTable() {
 		SensorTableView.getItems().clear();
-		String p = System.getProperty("user.dir")+"/lib/sensors";
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/sensors"))) {
+		String p = App.getBasePath()+"/lib/sensors";
+
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(p))) {
+			// unable to find the directory
 			for (Path path : stream) {
 				if (!Files.isDirectory(path)) {
 					SensorTableData data = new SensorTableData(path);
@@ -827,7 +829,7 @@ public class SensorsTabController implements Initializable {
 				}
 			}
 		} catch (IOException e) {
-			// unable to find the directory
+			// IO Exception
 		}
 	}
 

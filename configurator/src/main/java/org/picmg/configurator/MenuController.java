@@ -71,14 +71,14 @@ public class MenuController implements Initializable {
 
 	@FXML void notifyExport(Event event) {
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+		fileChooser.setInitialDirectory(new File(App.getBasePath()));
 		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
 	}
 
 	void importFile()
 	{
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+		fileChooser.setInitialDirectory(new File(App.getBasePath()));
 		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
 		mainController.loadDevice(selectedFile);
 	}
@@ -86,7 +86,7 @@ public class MenuController implements Initializable {
 	void importConfig()
 	{
 		FileChooser fileChooser = new FileChooser();
-		fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+		fileChooser.setInitialDirectory(new File(App.getBasePath()));
 		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
 		mainController.loadConfig(selectedFile);
 	}
@@ -163,7 +163,7 @@ public class MenuController implements Initializable {
 			@Override
 			public void handle(MouseEvent event) {
 				FileChooser fileChooser = new FileChooser();
-				fileChooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+				fileChooser.setInitialDirectory(new File(App.getBasePath()));
 				File selectedFile = fileChooser.showSaveDialog(mainMenubar.getScene().getWindow());
 				if (selectedFile != null) mainController.exportConfiguration(selectedFile);
 			}

@@ -746,7 +746,7 @@ public class EffectersTabController implements Initializable {
 
 	@FXML
 	void onOutputCurveSelectAction(ActionEvent event) {
-		File defaultPath = new File(System.getProperty("user.dir")+"/lib/device_curves/");
+		File defaultPath = new File(App.getBasePath()+"/lib/device_curves/");
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(defaultPath);
 		fileChooser.setTitle("Open Resource File");
@@ -797,7 +797,7 @@ public class EffectersTabController implements Initializable {
 	private File promptSavePath() {
 		File defaultPath = (workingData.getSavePath() != null)
 				? workingData.getSavePath().toFile()
-				: new File(System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json");
+				: new File(App.getBasePath()+"/lib/effecters/" + workingData.getName()+".json");
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Json Files", "*.json"));
 		fileChooser.setTitle("Save As");
@@ -818,7 +818,7 @@ public class EffectersTabController implements Initializable {
 	void onSaveChangesAction(ActionEvent event) {
 		File defaultPath = (workingData.getSavePath() != null)
 				? workingData.getSavePath().toFile()
-				: new File(System.getProperty("user.dir")+"/lib/effecters/" + workingData.getName()+".json");
+				: new File(App.getBasePath()+"/lib/effecters/" + workingData.getName()+".json");
 		workingData.SaveToFile(defaultPath.toString());
 		modified = false;
 		setSaveAvailability(false);
@@ -880,7 +880,7 @@ public class EffectersTabController implements Initializable {
 	 */
 	private void initializeTable() {
 		EffecterTableView.getItems().clear();
-		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(System.getProperty("user.dir")+"/lib/effecters"))) {
+		try (DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(App.getBasePath()+"/lib/effecters"))) {
 			for (Path path : stream) {
 				if (!Files.isDirectory(path)) {
 					EffecterTableData data = new EffecterTableData(path);
