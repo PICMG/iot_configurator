@@ -1073,22 +1073,26 @@ public class Device {
                     // value must be null
                     return (value == null);
                 }
-                // otherwise,the value should be one of the units choices
-                if (value == null) return false;
-                for (String choice : unitsChoices)
-                    if (value.equals(choice)) return true;
-                return false;
+                // the value should be an integer
+                try {
+                    Integer.parseInt(value);
+                    return true;
+                } catch (Exception ex) {
+                    return false;
+                }
             case "physicalRateUnit":
             case "physicalAuxRateUnit":
                 if (virtual) {
                     // value must be null
                     return (value == null);
                 }
-                // otherwise,the value should be one of the units choices
-                if (value == null) return false;
-                for (String choice : rateChoices)
-                    if (value.equals(choice)) return true;
-                return false;
+                // the value should be an integer
+                try {
+                    Integer.parseInt(value);
+                    return true;
+                } catch (Exception ex) {
+                    return false;
+                }
             case "rel":
                 if (virtual) {
                     // value must be null

@@ -290,20 +290,26 @@ public class NumericSensorController implements Initializable {
 			updateIcons();
 		});
 		physicalBaseUnit.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			// TODO: change to integer
 			if (physicalBaseUnit.getValue()!=null)
-				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalBaseUnit",physicalBaseUnit.getValue());
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalBaseUnit",Integer.toString(physicalBaseUnit.getSelectionModel().getSelectedIndex()));
+				//device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalBaseUnit",physicalBaseUnit.getValue());
 			setControlEnables();
 			updateIcons();
 		});
 		physicalRate.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			// TODO: change to integer
 			if (physicalRate.getValue()!=null)
-				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalRateUnit",physicalRate.getValue());
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalRateUnit",Integer.toString(physicalRate.getSelectionModel().getSelectedIndex()));
+				//device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalRateUnit",physicalRate.getValue());
 			setControlEnables();
 			updateIcons();
 		});
 		physicalAux.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			// TODO: change to integer
 			if (physicalAux.getValue()!=null)
-				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnit",physicalAux.getValue());
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnit",Integer.toString(physicalAux.getSelectionModel().getSelectedIndex()));
+				//device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxUnit",physicalAux.getValue());
 			setControlEnables();
 			updateIcons();
 		});
@@ -314,8 +320,10 @@ public class NumericSensorController implements Initializable {
 			updateIcons();
 		});
 		physicalAuxRate.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			// TODO: change to integer
 			if (physicalAuxRate.getValue()!=null)
-				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxRateUnit",physicalAuxRate.getValue());
+				device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxRateUnit",Integer.toString(physicalAuxRate.getSelectionModel().getSelectedIndex()));
+				//device.setConfiguredBindingValueFromKey(selectedNode.getValue().name,"physicalAuxRateUnit",physicalAuxRate.getValue());
 			setControlEnables();
 			updateIcons();
 		});
@@ -450,7 +458,9 @@ public class NumericSensorController implements Initializable {
 		physicalBaseUnit.getItems().clear();
 		for (String choice:Device.unitsChoices) physicalBaseUnit.getItems().add(choice);
 		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalBaseUnit") != null){
-			physicalBaseUnit.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalBaseUnit"));
+			// TODO: change to index proper value
+			physicalBaseUnit.getSelectionModel().clearAndSelect(Integer.parseInt(device.getConfiguredBindingValueFromKey(bindingName,"physicalBaseUnit")));
+			//physicalBaseUnit.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalBaseUnit"));
 		}
 
 		// if physical unit modifier is non-null, set value according to json. Else, allow for population.
@@ -465,14 +475,18 @@ public class NumericSensorController implements Initializable {
 		physicalRate.getItems().clear();
 		for (String choice:Device.rateChoices) physicalRate.getItems().add(choice);
 		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalRateUnit") != null){
-			physicalRate.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalRateUnit"));
+			// TODO: change to index proper value
+			physicalRate.getSelectionModel().clearAndSelect(Integer.parseInt(device.getConfiguredBindingValueFromKey(bindingName,"physicalRateUnit")));
+			//physicalRate.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalRateUnit"));
 		}
 
 		// if physical aux is non-null, set value according to json. Else, allow for population.
 		physicalAux.getItems().clear();
 		for (String choice:Device.unitsChoices) physicalAux.getItems().add(choice);
 		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxUnit") != null){
-			physicalAux.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxUnit"));
+			// TODO: change to index proper value
+			physicalAux.getSelectionModel().clearAndSelect(Integer.parseInt(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxUnit")));
+			//physicalAux.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxUnit"));
 		}
 
 		// if rel is non-null, set value according to json. Else, allow for population.
@@ -494,7 +508,9 @@ public class NumericSensorController implements Initializable {
 		physicalAuxRate.getItems().clear();
 		for (String choice:Device.rateChoices) physicalAuxRate.getItems().add(choice);
 		if(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxRateUnit") != null){
-			physicalAuxRate.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxRateUnit"));
+			// TODO: change to index proper value
+			physicalAuxRate.getSelectionModel().clearAndSelect(Integer.parseInt(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxRateUnit")));
+			//physicalAuxRate.setValue(device.getConfiguredBindingValueFromKey(bindingName,"physicalAuxRateUnit"));
 		}
 
 		updated = true;
