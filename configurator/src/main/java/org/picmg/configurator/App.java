@@ -30,6 +30,9 @@ import java.nio.file.Paths;
 import javafx.application.Application;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Dialog;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import javafx.fxml.FXMLLoader;
@@ -106,6 +109,19 @@ public class App extends Application {
 			path = path.substring(0,path.lastIndexOf('/'));
 		}
 		return path;
+	}
+
+	/**
+	 * Show an error dialog and await confirmation from the user.
+	 * @param message the error message to display
+	 */
+	static void showErrorDlg(String message) {
+		Dialog<String> dialog = new Dialog<String>();
+		dialog.setTitle("Error");
+		ButtonType type = new ButtonType("Ok", ButtonBar.ButtonData.OK_DONE);
+		dialog.setContentText(message);
+		dialog.getDialogPane().getButtonTypes().add(type);
+		dialog.showAndWait();
 	}
 
 	@Override

@@ -22,33 +22,21 @@
 //
 package org.picmg.configurator;
 
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.ContextMenuEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
-import javafx.util.Callback;
-import org.picmg.jsonreader.*;
 
 import java.io.*;
 import java.net.URL;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.Optional;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 public class MenuController implements Initializable {
@@ -65,6 +53,10 @@ public class MenuController implements Initializable {
 
 	MainScreenController mainController; // the controller for the main pane
 
+	/**
+	 * Update whether or not the Export menu item is visible on the menu bar
+	 * @param configError if false, display the export menu option
+	 */
 	void updateMenuChoices(Boolean configError) {
 		exportMenu.setDisable(configError);
 	}
@@ -75,7 +67,11 @@ public class MenuController implements Initializable {
 		File selectedFile = fileChooser.showOpenDialog(mainMenubar.getScene().getWindow());
 	}
 
-	void importFile()
+	/**
+	 * This function is invoked by the main menu "New" selection.  The function attempts
+	 * to load an existing device capabilities file.
+	 */
+	void importNewDevice()
 	{
 		FileChooser fileChooser = new FileChooser();
 		fileChooser.setInitialDirectory(new File(App.getBasePath()));
@@ -83,6 +79,10 @@ public class MenuController implements Initializable {
 		mainController.loadDevice(selectedFile);
 	}
 
+	/**
+	 * This function is invoked by the main menu "Edit" selection.  The function attempts
+	 * to load an existing configuration file.
+	 */
 	void importConfig()
 	{
 		FileChooser fileChooser = new FileChooser();
@@ -169,13 +169,14 @@ public class MenuController implements Initializable {
 			}
 		});
 		exportMenu.setGraphic(exportLabel);
+		updateMenuChoices(true);
 
 		Label newDeviceLabel = new Label("New");
 		newDeviceLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 
-				importFile();
+				importNewDevice();
 			}
 		});
 

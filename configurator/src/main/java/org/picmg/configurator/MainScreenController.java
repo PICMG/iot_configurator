@@ -693,8 +693,10 @@ public class MainScreenController implements Initializable {
 
 	// Checks for errors in all tree nodes. displays error icon if found.
 	public void errorCheck() {
-		configurationError.set(false);
-		configurationError.set(errorChecker(treeView.getRoot(),false));
+		configurationError.set(true);
+		if ((hardware != null) && (device != null)) {
+			configurationError.set(errorChecker(treeView.getRoot(), false));
+		}
 	}
 
 	// Clears error value in all treeItems by setting the error value to false.
@@ -724,39 +726,78 @@ public class MainScreenController implements Initializable {
 		}
 	}
 
+	/**
+	 * Get the error property for the current device.  The error property is used to signal that an error condition
+	 * exists.  As long as an error exists, exporting the device is not allowed.
+	 * @return the error property
+	 */
 	public SimpleBooleanProperty getErrorProperty() {
 		return configurationError;
 	}
 
+	/**
+	 * Attempt to reset the device to its default values
+	 */
 	public void resetDevice() {
 		configurationError.set(true);
 		// create a copy of the hardware file to be configured
 		newDevice();
 		clearPanes();
+		showTree();
 	}
 
+	/**
+	 * Attempt to load a device capabilities file from the specified file path
+	 * @param filePath The path of the capabilities file to load
+	 */
 	public void loadDevice(File filePath)
 	{
 		if(filePath != null)
 		{
-			JsonResultFactory factory = new JsonResultFactory();
-			hardware = (JsonObject)factory.buildFromFile(filePath.toPath());
-			newDevice();
+			try {
+				JsonResultFactory factory = new JsonResultFactory();
+				hardware = (JsonObject)factory.buildFromFile(filePath.toPath());
+			} catch (Exception e) {
+				App.showErrorDlg("Error Reading Input File");
+				return;
+			}
+			clearPanes();
+			try {
+				newDevice();
+			} catch (Exception e) {
+				App.showErrorDlg("Input file error.  It appears the requested file is not a device file.");
+				return;
+			}
 			showTree();
 		}
 	}
+
 	public void showTree()
 	{
 		treeView.setVisible(true);
 	}
 
+	/**
+	 * Attempt to load an existing configuration file from the specified file path.
+	 * @param filePath The path of the configuration file to load
+	 */
 	public void loadConfig(File filePath)
 	{
-		if(filePath != null)
-		{
-			JsonResultFactory factory = new JsonResultFactory();
-			hardware = (JsonObject)factory.buildFromFile(filePath.toPath());
-			loadDevice();
+		if (filePath != null) {
+			try {
+				JsonResultFactory factory = new JsonResultFactory();
+				hardware = (JsonObject) factory.buildFromFile(filePath.toPath());
+			} catch (Exception e) {
+				App.showErrorDlg("Error Reading Input File");
+				return;
+			}
+			clearPanes();
+			try {
+				loadDevice();
+			} catch (Exception e) {
+				App.showErrorDlg("Input file error.  It appears the requested file is not a configuration file.");
+				return;
+			}
 			showTree();
 		}
 	}
@@ -766,6 +807,8 @@ public class MainScreenController implements Initializable {
 	 */
 	public void newDevice()
 	{
+		if (hardware == null) return;
+
 		// create the tree based on the device
 		treeView.setVisible(false);
 		configurationError.set(true);
@@ -803,7 +846,7 @@ public class MainScreenController implements Initializable {
 
 		// load the default hardware profile
 		JsonResultFactory factory = new JsonResultFactory();
-		hardware = (JsonObject)factory.buildFromResource("microsam_new2.json");
+		//hardware = (JsonObject)factory.buildFromResource("microsam_new2.json");
 
 		// Load the libraries from the resource folders - these are the default
 		// picmg libraries and sensors
