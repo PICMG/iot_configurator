@@ -134,7 +134,7 @@ public class Device {
         ArrayList<String> usedChannels = new ArrayList<>();
         JsonObject cfg = (JsonObject) jdev.get("configuration");
         ((JsonArray) cfg.get("logicalEntities")).forEach(
-                entity -> ((JsonArray) jdev.get("ioBindings")).forEach(
+                entity -> ((JsonArray) ((JsonObject)entity).get("ioBindings")).forEach(
                         binding -> usedChannels.add(binding.getValue("boundChannel"))
                 )
         );
@@ -150,7 +150,7 @@ public class Device {
         JsonObject capabilities = (JsonObject) jdev.get("capabilities");
         JsonObject cfg = (JsonObject) jdev.get("configuration");
         ((JsonArray) cfg.get("logicalEntities")).forEach(
-                entity -> ((JsonArray) jdev.get("ioBindings")).forEach(
+                entity -> ((JsonArray) ((JsonObject)entity).get("ioBindings")).forEach(
                         binding -> (
                                 (JsonArray) capabilities.get("channels")).forEach(
                                 channel -> {
