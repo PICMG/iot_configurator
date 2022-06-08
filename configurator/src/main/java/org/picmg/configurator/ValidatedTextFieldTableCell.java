@@ -24,6 +24,7 @@ package org.picmg.configurator;
 
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.event.Event;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.KeyCode;
@@ -127,6 +128,38 @@ public class ValidatedTextFieldTableCell<S, T> extends TextFieldTableCell<S, T> 
             cancel = false;
         }
         cancel = true;
+    }
+
+    /**
+     * Commit the edit before loss of focus
+     */
+    @Override
+    public void commitEdit(T newItem) {
+        // if we are not editing but the current item has not yet been committed, fire an event to commit
+        // This code fixes a well-known issue with the javafx library.
+        if ((!isEditing()) && (!newItem.equals(getItem()))) {
+            TableView<S> tableView = getTableView();
+            if (tableView != null) {
+                // create an event for committing this cell
+                // The event consists of the following:
+                //    tableView - The TableView on which this will occur (the cell's containing table).
+                //    tablePos - The position upon which this event will occur (the cell's row and column index).
+                //    eventType - The type of event that will occur (an edit commit event).  In this case, it is an
+                //       edit commit event, which indicates a change has been made by the user and the backing table
+                //       data needs to be updated.
+                //    newItem - The new value input by the user.
+                TableColumn<S, T> column = getTableColumn();
+                TablePosition tablePos = new TablePosition<S, T>(tableView, getIndex(), column);
+                TableColumn.CellEditEvent<S, T> event = new TableColumn.CellEditEvent<S, T>(tableView, tablePos, TableColumn.editCommitEvent(), newItem);
+                Event.fireEvent(column, event);
+            }
+        }
+
+        // continue to allow the default cell behavior for commit Edit.
+        super.commitEdit(newItem);
+
+        // Change the text box to show text only - leaving the editing mode
+        setContentDisplay(ContentDisplay.TEXT_ONLY);
     }
 
     @Override

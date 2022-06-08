@@ -75,12 +75,20 @@
         "description":null,
         "fields": [
           {
-            "description":"",
+            "description":"vendor",
             "format":"string",
             "length":null,
             "required":"true",
             "type":7,
-            "value":"PICMG"
+            "value":null
+          },
+          {
+            "description":"model",
+            "format":"string",
+            "length":null,
+            "required":"true",
+            "type":2,
+            "value":null
           },
           {
             "description":"",

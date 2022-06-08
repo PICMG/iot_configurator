@@ -65,7 +65,7 @@
                         <TableColumn fx:id="tableColumnOEMType" onEditCommit="#oemTypeCommit" prefWidth="89.0" text="OEM Type" />
                         <TableColumn fx:id="tableColumnFormat" onEditCommit="#formatCellCommit" prefWidth="85.0" text="Format" />
                         <TableColumn fx:id="tableColumnValue" onEditCommit="#valueCellCommit" prefWidth="96.0" text="Value" />
-                      <TableColumn fx:id="tableColumnName" prefWidth="234.0" text="Description" />
+                      <TableColumn fx:id="tableColumnDescription" prefWidth="234.0" text="Description" />
                     </columns>
                   </TableView>
                </content>

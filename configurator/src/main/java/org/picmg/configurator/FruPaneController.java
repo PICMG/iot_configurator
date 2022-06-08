@@ -22,8 +22,8 @@
 //
 package org.picmg.configurator;
 
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -31,7 +31,6 @@ import javafx.scene.control.cell.ChoiceBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import org.picmg.jsonreader.JsonArray;
-import org.picmg.jsonreader.JsonAbstractValue;
 import org.picmg.jsonreader.JsonObject;
 import org.picmg.jsonreader.JsonValue;
 import java.net.URL;
@@ -48,6 +47,7 @@ public class FruPaneController implements Initializable {
 	private JsonObject jsonFru;
 	private JsonObject jsonCapabilitiesFru;
 	private TreeItem<MainScreenController.TreeData> selectedNode;
+	private MainScreenController mainController;
 
 	private final int DMTF_IANA = 412;
 	private final String[] typeChoices = {"Chassis Type","Model","Part Number", "Serial Number","Manufacturer",
@@ -60,7 +60,7 @@ public class FruPaneController implements Initializable {
 	@FXML private ChoiceBox<String> choiceBoxFruType;
 	@FXML private TextField textFieldOemId;
 	@FXML private TableView<FruTableInfo> tableViewFruInfo;
-	@FXML private TableColumn<FruTableInfo, String> tableColumnName;
+	@FXML private TableColumn<FruTableInfo, String> tableColumnDescription;
 	@FXML private TableColumn<FruTableInfo, String> tableColumnType;
 	@FXML private TableColumn<FruTableInfo, String> tableColumnOEMType;
 	@FXML private TableColumn<FruTableInfo, String> tableColumnValue;
@@ -70,11 +70,16 @@ public class FruPaneController implements Initializable {
 
 	// data model for the fru information table
 	public static class FruTableInfo {
-		String name;
+		String description;
 		String type;
 		String oemType;
 		String value;
 		String format;
+		public boolean description_editable;
+		public boolean type_editable;
+		public boolean value_editable;
+		public boolean format_editable;
+		public boolean oemtype_editable;
 		public String getOemType() { return oemType;}
 		public void setOemType(String oemType) { this.oemType = oemType;}
 		public String getFormat() { return format;}
@@ -83,8 +88,8 @@ public class FruPaneController implements Initializable {
 		public void setType(String type) { this.type = type;	}
 		public String getValue() { return value;}
 		public void setValue(String value) { this.value = value;}
-		public String getName() { return name;}
-		public void setName(String name) { this.name = name;}
+		public String getDescription() { return description;}
+		public void setDescription(String name) { this.description = name;}
 	}
 
 	/**
@@ -129,30 +134,112 @@ public class FruPaneController implements Initializable {
 		return change;
 	};
 
+	void setMainController(MainScreenController mainController) {
+		this.mainController = mainController;
+	}
+
 	@Override
 	/**
 	 * initialize()
 	 * initialize all the controls on in the pane
 	 */
 	public void initialize(URL location, ResourceBundle resources) {
-		tableColumnName.setCellValueFactory(new PropertyValueFactory<>("name"));
-		tableColumnName.setCellFactory(TextFieldTableCell.forTableColumn());
-		tableColumnName.setSortable(false);
+		tableColumnDescription.setCellValueFactory(new PropertyValueFactory<>("description"));
+		tableColumnDescription.setCellFactory(TextFieldTableCell.forTableColumn());
+		tableColumnDescription.setCellFactory(tableColumn -> {
+			TextFieldTableCell<FruTableInfo, String> cell = new TextFieldTableCell<FruTableInfo, String>();
+			ChangeListener<String> infoListener = (obs, oldvalue, newvalue) -> {
+				cell.setDisable(false);
+				if (newvalue != null) {
+					// set the new settings for the new cell;
+					TableRow<FruTableInfo> row = cell.getTableRow();
+					FruTableInfo item = row.getItem();
+					if (item != null) {
+						cell.setDisable(!((FruTableInfo)cell.getTableRow().getItem()).description_editable);
+					}
+				}
+			};
+			cell.itemProperty().addListener(infoListener);
+			return cell ;
+		});
+		tableColumnDescription.setSortable(false);
 
 		tableColumnType.setCellValueFactory(new PropertyValueFactory<>("type"));
-		tableColumnType.setCellFactory(ChoiceBoxTableCell.forTableColumn(typeChoices));
+		tableColumnType.setCellFactory(tableColumn -> {
+			ChoiceBoxTableCell<FruTableInfo, String> cell = new ChoiceBoxTableCell<>(typeChoices);
+			ChangeListener<String> infoListener = (obs, oldstr, newstr) -> {
+				cell.setDisable(false);
+				if (newstr != null) {
+					// set the new settings for the new cell;
+					TableRow<FruTableInfo> row = cell.getTableRow();
+					FruTableInfo item = row.getItem();
+					if (item != null) {
+						cell.setDisable(!((FruTableInfo)cell.getTableRow().getItem()).type_editable);
+					}
+				}
+			};
+			cell.itemProperty().addListener(infoListener);
+			return cell ;
+		});
 		tableColumnType.setSortable(false);
 
 		tableColumnOEMType.setCellValueFactory(new PropertyValueFactory<>("oemType"));
 		tableColumnOEMType.setCellFactory(TextFieldTableCell.forTableColumn());
+		tableColumnOEMType.setCellFactory(tableColumn -> {
+			TextFieldTableCell<FruTableInfo, String> cell = new TextFieldTableCell<FruTableInfo, String>();
+			ChangeListener<String> infoListener = (obs, oldvalue, newvalue) -> {
+				cell.setDisable(false);
+				if (newvalue != null) {
+					// set the new settings for the new cell;
+					TableRow<FruTableInfo> row = cell.getTableRow();
+					FruTableInfo item = row.getItem();
+					if (item != null) {
+						cell.setDisable(!((FruTableInfo)cell.getTableRow().getItem()).oemtype_editable);
+					}
+				}
+			};
+			cell.itemProperty().addListener(infoListener);
+			return cell ;
+		});
 		tableColumnOEMType.setSortable(false);
 
 		tableColumnValue.setCellValueFactory(new PropertyValueFactory<>("value"));
-		tableColumnValue.setCellFactory(ValidatedTextFieldTableCell.forTableColumn(decimalOnlyOperator));
+		tableColumnValue.setCellFactory(tableColumn -> {
+			ValidatedTextFieldTableCell<FruTableInfo, String> cell = new ValidatedTextFieldTableCell<FruTableInfo, String>(decimalOnlyOperator);
+			ChangeListener<String> infoListener = (obs, oldvalue, newvalue) -> {
+				cell.setDisable(false);
+				if (newvalue != null) {
+					// set the new settings for the new cell;
+					TableRow<FruTableInfo> row = cell.getTableRow();
+					FruTableInfo item = row.getItem();
+					if (item != null) {
+						cell.setDisable(!((FruTableInfo)cell.getTableRow().getItem()).value_editable);
+					}
+				}
+			};
+			cell.itemProperty().addListener(infoListener);
+			return cell ;
+		});
 		tableColumnValue.setSortable(false);
 
 		tableColumnFormat.setCellValueFactory(new PropertyValueFactory<>("format"));
-		tableColumnFormat.setCellFactory(ChoiceBoxTableCell.forTableColumn(formatChoices));
+		//tableColumnFormat.setCellFactory(ChoiceBoxTableCell.forTableColumn(formatChoices));
+		tableColumnFormat.setCellFactory(tableColumn -> {
+			ChoiceBoxTableCell<FruTableInfo, String> cell = new ChoiceBoxTableCell<>(formatChoices);
+			ChangeListener<String> infoListener = (obs, oldstr, newstr) -> {
+				cell.setDisable(false);
+				if (newstr != null) {
+					// set the new settings for the new cell;
+					TableRow<FruTableInfo> row = cell.getTableRow();
+					FruTableInfo item = row.getItem();
+					if (item != null) {
+						cell.setDisable(!((FruTableInfo)cell.getTableRow().getItem()).format_editable);
+					}
+				}
+			};
+			cell.itemProperty().addListener(infoListener);
+			return cell;
+		});
 		tableColumnFormat.setSortable(false);
 
 		tableViewFruInfo.setEditable(true);
@@ -173,19 +260,19 @@ public class FruPaneController implements Initializable {
 		// create a new fru entry based on whether or not it is a standard type
 		JsonObject field = new JsonObject();
 		if (isStandard) {
-			field.put("type",new JsonValue("1"));
+			field.put("type",new JsonValue("null"));
 			field.put("required",new JsonValue("true"));
-			field.put("description",new JsonValue(""));
-			field.put("format",new JsonValue("string"));
+			field.put("description",new JsonValue("null"));
+			field.put("format",new JsonValue("null"));
 			field.put("length",new JsonValue("null"));
-			field.put("value",new JsonValue(""));
+			field.put("value",new JsonValue("null"));
 		} else {
-			field.put("type",new JsonValue(""));
+			field.put("type",new JsonValue("null"));
 			field.put("required",new JsonValue("true"));
-			field.put("description",new JsonValue(""));
-			field.put("format",new JsonValue("string"));
+			field.put("description",new JsonValue("null"));
+			field.put("format",new JsonValue("null"));
 			field.put("length",new JsonValue("null"));
-			field.put("value",new JsonValue(""));
+			field.put("value",new JsonValue("null"));
 		}
 		fields.add(field);
 		updateControls();
@@ -244,13 +331,17 @@ public class FruPaneController implements Initializable {
 			// if the type was set to "Manufacture Date", the format should be
 			// changed to "timestamp104"
 			((JsonValue)(field.get("format"))).set("timestamp104");
+		} else if (e.getNewValue().equals("Vendor IANA")) {
+			// if the type was set to "Vendor IANA", the format should be
+			// changed to "uint32"
+			((JsonValue)(field.get("format"))).set("uint32");
 		} else {
 			// otherwise the format field should be set to "string"
 			((JsonValue) (field.get("format"))).set("string");
 		}
 
 		// clear any existing value
-		((JsonValue) (field.get("value"))).set("");
+		((JsonValue) (field.get("value"))).set("null");
 
 		updateControls();
 
@@ -383,14 +474,46 @@ public class FruPaneController implements Initializable {
 		// update the tableview
 		tableViewFruInfo.getItems().clear();
 		JsonArray fruFields = (JsonArray)jsonFru.get("fields");
-		for (JsonAbstractValue field : fruFields) {
-			JsonObject fruField = (JsonObject) field;
+		for (int fruidx = 0; fruidx<fruFields.size(); fruidx++) {
+			JsonObject fruField = (JsonObject) fruFields.get(fruidx);
 
+			// get a reference to the corresponding fru record from the
+			// device's capabilities section (if the fru record exists).
+			JsonObject fruCapField = null;
+			if (jsonCapabilitiesFru!=null) {
+				if (jsonCapabilitiesFru.containsKey("fields")) {
+					JsonArray fruCapFields = (JsonArray)jsonCapabilitiesFru.get("fields");
+					if (fruidx<fruCapFields.size()) {
+						fruCapField = (JsonObject) fruCapFields.get(fruidx);
+					}
+				}
+			}
+
+			// create a new FruTableInfo object associated with this fru record
 			FruTableInfo info = new FruTableInfo();
+
+			// by default, every field is editable
+			info.description_editable = true;
+			info.type_editable = true;
+			info.value_editable = true;
+			info.format_editable = true;
+			info.oemtype_editable = true;
+
+			// if the field is defined in the capabilities fru record, it is immutable
+			if (fruCapField!=null) {
+				info.description_editable = (fruCapField.getValue("description") == null);
+				info.type_editable = (fruCapField.getValue("type") == null);
+				info.value_editable = (fruCapField.getValue("value") == null);
+				info.format_editable = (fruCapField.getValue("format") == null);
+				info.oemtype_editable = (fruCapField.getValue("type") == null);
+			}
+			if (isStandard) info.format_editable = false;
+
+			// set field values
 			if (fruField.getValue("description") != null) {
-				info.setName(fruField.getValue("description"));
+				info.setDescription(fruField.getValue("description"));
 			} else {
-				info.setName("");
+				info.setDescription("");
 			}
 
 			if (fruField.getValue("format") != null) {
@@ -436,6 +559,12 @@ public class FruPaneController implements Initializable {
 			tableColumnType.setVisible(true);
 		}
 
+		// Refresh the table so that all the changes take place
+		tableViewFruInfo.refresh();
+
+		// refresh the main screen tree view errors (if any)
+		if (mainController!=null) mainController.errorCheck();
+
 		// disable the "add" button if the fru record is not extendable
 		buttonAdd.setDisable(!isExtensible);
 		buttonDelete.setDisable(true);
@@ -445,14 +574,14 @@ public class FruPaneController implements Initializable {
 	 * This function is called when the pane is changed from the main menu.
 	 * It updates all the controls based on the java objects that it corresponds to.
 	 * @param fru the json object for this fru record (from the configuration section of the device)
-	 * @param configurationFru the json object for the corresponding fru record in the
+	 * @param capabilitiesFru the json object for the corresponding fru record in the
 	 *                        capabilities section of the input file
 	 */
-	public void update( TreeItem<MainScreenController.TreeData> selectedNode, JsonObject fru, JsonObject configurationFru)
+	public void update( TreeItem<MainScreenController.TreeData> selectedNode, JsonObject fru, JsonObject capabilitiesFru)
 	{
 		// do any configuration required prior to making the pane visible
 		jsonFru = fru;
-		jsonCapabilitiesFru = configurationFru;
+		jsonCapabilitiesFru = capabilitiesFru;
 		this.selectedNode = selectedNode;
 
 		updateControls();

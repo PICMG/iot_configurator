@@ -210,6 +210,7 @@ public class MainScreenController implements Initializable {
 						ti.getParent().getChildren().remove(ti);
 						((JsonArray) data.parent).remove(data.leaf);
 					}
+					setPaneContent();
 				}
 			});
 		}
@@ -437,12 +438,10 @@ public class MainScreenController implements Initializable {
 						initializeFruRecordCell();
 						break;
 					case "fruRecords":
-						//TODO: add code to set up the context pane for the fru collection
 						setText(getItem().nodeType);
 						initializeFruCell();
 						break;
 					case "parameters":
-						//TODO: add code to set up the context pane for the parameters collection
 						setText(getItem().nodeType);
 						initializeParametersCell();
 						break;
@@ -536,7 +535,7 @@ public class MainScreenController implements Initializable {
 	}
 
 	// helper function that clears all panes
-	private void clearPanes() {
+	public void clearPanes() {
 		stateSensorContent.setVisible(false);
 		stateEffecterContent.setVisible(false);
 		numericSensorContent.setVisible(false);
@@ -589,6 +588,7 @@ public class MainScreenController implements Initializable {
 				FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("FruPane.fxml"));
 				fruContent = loader.load();
 				fruPaneController = loader.getController();
+				fruPaneController.setMainController(this);
 				bindingPane.getChildren().add(fruContent);
 				fruContent.setVisible(false);
 			}
@@ -837,6 +837,55 @@ public class MainScreenController implements Initializable {
 		populateTree(rootNode);
 	}
 
+	private void setPaneContent() {
+		clearPanes();
+		TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
+		if (selectedNode == null) return;
+		treeView.getSelectionModel().select(selectedNode);
+
+		//checking if click is on ioBinding
+		if (selectedNode.getValue().nodeType.equals("ioBinding")) {
+
+			// switch on type of binding
+			String name = selectedNode.getValue().leaf.getValue("name");
+			String bindingType = device.getBindingValueFromKey(selectedNode.getValue().name, "bindingType");
+			switch (bindingType) {
+				case "stateEffecter":
+					clearPanes();
+					stateEffecterContent.setVisible(true);
+					break;
+				case "stateSensor":
+					clearPanes();
+					stateSensorContent.setVisible(true);
+					stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray) stateLib.get("stateSets"));
+					break;
+				case "numericEffecter":
+					clearPanes();
+					numericEffecterContent.setVisible(true);
+					break;
+				case "numericSensor":
+					clearPanes();
+					numericSensorContent.setVisible(true);
+					numericSensorController.update(device, treeView.getSelectionModel().getSelectedItem());
+					break;
+				default:
+					clearPanes();
+			}
+
+		} else if (selectedNode.getValue().nodeType.equals("parameters")) {
+			clearPanes();
+			JsonObject capabilitiesEntity = (JsonObject) selectedNode.getValue().parent;
+			JsonArray capabilitiesParameters = (JsonArray) capabilitiesEntity.get("parameters");
+			parameterPaneController.update((JsonArray) selectedNode.getValue().leaf, capabilitiesParameters);
+			parameterContent.setVisible(true);
+		} else if (selectedNode.getValue().nodeType.equals("fruRecord")) {
+			clearPanes();
+			fruPaneController.update(treeView.getSelectionModel().getSelectedItem(), (JsonObject) selectedNode.getValue().leaf,
+					device.getCapabilitiesFruRecordByName(selectedNode.getValue().leaf.getValue("name")));
+			fruContent.setVisible(true);
+		}
+	}
+
 	@Override
 	public void initialize(URL location, ResourceBundle resources) {
 		setPaneBindings();
@@ -875,51 +924,7 @@ public class MainScreenController implements Initializable {
 				Node treeNode = event.getPickResult().getIntersectedNode();
 
 				if (treeNode instanceof Text || (treeNode instanceof TreeCell && ((TreeCell) treeNode).getText() != null)) {
-					TreeItem<TreeData> selectedNode = treeView.getSelectionModel().getSelectedItem();
-					treeView.getSelectionModel().select(selectedNode);
-					clearPanes();
-
-					//checking if click is on ioBinding
-					if (selectedNode.getValue().nodeType.equals("ioBinding")) {
-
-						// switch on type of binding
-						String name = selectedNode.getValue().leaf.getValue("name");
-						String bindingType = device.getBindingValueFromKey(selectedNode.getValue().name, "bindingType");
-						switch (bindingType) {
-							case "stateEffecter":
-								clearPanes();
-								stateEffecterContent.setVisible(true);
-								break;
-							case "stateSensor":
-								clearPanes();
-								stateSensorContent.setVisible(true);
-								stateSensorController.update(device, treeView.getSelectionModel().getSelectedItem(), (JsonArray) stateLib.get("stateSets"));
-								break;
-							case "numericEffecter":
-								clearPanes();
-								numericEffecterContent.setVisible(true);
-								break;
-							case "numericSensor":
-								clearPanes();
-								numericSensorContent.setVisible(true);
-								numericSensorController.update(device, treeView.getSelectionModel().getSelectedItem());
-								break;
-							default:
-								clearPanes();
-						}
-
-					} else if (selectedNode.getValue().nodeType.equals("parameters")) {
-						clearPanes();
-						JsonObject capabilitiesEntity = (JsonObject) selectedNode.getValue().parent;
-						JsonArray capabilitiesParameters = (JsonArray) capabilitiesEntity.get("parameters");
-						parameterPaneController.update((JsonArray) selectedNode.getValue().leaf, capabilitiesParameters);
-						parameterContent.setVisible(true);
-					} else if (selectedNode.getValue().nodeType.equals("fruRecord")) {
-						clearPanes();
-						fruPaneController.update(treeView.getSelectionModel().getSelectedItem(), (JsonObject) selectedNode.getValue().leaf,
-								device.getCapabilitiesFruRecordByName(selectedNode.getValue().leaf.getValue("name")));
-						fruContent.setVisible(true);
-					}
+					setPaneContent();
 				}
 			}
 		});
